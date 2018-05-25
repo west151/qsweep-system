@@ -29,3 +29,8 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lhackrf
 
 INCLUDEPATH += $$PWD/../../../../usr/local/include/libhackrf
 DEPENDPATH += $$PWD/../../../../usr/local/include/libhackrf
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lfftw3f
+
+INCLUDEPATH += $$PWD/../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../usr/local/include

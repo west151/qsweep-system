@@ -148,8 +148,8 @@ int HackrfInfo::getHackrfInfo()
         }
 
         result = hackrf_close(device);
-        if (result != HACKRF_SUCCESS) {
-
+        if (result != HACKRF_SUCCESS)
+        {
 #ifdef QT_DEBUG
             qDebug() << tr("hackrf_close() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
                      << tr("(%1)").arg(result);
@@ -160,5 +160,5 @@ int HackrfInfo::getHackrfInfo()
     hackrf_device_list_free(list);
     hackrf_exit();
 
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

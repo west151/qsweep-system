@@ -4,6 +4,7 @@
 #include <QObject>
 
 class HackrfInfo;
+class SweepWorker;
 
 class CoreSweep : public QObject
 {
@@ -14,6 +15,7 @@ public:
 
 private:
     HackrfInfo* ptrHackrfInfo;
+    SweepWorker* ptrSweepWorker;
 };
 
 #endif // CORESWEEP_H
