@@ -49,10 +49,7 @@ private:
     uint32_t freq_min = 2400;      // uint32_t freq_min = 0;
     uint32_t freq_max = 2700;   // uint32_t freq_max = 6000;
 
-    hackrf_device* device = NULL; //static hackrf_device* device = NULL;
-
-    int parse_u32(char* s, uint32_t* const value);
-    int parse_u32_range(char* s, uint32_t* const value_min, uint32_t* const value_max);
+    hackrf_device* device = NULL;
 };
 
 #endif // SWEEPWORKER_H

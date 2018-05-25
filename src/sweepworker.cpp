@@ -178,16 +178,12 @@ int SweepWorker::runSweepWorker()
     amp = true;
 
     if(4 > fftSize) {
-#ifdef QT_DEBUG
-        qDebug() << tr("FFT bin width (-w) must be no more than one quarter the sample rate");
-#endif
+        fprintf(stderr,"argument error: FFT bin width (-w) must be no more than one quarter the sample rate\n");
         return EXIT_FAILURE;
     }
 
     if(16368 < fftSize) {
-#ifdef QT_DEBUG
-        qDebug() << tr("FFT bin width (-w) too small, resulted in more than 16368 FFT bins");
-#endif
+        fprintf(stderr,	"argument error: FFT bin width (-w) too small, resulted in more than 16368 FFT bins\n");
         return EXIT_FAILURE;
     }
 
@@ -211,39 +207,33 @@ int SweepWorker::runSweepWorker()
 
     result = hackrf_init();
     if( result != HACKRF_SUCCESS ) {
-#ifdef QT_DEBUG
-        qDebug() << tr("hackrf_init() failed:")
-                 << hackrf_error_name(static_cast<hackrf_error>(result))
-                 << tr("(%1)").arg(result);
-#endif
+        fprintf(stderr, "hackrf_init() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
         return EXIT_FAILURE;
     }
 
     result = hackrf_open_by_serial(serial_number, &device);
-
-    if( result != HACKRF_SUCCESS )
-    {
-        qDebug() << tr("hackrf_open() failed:")
-                 << hackrf_error_name(static_cast<hackrf_error>(result))
-                 << tr("(%1)").arg(result);
+    if( result != HACKRF_SUCCESS ){
+        fprintf(stderr, "hackrf_open() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
         return EXIT_FAILURE;
     }
 
     fd = fopen(path, "wb");
     if( fd == NULL ) {
-        qDebug() << tr("Failed to open file:") << path;
+        fprintf(stderr, "Failed to open file: %s\n", path);
         return EXIT_FAILURE;
     }
     /* Change fd buffer to have bigger one to store or read data on/to HDD */
     result = setvbuf(fd , NULL , _IOFBF , FD_BUFFER_SIZE);
     if( result != 0 ) {
-        qDebug() << tr("setvbuf() failed:") << result;
+        fprintf(stderr, "setvbuf() failed: %d\n", result);
         return EXIT_FAILURE;
     }
 
     fprintf(stderr, "call hackrf_sample_rate_set(%.03f MHz)\n",
             ((float)DEFAULT_SAMPLE_RATE_HZ/(float)FREQ_ONE_MHZ));
+
     result = hackrf_set_sample_rate_manual(device, DEFAULT_SAMPLE_RATE_HZ, 1);
+
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_sample_rate_set() failed: %s (%d)\n",
                 hackrf_error_name(static_cast<hackrf_error>(result)), result);
@@ -252,6 +242,8 @@ int SweepWorker::runSweepWorker()
 
     fprintf(stderr, "call hackrf_baseband_filter_bandwidth_set(%.03f MHz)\n",
             ((float)DEFAULT_BASEBAND_FILTER_BANDWIDTH/(float)FREQ_ONE_MHZ));
+
+
     result = hackrf_set_baseband_filter_bandwidth(device, DEFAULT_BASEBAND_FILTER_BANDWIDTH);
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_baseband_filter_bandwidth_set() failed: %s (%d)\n",
@@ -385,57 +377,5 @@ int SweepWorker::runSweepWorker()
     fftwf_free(pwr);
     fftwf_free(window);
 
-
     return EXIT_SUCCESS;
 }
-
-int SweepWorker::parse_u32(char *s, uint32_t * const value)
-{
-    uint_fast8_t base = 10;
-    char* s_end;
-    uint64_t ulong_value;
-
-    if( strlen(s) > 2 ) {
-        if( s[0] == '0' ) {
-            if( (s[1] == 'x') || (s[1] == 'X') ) {
-                base = 16;
-                s += 2;
-            } else if( (s[1] == 'b') || (s[1] == 'B') ) {
-                base = 2;
-                s += 2;
-            }
-        }
-    }
-
-    s_end = s;
-    ulong_value = strtoul(s, &s_end, base);
-    if( (s != s_end) && (*s_end == 0) ) {
-        *value = (uint32_t)ulong_value;
-        return HACKRF_SUCCESS;
-    } else {
-        return HACKRF_ERROR_INVALID_PARAM;
-    }
-}
-
-int SweepWorker::parse_u32_range(char *s, uint32_t * const value_min, uint32_t * const value_max)
-{
-    int result;
-
-    char *sep = strchr(s, ':');
-    if (!sep)
-        return HACKRF_ERROR_INVALID_PARAM;
-
-    *sep = 0;
-
-    result = parse_u32(s, value_min);
-    if (result != HACKRF_SUCCESS)
-        return result;
-    result = parse_u32(sep + 1, value_max);
-    if (result != HACKRF_SUCCESS)
-        return result;
-
-    return HACKRF_SUCCESS;
-}
-
-
-
