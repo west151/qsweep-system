@@ -292,12 +292,10 @@ int SweepWorker::runSweepWorker()
         }
     }
 
-
     gettimeofday(&t_start, NULL);
     gettimeofday(&time_start, NULL);
 
     fprintf(stderr, "Stop with Ctrl-C\n");
-
 
     while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false)) {
         uint32_t byte_count_now;
@@ -344,34 +342,30 @@ int SweepWorker::runSweepWorker()
     if(device != NULL)
     {
         result = hackrf_stop_rx(device);
-        if(result != HACKRF_SUCCESS)
-        {
-            qDebug() << tr("hackrf_stop_rx() failed:")
-                     << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
+        if(result != HACKRF_SUCCESS) {
+            fprintf(stderr, "hackrf_stop_rx() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
         } else {
-            qDebug() << tr("hackrf_stop_rx() done");
+            fprintf(stderr, "hackrf_stop_rx() done\n");
         }
 
         result = hackrf_close(device);
 
         if(result != HACKRF_SUCCESS) {
-            qDebug() << tr("hackrf_close() failed:")
-                     << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
+            fprintf(stderr, "hackrf_close() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
         } else {
-            qDebug() << tr("hackrf_close() done");
+            fprintf(stderr, "hackrf_close() done\n");
         }
 
         hackrf_exit();
-        qDebug() << tr("hackrf_exit() done");
+        fprintf(stderr, "hackrf_exit() done\n");
     } // if(device != NULL)
 
     if(fd != NULL) {
         fclose(fd);
         fd = NULL;
-        qDebug() << tr("fclose(fd) done");
+        fprintf(stderr, "fclose(fd) done\n");
     }
+
     fftwf_free(fftwIn);
     fftwf_free(fftwOut);
     fftwf_free(pwr);
