@@ -212,7 +212,7 @@ int SweepWorker::runSweepWorker()
     }
 
     result = hackrf_open_by_serial(serial_number, &device);
-    if( result != HACKRF_SUCCESS ){
+    if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_open() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
         return EXIT_FAILURE;
     }
@@ -242,7 +242,6 @@ int SweepWorker::runSweepWorker()
 
     fprintf(stderr, "call hackrf_baseband_filter_bandwidth_set(%.03f MHz)\n",
             ((float)DEFAULT_BASEBAND_FILTER_BANDWIDTH/(float)FREQ_ONE_MHZ));
-
 
     result = hackrf_set_baseband_filter_bandwidth(device, DEFAULT_BASEBAND_FILTER_BANDWIDTH);
     if( result != HACKRF_SUCCESS ) {
@@ -334,13 +333,7 @@ int SweepWorker::runSweepWorker()
     time_diff = TimevalDiff(&t_end, &t_start);
     fprintf(stderr, "Total time: %5.5f s\n", time_diff);
 
-
-
-
-
-
-    if(device != NULL)
-    {
+    if(device != NULL) {
         result = hackrf_stop_rx(device);
         if(result != HACKRF_SUCCESS) {
             fprintf(stderr, "hackrf_stop_rx() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
@@ -358,7 +351,7 @@ int SweepWorker::runSweepWorker()
 
         hackrf_exit();
         fprintf(stderr, "hackrf_exit() done\n");
-    } // if(device != NULL)
+    }
 
     if(fd != NULL) {
         fclose(fd);
