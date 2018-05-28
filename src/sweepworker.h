@@ -34,7 +34,15 @@ class SweepWorker : public QObject
 public:
     explicit SweepWorker(QObject *parent = nullptr);
 
-    int runSweepWorker();
+    //
+    int runSweepWorker(const uint32_t &freqMin = 30 /* MHz */,
+                       const uint32_t &freqMax = 6000 /* MHz */,
+                       const uint32_t &fftBinWidth = 500000 /* Hz */,
+                       const unsigned int &lnaGain = 0,
+                       const unsigned int &vgaGain = 0);
+
+signals:
+    void sendSignal();
 
 private:
     int opt, i, result = 0;
@@ -43,13 +51,38 @@ private:
     int exit_code = EXIT_SUCCESS;
     struct timeval t_end;
     float time_diff;
-    unsigned int lna_gain=16, vga_gain=20;
-    uint32_t num_samples = DEFAULT_SAMPLE_COUNT;
+    unsigned int lna_gain = 16;   // RX LNA (IF) gain, 0-40dB, 8dB steps
+    unsigned int vga_gain = 20;   // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    uint32_t num_samples = DEFAULT_SAMPLE_COUNT;    // Number of samples per frequency, 16384-4294967296
+    uint32_t fft_bin_width = 500000;    // FFT bin width (frequency resolution) in Hz\n")
     int step_count;
-    uint32_t freq_min = 2400;      // uint32_t freq_min = 0;
-    uint32_t freq_max = 2700;   // uint32_t freq_max = 6000;
+    uint32_t freq_min = 1;      // freq_min = 0;
+    uint32_t freq_max = 6000;   // freq_max = 6000;
 
     hackrf_device* device = NULL;
+
+    static int rx_callback(hackrf_transfer *transfer);
+    int hackrf_rx_callback(unsigned char *buffer, uint32_t length);
+
+    void testSender();
+
 };
+
+//fprintf(stderr, "Usage:\n");
+//fprintf(stderr, "\t[-h] # this help\n");
+//fprintf(stderr, "\t[-d serial_number] # Serial number of desired HackRF\n");
+//fprintf(stderr, "\t[-a amp_enable] # RX RF amplifier 1=Enable, 0=Disable\n");
+//fprintf(stderr, "\t[-f freq_min:freq_max] # minimum and maximum frequencies in MHz\n");
+//fprintf(stderr, "\t[-p antenna_enable] # Antenna port power, 1=Enable, 0=Disable\n");
+//fprintf(stderr, "\t[-l gain_db] # RX LNA (IF) gain, 0-40dB, 8dB steps\n");
+//fprintf(stderr, "\t[-g gain_db] # RX VGA (baseband) gain, 0-62dB, 2dB steps\n");
+//fprintf(stderr, "\t[-n num_samples] # Number of samples per frequency, 16384-4294967296\n");
+//fprintf(stderr, "\t[-w bin_width] # FFT bin width (frequency resolution) in Hz\n");
+//fprintf(stderr, "\t[-1] # one shot mode\n");
+//fprintf(stderr, "\t[-B] # binary output\n");
+//fprintf(stderr, "\n");
+//fprintf(stderr, "Output fields:\n");
+//fprintf(stderr, "\tdate, time, hz_low, hz_high, hz_bin_width, num_samples, dB, dB, . . .\n");
+
 
 #endif // SWEEPWORKER_H

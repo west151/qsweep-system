@@ -21,13 +21,13 @@ uint32_t amp_enable;
 bool antenna = false;
 uint32_t antenna_enable;
 
-bool binary_output = false;
+//bool binary_output = false;
 bool one_shot = true;
 volatile bool sweep_started = false;
 volatile bool do_exit = false;
 
 int fftSize = 20;
-uint32_t fft_bin_width;
+//uint32_t fft_bin_width;
 fftwf_complex *fftwIn = NULL;
 fftwf_complex *fftwOut = NULL;
 fftwf_plan fftwPlan = NULL;
@@ -54,23 +54,135 @@ float logPower(fftwf_complex in, float scale)
     return log2f(magsq) * 10.0f / log2(10.0f);
 }
 
+int SweepWorker::rx_callback(hackrf_transfer *transfer)
+{
+    SweepWorker *obj = (SweepWorker *)transfer->rx_ctx;
+    return obj->hackrf_rx_callback(transfer->buffer, transfer->valid_length);
 
-int rx_callback(hackrf_transfer *transfer)
+
+//    int8_t* buf;
+//    uint8_t* ubuf;
+//    uint64_t frequency; /* in Hz */
+////    uint64_t band_edge;
+////    uint32_t record_length;
+//    int i, j;
+
+//    if(NULL == fd) {
+//        return -1;
+//    }
+
+//    byte_count += transfer->valid_length;
+//    buf = (int8_t*) transfer->buffer;
+//    for(j=0; j<BLOCKS_PER_TRANSFER; j++) {
+//        if(do_exit) {
+//            return 0;
+//        }
+//        ubuf = (uint8_t*) buf;
+//        if(ubuf[0] == 0x7F && ubuf[1] == 0x7F) {
+//            frequency = ((uint64_t)(ubuf[9]) << 56) | ((uint64_t)(ubuf[8]) << 48) | ((uint64_t)(ubuf[7]) << 40)
+//                    | ((uint64_t)(ubuf[6]) << 32) | ((uint64_t)(ubuf[5]) << 24) | ((uint64_t)(ubuf[4]) << 16)
+//                    | ((uint64_t)(ubuf[3]) << 8) | ubuf[2];
+//        } else {
+//            buf += SAMPLES_PER_BLOCK;
+//            continue;
+//        }
+//        if(!sweep_started) {
+//            if (frequency == (uint64_t)(FREQ_ONE_MHZ*frequencies[0])) {
+//                sweep_started = true;
+//            } else {
+//                buf += SAMPLES_PER_BLOCK;
+//                continue;
+//            }
+//        }
+//        if((FREQ_MAX_MHZ * FREQ_ONE_MHZ) < frequency) {
+//            buf += SAMPLES_PER_BLOCK;
+//            continue;
+//        }
+//        /* copy to fftwIn as floats */
+//        buf += SAMPLES_PER_BLOCK - (fftSize * 2);
+//        for(i=0; i < fftSize; i++) {
+//            fftwIn[i][0] = buf[i*2] * window[i] * 1.0f / 128.0f;
+//            fftwIn[i][1] = buf[i*2+1] * window[i] * 1.0f / 128.0f;
+//        }
+//        buf += fftSize * 2;
+//        fftwf_execute(fftwPlan);
+//        for (i=0; i < fftSize; i++) {
+//            pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
+//        }
+////        if(binary_output) {
+////            record_length = 2 * sizeof(band_edge)
+////                    + (fftSize/4) * sizeof(float);
+
+////            fwrite(&record_length, sizeof(record_length), 1, stdout);
+////            band_edge = frequency;
+////            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
+////            band_edge = frequency + DEFAULT_SAMPLE_RATE_HZ / 4;
+////            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
+////            fwrite(&pwr[1+(fftSize*5)/8], sizeof(float), fftSize/4, stdout);
+
+////            fwrite(&record_length, sizeof(record_length), 1, stdout);
+////            band_edge = frequency + DEFAULT_SAMPLE_RATE_HZ / 2;
+////            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
+////            band_edge = frequency + (DEFAULT_SAMPLE_RATE_HZ * 3) / 4;
+////            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
+////            fwrite(&pwr[1+fftSize/8], sizeof(float), fftSize/4, stdout);
+////        }
+////        else
+////        {
+
+//        time_now = time(NULL);
+//        fft_time = localtime(&time_now);
+//        strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
+//        printf("%s, %" PRIu64 ", %" PRIu64 ", %.2f, %u",
+//               time_str,
+//               (uint64_t)(frequency),
+//               (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
+//               (float)fft_bin_width,
+//               fftSize);
+//        for(i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++) {
+//            printf(", %.2f", pwr[i]);
+//        }
+//        printf(" ups 1\n");
+//        printf("%s, %" PRIu64 ", %" PRIu64 ", %.2f, %u",
+//               time_str,
+//               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
+//               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
+//               (float)fft_bin_width,
+//               fftSize);
+//        for(i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
+//            printf(", %.2f", pwr[i]);
+//        }
+//        printf(" ups 2\n");
+
+////        }
+//        if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+//                        >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))) {
+//            do_exit = true;
+//        }
+
+//        printf("BLOCKS_PER_TRANSFER\n");
+
+//    } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
+
+//    printf("RETURN 0\n");
+
+//    return 0;
+}
+
+int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
 {
     int8_t* buf;
     uint8_t* ubuf;
     uint64_t frequency; /* in Hz */
-    uint64_t band_edge;
-    uint32_t record_length;
-    int i, j;
 
     if(NULL == fd) {
         return -1;
     }
 
-    byte_count += transfer->valid_length;
-    buf = (int8_t*) transfer->buffer;
-    for(j=0; j<BLOCKS_PER_TRANSFER; j++) {
+    byte_count += length;
+    buf = (int8_t*) buffer;
+
+    for(int j=0; j<BLOCKS_PER_TRANSFER; j++) {
         if(do_exit) {
             return 0;
         }
@@ -97,79 +209,92 @@ int rx_callback(hackrf_transfer *transfer)
         }
         /* copy to fftwIn as floats */
         buf += SAMPLES_PER_BLOCK - (fftSize * 2);
-        for(i=0; i < fftSize; i++) {
+        for(int i=0; i < fftSize; i++) {
             fftwIn[i][0] = buf[i*2] * window[i] * 1.0f / 128.0f;
             fftwIn[i][1] = buf[i*2+1] * window[i] * 1.0f / 128.0f;
         }
         buf += fftSize * 2;
         fftwf_execute(fftwPlan);
-        for (i=0; i < fftSize; i++) {
+        for (int i=0; i < fftSize; i++) {
             pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
         }
-        if(binary_output) {
-            record_length = 2 * sizeof(band_edge)
-                    + (fftSize/4) * sizeof(float);
 
-            fwrite(&record_length, sizeof(record_length), 1, stdout);
-            band_edge = frequency;
-            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
-            band_edge = frequency + DEFAULT_SAMPLE_RATE_HZ / 4;
-            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
-            fwrite(&pwr[1+(fftSize*5)/8], sizeof(float), fftSize/4, stdout);
+        time_now = time(NULL);
+        fft_time = localtime(&time_now);
+        strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
-            fwrite(&record_length, sizeof(record_length), 1, stdout);
-            band_edge = frequency + DEFAULT_SAMPLE_RATE_HZ / 2;
-            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
-            band_edge = frequency + (DEFAULT_SAMPLE_RATE_HZ * 3) / 4;
-            fwrite(&band_edge, sizeof(band_edge), 1, stdout);
-            fwrite(&pwr[1+fftSize/8], sizeof(float), fftSize/4, stdout);
-        } else {
-            time_now = time(NULL);
-            fft_time = localtime(&time_now);
-            strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
-            printf("%s, %" PRIu64 ", %" PRIu64 ", %.2f, %u",
-                   time_str,
-                   (uint64_t)(frequency),
-                   (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
-                   (float)fft_bin_width,
-                   fftSize);
-            for(i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++) {
-                printf(", %.2f", pwr[i]);
-            }
-            printf("\n");
-            printf("%s, %" PRIu64 ", %" PRIu64 ", %.2f, %u",
-                   time_str,
-                   (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
-                   (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
-                   (float)fft_bin_width,
-                   fftSize);
-            for(i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
-                printf(", %.2f", pwr[i]);
-            }
-            printf("\n");
+        //qDebug() << "fft_bin_width:" << (float)fft_bin_width;
+
+        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+               time_str,
+               (uint64_t)(frequency),
+               (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
+               fftSize);
+
+        for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++) {
+            printf(", %.2f", pwr[i]);
         }
+        printf(" ups1 (%u) \n", (uint32_t)((1+(fftSize*7)/8)-(1+(fftSize*5)/8)));
+
+        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+               time_str,
+               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
+               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
+               fftSize);
+
+        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
+            printf(", %.2f", pwr[i]);
+        }
+        printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
+
+        //        }
         if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
                         >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))) {
             do_exit = true;
         }
-    }
+
+        //qDebug() << "BLOCKS_PER_TRANSFER";
+
+    } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
+
+    //printf("RETURN 0\n");
+
     return 0;
 }
+
+void SweepWorker::testSender()
+{
+
+}
+
+//float SweepWorker::ieee_float(uint32_t f)
+//{
+//    static_assert(sizeof(float) == sizeof f, "`float` has a weird size.");
+//    float ret;
+//    memcpy(&ret, &f, sizeof(float));
+//    return ret;
+//}
 
 SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 {
 
 }
 
-int SweepWorker::runSweepWorker()
+int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax, const uint32_t &fftBinWidth,
+                                const unsigned int &lnaGain,
+                                const unsigned int &vgaGain)
 {
+    freq_min = freqMin;
+    freq_max = freqMax;
+    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
+    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
+    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
+
     if (0 == num_ranges) {
         frequencies[0] = (uint16_t)freq_min;
         frequencies[1] = (uint16_t)freq_max;
         num_ranges++;
     }
-
-    fft_bin_width = 500000; // [-w bin_width] # FFT bin width (frequency resolution) in Hz
 
     fftSize = DEFAULT_SAMPLE_RATE_HZ / fft_bin_width;
 

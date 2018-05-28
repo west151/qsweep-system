@@ -21,9 +21,9 @@ int CoreSweep::runCoreSweep(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    //ptrHackrfInfo->getHackrfInfo();
-
-    ptrSweepWorker->runSweepWorker();
+    // RX LNA (IF) gain, 0-40dB, 8dB steps
+    // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    ptrSweepWorker->runSweepWorker(2400, 2700, 500000, 40, 62);
 
     return app.exec();
 }
