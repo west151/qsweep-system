@@ -1,5 +1,7 @@
 #include "sweepworker.h"
 
+#include "sweepparams.h"
+
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
 #endif
@@ -162,15 +164,13 @@ SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 
 }
 
-int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax, const uint32_t &fftBinWidth,
-                                const unsigned int &lnaGain,
-                                const unsigned int &vgaGain)
+void SweepWorker::onRunSweepWorker()
 {
-    freq_min = freqMin;
-    freq_max = freqMax;
-    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
-    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
-    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
+//    freq_min = freqMin;
+//    freq_max = freqMax;
+//    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
+//    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
+//    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
 
     if (0 == num_ranges) {
         frequencies[0] = (uint16_t)freq_min;
@@ -186,12 +186,14 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
 
     if(4 > fftSize) {
         fprintf(stderr,"argument error: FFT bin width (-w) must be no more than one quarter the sample rate\n");
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     if(16368 < fftSize) {
         fprintf(stderr,	"argument error: FFT bin width (-w) too small, resulted in more than 16368 FFT bins\n");
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     /* In interleaved mode, the FFT bin selection works best if the total
@@ -215,25 +217,29 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
     result = hackrf_init();
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_init() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     result = hackrf_open_by_serial(serial_number, &device);
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_open() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     fd = fopen(path, "wb");
     if( fd == NULL ) {
         fprintf(stderr, "Failed to open file: %s\n", path);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
     /* Change fd buffer to have bigger one to store or read data on/to HDD */
     result = setvbuf(fd , NULL , _IOFBF , FD_BUFFER_SIZE);
     if( result != 0 ) {
         fprintf(stderr, "setvbuf() failed: %d\n", result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     fprintf(stderr, "call hackrf_sample_rate_set(%.03f MHz)\n",
@@ -244,7 +250,8 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_sample_rate_set() failed: %s (%d)\n",
                 hackrf_error_name(static_cast<hackrf_error>(result)), result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     fprintf(stderr, "call hackrf_baseband_filter_bandwidth_set(%.03f MHz)\n",
@@ -254,7 +261,8 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_baseband_filter_bandwidth_set() failed: %s (%d)\n",
                 hackrf_error_name(static_cast<hackrf_error>(result)), result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     result = hackrf_set_vga_gain(device, vga_gain);
@@ -262,7 +270,8 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
     result |= hackrf_start_rx(device, rx_callback, NULL);
     if (result != HACKRF_SUCCESS) {
         fprintf(stderr, "hackrf_start_rx() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     /*
@@ -285,7 +294,8 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
     if( result != HACKRF_SUCCESS ) {
         fprintf(stderr, "hackrf_init_sweep() failed: %s (%d)\n",
                hackrf_error_name(static_cast<hackrf_error>(result)), result);
-        return EXIT_FAILURE;
+        exit(0);
+        //return EXIT_FAILURE;
     }
 
     if (amp) {
@@ -294,7 +304,8 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
         if (result != HACKRF_SUCCESS) {
             fprintf(stderr, "hackrf_set_amp_enable() failed: %s (%d)\n",
                     hackrf_error_name(static_cast<hackrf_error>(result)), result);
-            return EXIT_FAILURE;
+            exit(0);
+            //return EXIT_FAILURE;
         }
     }
 
@@ -371,5 +382,25 @@ int SweepWorker::runSweepWorker(const uint32_t &freqMin, const uint32_t &freqMax
     fftwf_free(pwr);
     fftwf_free(window);
 
-    return EXIT_SUCCESS;
+    //return EXIT_SUCCESS;
+}
+
+void SweepWorker::onStopSweepWorker()
+{
+
+}
+
+void SweepWorker::onParamsSweepWorker(const SweepParams &value)
+{
+//    freq_min = freqMin;
+//    freq_max = freqMax;
+//    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
+//    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
+//    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
+
+//    const uint32_t &freqMin = 30 /* MHz */,
+//            const uint32_t &freqMax = 6000 /* MHz */,
+//            const uint32_t &fftBinWidth = 500000 /* Hz */,
+//            const unsigned int &lnaGain = 0,
+//            const unsigned int &vgaGain = 0
 }

@@ -12,6 +12,8 @@
 #include <math.h>
 #include <inttypes.h>
 
+class SweepParams;
+
 #define FD_BUFFER_SIZE (8*1024)
 
 #define FREQ_ONE_MHZ (1000000ull)
@@ -35,11 +37,16 @@ public:
     explicit SweepWorker(QObject *parent = nullptr);
 
     //
-    int runSweepWorker(const uint32_t &freqMin = 30 /* MHz */,
-                       const uint32_t &freqMax = 6000 /* MHz */,
-                       const uint32_t &fftBinWidth = 500000 /* Hz */,
-                       const unsigned int &lnaGain = 0,
-                       const unsigned int &vgaGain = 0);
+//    int runSweepWorker(const uint32_t &freqMin = 30 /* MHz */,
+//                       const uint32_t &freqMax = 6000 /* MHz */,
+//                       const uint32_t &fftBinWidth = 500000 /* Hz */,
+//                       const unsigned int &lnaGain = 0,
+//                       const unsigned int &vgaGain = 0);
+
+public slots:
+    void onRunSweepWorker();
+    void onStopSweepWorker();
+    void onParamsSweepWorker(const SweepParams &);
 
 signals:
     void sendSignal();
@@ -56,7 +63,7 @@ private:
     uint32_t num_samples = DEFAULT_SAMPLE_COUNT;    // Number of samples per frequency, 16384-4294967296
     uint32_t fft_bin_width = 500000;    // FFT bin width (frequency resolution) in Hz\n")
     int step_count;
-    uint32_t freq_min = 1;      // freq_min = 0;
+    uint32_t freq_min = 30;      // freq_min = 0;
     uint32_t freq_max = 6000;   // freq_max = 6000;
 
     hackrf_device* device = NULL;
