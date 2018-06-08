@@ -6,5 +6,7 @@
         <file>ClientForm.ui.qml</file>
         <file>SweepControl.qml</file>
         <file>SweepControlForm.ui.qml</file>
+        <file>SweepMessageLog.qml</file>
+        <file>SweepMessageLogForm.ui.qml</file>
     </qresource>
 </RCC>

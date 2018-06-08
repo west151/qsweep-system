@@ -1,6 +1,7 @@
 QT += quick mqtt
 
 include(../../common.pri)
+include(../../topic.pri)
 
 SOURCES += \
     coresweepclient.cpp \
@@ -23,9 +24,3 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     coresweepclient.h \
     userinterface.h
-
-# MQTT
-unix:!macx: LIBS += -L$$PWD~/work/git/new_qtmqtt/lib/ -lQt5Mqtt
-
-INCLUDEPATH += $$PWD~/work/git/new_qtmqtt/include
-DEPENDPATH += $$PWD~/work/git/new_qtmqtt/include

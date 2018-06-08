@@ -26,8 +26,6 @@ private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
-    const QString topic_ctrl = "sdr/ctrl";
-    const QString topic_data = "sdr/data";
 
     void initialization();
     void launching();

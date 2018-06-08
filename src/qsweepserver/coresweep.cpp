@@ -8,6 +8,7 @@
 #include "hackrfinfo.h"
 #include "sweepworker.h"
 #include "ctrlsweepworker.h"
+#include "../../include/topic.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>

@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #include "userinterface.h"
+#include "../../include/topic.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>

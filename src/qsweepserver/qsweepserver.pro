@@ -7,6 +7,7 @@ CONFIG -= app_bundle
 include(../../common.pri)
 include(../../hackrf.pri)
 include(../../fftw.pri)
+include(../../topic.pri)
 
 SOURCES += \
     qsweepserver.cpp \
@@ -22,9 +23,3 @@ HEADERS += \
     hackrfinfo.h \
     ctrlsweepworker.h \
     sweepparams.h
-
-# MQTT
-unix:!macx: LIBS += -L$$PWD~/work/git/new_qtmqtt/lib/ -lQt5Mqtt
-
-INCLUDEPATH += $$PWD~/work/git/new_qtmqtt/include
-DEPENDPATH += $$PWD~/work/git/new_qtmqtt/include
