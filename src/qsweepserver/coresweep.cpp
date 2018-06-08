@@ -5,9 +5,9 @@
 
 #include <time.h>
 
-#include "src/hackrfinfo.h"
-#include "src/sweepworker.h"
-#include "src/ctrlsweepworker.h"
+#include "hackrfinfo.h"
+#include "sweepworker.h"
+#include "ctrlsweepworker.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
