@@ -25,13 +25,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    qsweepmessagelog.cpp
+    qsweepmessagelog.cpp \
+    qsweeprequest.cpp \
+    qsweeptopic.cpp
 
 HEADERS += \
         qsweepprotocol_global.h \  
-    qsweepmessagelog.h
+    qsweepmessagelog.h \
+    qsweeprequest.h \
+    qsweeptopic.h
 
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
+#unix {
+#    target.path = /usr/lib
+#    INSTALLS += target
+#}

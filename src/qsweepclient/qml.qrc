@@ -8,5 +8,7 @@
         <file>SweepControlForm.ui.qml</file>
         <file>SweepMessageLog.qml</file>
         <file>SweepMessageLogForm.ui.qml</file>
+        <file>SweepInfo.qml</file>
+        <file>SweepInfoForm.ui.qml</file>
     </qresource>
 </RCC>

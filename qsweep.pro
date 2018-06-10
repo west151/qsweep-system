@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    lib/qsweepprotocol \
     src/qsweepserver \
-    src/qsweepclient \
-    lib/qsweepprotocol
+    src/qsweepclient
 
 CONFIG += ordered

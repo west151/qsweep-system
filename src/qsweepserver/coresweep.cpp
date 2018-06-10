@@ -8,7 +8,8 @@
 #include "hackrfinfo.h"
 #include "sweepworker.h"
 #include "ctrlsweepworker.h"
-#include "../../include/topic.h"
+#include "qsweeptopic.h"
+
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -19,7 +20,8 @@ CoreSweep::CoreSweep(QObject *parent) : QObject(parent),
     ptrSweepWorker(new SweepWorker),
     ptrSweepThread(new QThread),
     ptrCtrlSweepWorker(new CtrlSweepWorker(this)),
-    ptrMqttClient(new QMqttClient(this))
+    ptrMqttClient(new QMqttClient(this)),
+    ptrSweepTopic(new QSweepTopic(this))
 {
 
 }
@@ -115,7 +117,7 @@ void CoreSweep::updateLogStateChange()
 
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(topic_ctrl, 0);
+        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), 0);
 
         if (!subscription)
         {

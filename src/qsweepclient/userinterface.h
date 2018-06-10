@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class QSweepRequest;
+
 class UserInterface : public QObject
 {
     Q_OBJECT
@@ -25,6 +27,7 @@ public:
     Q_INVOKABLE void onConnectToHost();
     Q_INVOKABLE void onSendMessageToHost();
     Q_INVOKABLE void onDisconnectFromHost();
+    Q_INVOKABLE void onRequestSweepInfo();
 
 signals:
     void hostChanged();
@@ -33,6 +36,7 @@ signals:
     void sendConnectToHost(const QString &host, const quint16 &port);
     void sendMessageToHost();
     void sendDisconnectFromHost();
+    void sendRequestSweepInfo(const QSweepRequest &);
 
 private:
     QString m_hostname;

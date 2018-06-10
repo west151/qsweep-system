@@ -7,7 +7,7 @@ CONFIG -= app_bundle
 include(../../common.pri)
 include(../../hackrf.pri)
 include(../../fftw.pri)
-include(../../topic.pri)
+include(../../protocol.pri)
 
 SOURCES += \
     qsweepserver.cpp \

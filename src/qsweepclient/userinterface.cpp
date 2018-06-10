@@ -1,5 +1,7 @@
 #include "userinterface.h"
 
+#include "qsweeprequest.h"
+
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_hostname("127.0.0.1"),
     m_port(1883),
@@ -58,4 +60,11 @@ void UserInterface::onSendMessageToHost()
 void UserInterface::onDisconnectFromHost()
 {
     emit sendDisconnectFromHost();
+}
+
+void UserInterface::onRequestSweepInfo()
+{
+    QSweepRequest info(this);
+
+    emit sendRequestSweepInfo(info);
 }

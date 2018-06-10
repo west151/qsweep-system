@@ -19,6 +19,12 @@ ApplicationWindow {
 
         SweepControl {
         }
+
+        SweepInfo {
+        }
+
+        SweepMessageLog {
+        }
     }
 
     footer: TabBar {
@@ -30,6 +36,12 @@ ApplicationWindow {
         }
         TabButton {
             text: qsTr("Control")
+        }
+        TabButton {
+            text: qsTr("Info")
+        }
+        TabButton {
+            text: qsTr("Message log")
         }
     }
 

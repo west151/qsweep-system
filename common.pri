@@ -35,3 +35,5 @@ RCC_DIR = $${BUILD_PATH_TARGET}/rcc/
 UI_DIR = $${BUILD_PATH_TARGET}/ui/
 MOC_DIR = $${BUILD_PATH_TARGET}/moc/
 OBJECTS_DIR = $${BUILD_PATH_TARGET}/obj/
+
+inux-g++: QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/../../lib.$${OS_SUFFIX}/

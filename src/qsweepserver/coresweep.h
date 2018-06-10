@@ -10,6 +10,7 @@
 class HackrfInfo;
 class SweepWorker;
 class CtrlSweepWorker;
+class QSweepTopic;
 
 class CoreSweep : public QObject
 {
@@ -28,6 +29,7 @@ private:
     CtrlSweepWorker* ptrCtrlSweepWorker {Q_NULLPTR};
 
     QMqttClient* ptrMqttClient {Q_NULLPTR};
+    QSweepTopic* ptrSweepTopic {Q_NULLPTR};
 
     void initialization();
     void launching();

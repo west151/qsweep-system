@@ -5,7 +5,8 @@
 #include <QDateTime>
 
 #include "userinterface.h"
-#include "../../include/topic.h"
+#include "qsweeptopic.h"
+#include "qsweeprequest.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -13,7 +14,8 @@
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
-    ptrMqttClient(new QMqttClient(this))
+    ptrMqttClient(new QMqttClient(this)),
+    ptrSweepTopic(new QSweepTopic(this))
 {
 //    https://stackoverflow.com/questions/49560780/mqt-qmqtt-qt-core-module-in-thread-strange-behaviour-from-animal-help-project
 }
@@ -59,7 +61,7 @@ void CoreSweepClient::onConnectToHost(const QString &host, const quint16 &port)
 void CoreSweepClient::onDisconnectFromHost()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected){
-        ptrMqttClient->unsubscribe(topic_data);
+        ptrMqttClient->unsubscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_DATA));
         ptrMqttClient->disconnectFromHost();
     }
 }
@@ -85,6 +87,8 @@ void CoreSweepClient::initialization()
             this , &CoreSweepClient::pingReceived);
     connect(ptrUserInterface, &UserInterface::sendMessageToHost,
             this, &CoreSweepClient::sendingMessage);
+    connect(ptrUserInterface, &UserInterface::sendRequestSweepInfo,
+            this, &CoreSweepClient::sendingRequest);
 }
 
 void CoreSweepClient::launching()
@@ -107,7 +111,7 @@ void CoreSweepClient::updateLogStateChange()
 
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(topic_data);
+        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_DATA));
 
         if (!subscription)
         {
@@ -146,17 +150,23 @@ void CoreSweepClient::connecting()
 
 void CoreSweepClient::sendingMessage()
 {
-    if(ptrMqttClient)
-    {
-        qint32 result = ptrMqttClient->publish(topic_ctrl, "run");
-
-        if(result){
+    if(ptrMqttClient) {
+        if (ptrMqttClient->state() == QMqttClient::Connected) {
+            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), "run");
 #ifdef QT_DEBUG
             qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << "test";
 #endif
-        }else{
+        }
+    }
+}
+
+void CoreSweepClient::sendingRequest(const QSweepRequest &value)
+{
+    if(ptrMqttClient) {
+        if (ptrMqttClient->state() == QMqttClient::Connected) {
+            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.exportToJson());
 #ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Can not publish message:") << result;
+            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << "test";
 #endif
         }
     }

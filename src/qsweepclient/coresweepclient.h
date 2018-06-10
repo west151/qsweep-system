@@ -8,6 +8,8 @@
 #include <QtMqtt/QMqttSubscription>
 
 class UserInterface;
+class QSweepTopic;
+class QSweepRequest;
 
 class CoreSweepClient : public QObject
 {
@@ -26,6 +28,7 @@ private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
+    QSweepTopic* ptrSweepTopic {Q_NULLPTR};
 
     void initialization();
     void launching();
@@ -36,6 +39,7 @@ private:
     void pingReceived();
     void connecting();
     void sendingMessage();
+    void sendingRequest(const QSweepRequest &);
 };
 
 #endif // CORESWEEPCLIENT_H
