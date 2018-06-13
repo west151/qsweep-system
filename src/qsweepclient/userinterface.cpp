@@ -65,6 +65,7 @@ void UserInterface::onDisconnectFromHost()
 void UserInterface::onRequestSweepInfo()
 {
     QSweepRequest info(this);
+    info.setTypeRequest(TypeRequest::INFO);
 
     emit sendRequestSweepInfo(info);
 }

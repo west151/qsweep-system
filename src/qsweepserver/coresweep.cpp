@@ -9,6 +9,7 @@
 #include "sweepworker.h"
 #include "ctrlsweepworker.h"
 #include "qsweeptopic.h"
+#include "qsweeprequest.h"
 
 
 #ifdef QT_DEBUG
@@ -101,12 +102,19 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
 #endif
 
         ptrCtrlSweepWorker->startSweepWorkerTest();
-
     }
 
+    QSweepRequest request(message, false);
+
+    if(request.isValid()){
+        if(request.typeRequest() == TypeRequest::INFO){
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << topic.name() << ":" << ctrl;
+            qDebug() << Q_FUNC_INFO<< "isValid:" << topic.name() << ":" << ctrl;
 #endif
+
+            ptrHackrfInfo->getHackrfInfo();
+        }
+    }
 }
 
 void CoreSweep::updateLogStateChange()
