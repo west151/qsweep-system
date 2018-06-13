@@ -166,7 +166,7 @@ void CoreSweepClient::sendingRequest(const QSweepRequest &value)
         if (ptrMqttClient->state() == QMqttClient::Connected) {
             qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.exportToJson());
 #ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << "test";
+            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.exportToJson();
 #endif
         }
     }

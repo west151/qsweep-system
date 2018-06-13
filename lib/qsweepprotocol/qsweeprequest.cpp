@@ -19,6 +19,7 @@ QSweepRequest::QSweepRequest(const QByteArray &json, bool binary)
 
     QJsonObject obj = doc.object();
     m_id = obj["id"].toString();
+    m_typeRequest = static_cast<TypeRequest>(obj["type_request"].toInt(0));
 }
 
 QString QSweepRequest::idRequest() const
@@ -26,10 +27,21 @@ QString QSweepRequest::idRequest() const
     return m_id;
 }
 
+void QSweepRequest::setTypeRequest(const TypeRequest &value)
+{
+    m_typeRequest = value;
+}
+
+TypeRequest QSweepRequest::typeRequest() const
+{
+    return m_typeRequest;
+}
+
 QByteArray QSweepRequest::exportToJson() const
 {
     QJsonObject jsonObject;
     jsonObject["id"] = m_id;
+    jsonObject["type_request"] = static_cast<qint32>(m_typeRequest);
 
     QJsonDocument doc(jsonObject);
 
@@ -40,6 +52,7 @@ QByteArray QSweepRequest::exportToJsonBinary() const
 {
     QJsonObject jsonObject;
     jsonObject["id"] = m_id;
+    jsonObject["type_request"] = static_cast<qint32>(m_typeRequest);
 
     QJsonDocument doc(jsonObject);
 
