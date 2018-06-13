@@ -9,10 +9,6 @@ static const QString ID_KEY = QStringLiteral("id");
 static const QString TYPE_REQUEST_KEY = QStringLiteral("TypeRequest");
 static const QString DT_REQUEST_KEY = QStringLiteral("DateTimeRequest");
 
-
-
-
-
 QSweepRequest::QSweepRequest(QObject *parent) : QObject(parent)
 {
     m_id = QUuid::createUuid().toString().mid(1, 8);

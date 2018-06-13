@@ -109,9 +109,10 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
     if(request.isValid()){
         if(request.typeRequest() == TypeRequest::INFO){
 #ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO<< "isValid:" << topic.name() << ":" << ctrl;
+            qDebug() << Q_FUNC_INFO << "isValid:";
+            qDebug() << Q_FUNC_INFO << topic.name();
+            qDebug() << Q_FUNC_INFO << ctrl;
 #endif
-
             ptrHackrfInfo->getHackrfInfo();
         }
     }

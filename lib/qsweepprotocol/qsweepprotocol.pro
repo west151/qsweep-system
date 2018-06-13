@@ -27,13 +27,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     qsweepmessagelog.cpp \
     qsweeprequest.cpp \
-    qsweeptopic.cpp
+    qsweeptopic.cpp \
+    qsweepanswer.cpp
 
 HEADERS += \
         qsweepprotocol_global.h \  
     qsweepmessagelog.h \
     qsweeprequest.h \
-    qsweeptopic.h
+    qsweeptopic.h \
+    qsweepanswer.h
 
 #unix {
 #    target.path = /usr/lib
