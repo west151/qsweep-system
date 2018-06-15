@@ -45,68 +45,41 @@ int HackrfInfo::getHackrfInfo()
         QHackrfInfo info;
 
         info.setIndexBoard(i);
-        info.setSerialNumbers("11111-33333333333333-44-5-66");
 
-#ifdef QT_DEBUG
-        qDebug() << tr("Found HackRF");
-        qDebug() << tr("Index:") << i;
-#endif
-
-        if (list->serial_numbers[i]){
-#ifdef QT_DEBUG
-            qDebug() << tr("Serial number:") << list->serial_numbers[i];
-#endif
-        }
+        // Serial number
+        if (list->serial_numbers[i])
+            info.setSerialNumbers(QString(list->serial_numbers[i]));
 
         device = NULL;
         result = hackrf_device_list_open(list, i, &device);
-        if (result != HACKRF_SUCCESS)
-        {
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_open() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
+        if (result != HACKRF_SUCCESS) {
+            errorHackrf(tr("hackrf_open() failed:"), result);
             return EXIT_FAILURE;
         }
 
+        // Board ID Number
         result = hackrf_board_id_read(device, &board_id);
-        if (result != HACKRF_SUCCESS)
-        {
-
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_board_id_read() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
-
+        if (result == HACKRF_SUCCESS) {
+            QString boardID(QString::number(board_id));
+            boardID.append(tr(" (%1)").arg(hackrf_board_id_name(static_cast<hackrf_board_id>(board_id))));
+            info.setBoardID(boardID);
+        }else{
+            errorHackrf(tr("hackrf_board_id_read() failed:"), result);
             return EXIT_FAILURE;
         }
 
-#ifdef QT_DEBUG
-        qDebug() << tr("Board ID Number:") << board_id
-                 << tr("(%1)").arg(hackrf_board_id_name(static_cast<hackrf_board_id>(board_id))) ;
-#endif
-
+        // Firmware Version
         result = hackrf_version_string_read(device, &version[0], 255);
-        if (result != HACKRF_SUCCESS)
-        {
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_version_string_read() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
+        if (result != HACKRF_SUCCESS) {
+            errorHackrf(tr("hackrf_version_string_read() failed:"), result);
             return EXIT_FAILURE;
         }
 
         result = hackrf_usb_api_version_read(device, &usb_version);
-        if (result != HACKRF_SUCCESS)
-        {
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_usb_api_version_read() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
+        if (result != HACKRF_SUCCESS) {
+            errorHackrf(tr("hackrf_usb_api_version_read() failed:"), result);
             return EXIT_FAILURE;
         }
-        //        printf("Firmware Version: %s (API:%x.%02x)\n", version,
-        //                (usb_version>>8)&0xFF, usb_version&0xFF);
 
 #ifdef QT_DEBUG
         qDebug() << tr("Firmware Version:") << version
@@ -166,6 +139,13 @@ int HackrfInfo::getHackrfInfo()
 #endif
         }
 
+#ifdef QT_DEBUG
+        qDebug() << tr("--------------------------- %1 -------------------------------").arg(i);
+        qDebug() << tr("Serial number:") << info.serialNumbers();
+        qDebug() << tr("Board ID Number:") << info.boardID();
+        qDebug() << tr("--------------------------------------------------------------");
+#endif
+
         answerData.setDataAnswer(info.exportToJson());
         sendHackrfInfo(answerData);
     }
@@ -174,4 +154,13 @@ int HackrfInfo::getHackrfInfo()
     hackrf_exit();
 
     return EXIT_SUCCESS;
+}
+
+void HackrfInfo::errorHackrf(const QString &text, int result)
+{
+#ifdef QT_DEBUG
+    qDebug() << text
+             << hackrf_error_name(static_cast<hackrf_error>(result))
+             << tr("(%1)").arg(result);
+#endif
 }

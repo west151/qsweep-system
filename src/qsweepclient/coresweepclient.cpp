@@ -108,10 +108,11 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 
 #ifdef QT_DEBUG
     qDebug() << "---------------------------------------------------";
-    qDebug() << Q_FUNC_INFO << "Type Answer" << static_cast<qint32>(answer.typeAnswer());
-    qDebug() << Q_FUNC_INFO << "Index Board:" << info.indexBoard();
-    qDebug() << Q_FUNC_INFO << "Serial Numbers:" << info.serialNumbers();
-    qDebug() << Q_FUNC_INFO << "Size message (byte):" << message.size();
+    qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
+    qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
+    qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
+    qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
+    qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
 #endif
 
     }

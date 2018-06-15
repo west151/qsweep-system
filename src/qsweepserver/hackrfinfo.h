@@ -27,6 +27,8 @@ private:
     uint8_t operacakes[8];
     hackrf_device_list_t *list;
     hackrf_device* device;
+
+    void errorHackrf(const QString &, int result);
 };
 
 #endif // HACKRFINFO_H

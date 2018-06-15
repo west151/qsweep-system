@@ -20,6 +20,9 @@ public:
     void setSerialNumbers(const QString &);
     QString serialNumbers()const;
 
+    void setBoardID(const QString &);
+    QString boardID()const;
+
     QByteArray exportToJson() const;
     QByteArray exportToJsonBinary() const;
 
@@ -27,6 +30,7 @@ private:
     bool m_valid;
     qint32 m_index;
     QString m_serialNumbers;
+    QString m_boardID;
 };
 
 #endif // QHACKRFINFO_H
