@@ -28,14 +28,16 @@ SOURCES += \
     qsweepmessagelog.cpp \
     qsweeprequest.cpp \
     qsweeptopic.cpp \
-    qsweepanswer.cpp
+    qsweepanswer.cpp \
+    qhackrfinfo.cpp
 
 HEADERS += \
         qsweepprotocol_global.h \  
     qsweepmessagelog.h \
     qsweeprequest.h \
     qsweeptopic.h \
-    qsweepanswer.h
+    qsweepanswer.h \
+    qhackrfinfo.h
 
 #unix {
 #    target.path = /usr/lib

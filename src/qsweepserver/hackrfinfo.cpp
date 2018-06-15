@@ -1,5 +1,8 @@
 #include "hackrfinfo.h"
 
+#include "qsweepanswer.h"
+#include "qhackrfinfo.h"
+
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
 #endif
@@ -37,6 +40,13 @@ int HackrfInfo::getHackrfInfo()
 
     for (int i = 0; i < list->devicecount; i++)
     {
+        QSweepAnswer answerData;
+        answerData.setTypeAnswer(TypeAnswer::INFO);
+        QHackrfInfo info;
+
+        info.setIndexBoard(i);
+        info.setSerialNumbers("11111-33333333333333-44-5-66");
+
 #ifdef QT_DEBUG
         qDebug() << tr("Found HackRF");
         qDebug() << tr("Index:") << i;
@@ -155,6 +165,9 @@ int HackrfInfo::getHackrfInfo()
                      << tr("(%1)").arg(result);
 #endif
         }
+
+        answerData.setDataAnswer(info.exportToJson());
+        sendHackrfInfo(answerData);
     }
 
     hackrf_device_list_free(list);

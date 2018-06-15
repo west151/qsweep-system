@@ -27,6 +27,9 @@ public:
     void setDateTimeAnswer(const QDateTime &value = QDateTime::currentDateTimeUtc());
     QDateTime dateTimeAnswer()const;
 
+    void setDataAnswer(const QByteArray &json);
+    QByteArray dataAnswer()const;
+
     QByteArray exportToJson() const;
     QByteArray exportToJsonBinary() const;
 
@@ -35,6 +38,7 @@ private:
     QString m_id;
     TypeAnswer m_typeAnswer;
     QDateTime m_dateTimeAnswer;
+    QByteArray m_data;
 };
 
 #endif // QSWEEPANSWER_H

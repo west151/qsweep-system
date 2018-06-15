@@ -20,7 +20,8 @@ public:
 
     explicit QSweepTopic(QObject *parent = nullptr);
 
-    QString sweepTopic(const Topic value = TOPIC_UNKNOWN)const;
+    QString sweepTopic(const Topic value = TOPIC_UNKNOWN) const;
+    Topic sweepTopic(const QString &value = "");
 };
 
 #endif // QSWEEPTOPIC_H

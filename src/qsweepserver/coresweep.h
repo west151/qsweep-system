@@ -11,6 +11,7 @@ class HackrfInfo;
 class SweepWorker;
 class CtrlSweepWorker;
 class QSweepTopic;
+class QSweepAnswer;
 
 class CoreSweep : public QObject
 {
@@ -39,7 +40,7 @@ private:
     void brokerDisconnected();
     void pingReceived();
     void connecting();
-    void sendingMessage();
+    void sendingMessage(const QSweepAnswer &);
 };
 
 #endif // CORESWEEP_H

@@ -10,6 +10,7 @@
 #include "ctrlsweepworker.h"
 #include "qsweeptopic.h"
 #include "qsweeprequest.h"
+#include "qsweepanswer.h"
 
 
 #ifdef QT_DEBUG
@@ -78,6 +79,10 @@ void CoreSweep::initialization()
             this, &CoreSweep::pingReceived);
     connect(ptrMqttClient, &QMqttClient::pingResponseReceived,
             this , &CoreSweep::pingReceived);
+
+    // HackRF Info
+    connect(ptrHackrfInfo, &HackrfInfo::sendHackrfInfo,
+            this, &CoreSweep::sendingMessage);
 }
 
 void CoreSweep::launching()
@@ -163,7 +168,18 @@ void CoreSweep::connecting()
 #endif
 }
 
-void CoreSweep::sendingMessage()
+void CoreSweep::sendingMessage(const QSweepAnswer &value)
 {
-
+    switch (value.typeAnswer()) {
+    case TypeAnswer::INFO:
+        if (ptrMqttClient->state() == QMqttClient::Connected) {
+            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value.exportToJson());
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << "test";
+#endif
+        }
+        break;
+    default:
+        break;
+    }
 }

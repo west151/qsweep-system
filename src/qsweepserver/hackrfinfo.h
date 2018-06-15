@@ -5,6 +5,8 @@
 
 #include "hackrf.h"
 
+class QSweepAnswer;
+
 class HackrfInfo : public QObject
 {
     Q_OBJECT
@@ -12,6 +14,9 @@ public:
     explicit HackrfInfo(QObject *parent = nullptr);
 
     int getHackrfInfo();
+
+signals:
+    void sendHackrfInfo(const QSweepAnswer &);
 
 private:
     int result = HACKRF_SUCCESS;

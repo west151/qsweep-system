@@ -7,6 +7,8 @@
 #include "userinterface.h"
 #include "qsweeptopic.h"
 #include "qsweeprequest.h"
+#include "qsweepanswer.h"
+#include "qhackrfinfo.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -98,8 +100,30 @@ void CoreSweepClient::launching()
 
 void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
+    switch (ptrSweepTopic->sweepTopic(topic.name())) {
+    case QSweepTopic::TOPIC_INFO:
+    {
+        QSweepAnswer answer(message);
+        QHackrfInfo info(answer.dataAnswer());
+
 #ifdef QT_DEBUG
+    qDebug() << "---------------------------------------------------";
+    qDebug() << Q_FUNC_INFO << "Type Answer" << static_cast<qint32>(answer.typeAnswer());
+    qDebug() << Q_FUNC_INFO << "Index Board:" << info.indexBoard();
+    qDebug() << Q_FUNC_INFO << "Serial Numbers:" << info.serialNumbers();
+    qDebug() << Q_FUNC_INFO << "Size message (byte):" << message.size();
+#endif
+
+    }
+        break;
+    default:
+        break;
+    }
+
+#ifdef QT_DEBUG
+    qDebug() << "---------------------------------------------------";
     qDebug() << Q_FUNC_INFO << topic.name() << ":" << message;
+    qDebug() << "---------------------------------------------------";
 #endif
 }
 
@@ -111,7 +135,7 @@ void CoreSweepClient::updateLogStateChange()
 
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_DATA));
+        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO));
 
         if (!subscription)
         {

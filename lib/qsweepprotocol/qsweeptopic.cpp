@@ -35,3 +35,23 @@ QString QSweepTopic::sweepTopic(const Topic value) const
 
     return {};
 }
+
+QSweepTopic::Topic QSweepTopic::sweepTopic(const QString &value)
+{
+    if(value == topic_message_log)
+        return TOPIC_MESSAGE_LOG;
+
+    if(value == topic_ctrl)
+        return TOPIC_CTRL;
+
+    if(value == topic_info)
+        return TOPIC_INFO;
+
+    if(value == topic_data)
+        return TOPIC_DATA;
+
+    if(value == topic_spectr)
+        return TOPIC_SPECTR;
+
+    return TOPIC_UNKNOWN;
+}
