@@ -7,6 +7,7 @@
 static const QString INDEX_KEY = QStringLiteral("index");
 static const QString SERIAL_NUMBERS_KEY = QStringLiteral("serial");
 static const QString BOARD_ID_KEY = QStringLiteral("board_id");
+static const QString FIRMWARE_VERSION_KEY = QStringLiteral("firmware_version");
 
 QHackrfInfo::QHackrfInfo(QObject *parent) : QObject(parent)
 {
@@ -14,6 +15,7 @@ QHackrfInfo::QHackrfInfo(QObject *parent) : QObject(parent)
     m_index = -1;
     m_serialNumbers.clear();
     m_boardID.clear();
+    m_firmwareVersion.clear();
 }
 
 QHackrfInfo::QHackrfInfo(const QByteArray &json, bool binary)
@@ -28,6 +30,7 @@ QHackrfInfo::QHackrfInfo(const QByteArray &json, bool binary)
     m_index = jsonObject[INDEX_KEY].toInt();
     m_serialNumbers = jsonObject[SERIAL_NUMBERS_KEY].toString();
     m_boardID = jsonObject[BOARD_ID_KEY].toString();
+    m_firmwareVersion = jsonObject[FIRMWARE_VERSION_KEY].toString();
 
     if(!doc.isEmpty())
         m_valid = true;
@@ -70,12 +73,23 @@ QString QHackrfInfo::boardID() const
     return m_boardID;
 }
 
+void QHackrfInfo::setFirmwareVersion(const QString &value)
+{
+    m_firmwareVersion = value;
+}
+
+QString QHackrfInfo::firmwareVersion() const
+{
+    return m_firmwareVersion;
+}
+
 QByteArray QHackrfInfo::exportToJson() const
 {
     QJsonObject jsonObject;
     jsonObject[INDEX_KEY] = m_index;
     jsonObject[SERIAL_NUMBERS_KEY] = m_serialNumbers;
     jsonObject[BOARD_ID_KEY] = m_boardID;
+    jsonObject[FIRMWARE_VERSION_KEY] = m_firmwareVersion;
 
     QJsonDocument doc(jsonObject);
 
@@ -88,6 +102,7 @@ QByteArray QHackrfInfo::exportToJsonBinary() const
     jsonObject[INDEX_KEY] = m_index;
     jsonObject[SERIAL_NUMBERS_KEY] = m_serialNumbers;
     jsonObject[BOARD_ID_KEY] = m_boardID;
+    jsonObject[FIRMWARE_VERSION_KEY] = m_firmwareVersion;
 
     QJsonDocument doc(jsonObject);
 

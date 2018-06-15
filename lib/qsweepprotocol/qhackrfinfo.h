@@ -23,6 +23,9 @@ public:
     void setBoardID(const QString &);
     QString boardID()const;
 
+    void setFirmwareVersion(const QString &);
+    QString firmwareVersion()const;
+
     QByteArray exportToJson() const;
     QByteArray exportToJsonBinary() const;
 
@@ -31,6 +34,7 @@ private:
     qint32 m_index;
     QString m_serialNumbers;
     QString m_boardID;
+    QString m_firmwareVersion;
 };
 
 #endif // QHACKRFINFO_H

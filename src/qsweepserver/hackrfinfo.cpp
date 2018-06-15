@@ -73,19 +73,17 @@ int HackrfInfo::getHackrfInfo()
         if (result != HACKRF_SUCCESS) {
             errorHackrf(tr("hackrf_version_string_read() failed:"), result);
             return EXIT_FAILURE;
+        }else{
+            result = hackrf_usb_api_version_read(device, &usb_version);
+            if (result == HACKRF_SUCCESS) {
+                QString firmwareVer(version);
+                firmwareVer.append(tr("(API:%1.%2)").arg((usb_version>>8)&0xFF).arg(usb_version&0xFF));
+                info.setFirmwareVersion(firmwareVer);
+            }else{
+                errorHackrf(tr("hackrf_usb_api_version_read() failed:"), result);
+                return EXIT_FAILURE;
+            }
         }
-
-        result = hackrf_usb_api_version_read(device, &usb_version);
-        if (result != HACKRF_SUCCESS) {
-            errorHackrf(tr("hackrf_usb_api_version_read() failed:"), result);
-            return EXIT_FAILURE;
-        }
-
-#ifdef QT_DEBUG
-        qDebug() << tr("Firmware Version:") << version
-                 << tr("(API:%1.%2)").arg((usb_version>>8)&0xFF).arg(usb_version&0xFF);
-#endif
-
 
         result = hackrf_board_partid_serialno_read(device, &read_partid_serialno);
 
@@ -132,17 +130,13 @@ int HackrfInfo::getHackrfInfo()
 
         result = hackrf_close(device);
         if (result != HACKRF_SUCCESS)
-        {
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_close() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
-        }
+            errorHackrf(tr("hackrf_close() failed:"), result);
 
 #ifdef QT_DEBUG
-        qDebug() << tr("--------------------------- %1 -------------------------------").arg(i);
+        qDebug() << tr("---------------------------- %1 -------------------------------").arg(i);
         qDebug() << tr("Serial number:") << info.serialNumbers();
         qDebug() << tr("Board ID Number:") << info.boardID();
+        qDebug() << tr("Firmware Version:") << info.firmwareVersion();
         qDebug() << tr("--------------------------------------------------------------");
 #endif
 
