@@ -31,8 +31,7 @@ public:
     void setDataAnswer(const QByteArray &json);
     QByteArray dataAnswer()const;
 
-    QByteArray exportToJson() const;
-    QByteArray exportToJsonBinary() const;
+    QByteArray exportToJson(bool binary = false) const;
 
 private:
     bool m_valid;

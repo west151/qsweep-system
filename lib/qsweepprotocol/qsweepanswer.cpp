@@ -83,7 +83,7 @@ QByteArray QSweepAnswer::dataAnswer() const
     return m_data;
 }
 
-QByteArray QSweepAnswer::exportToJson() const
+QByteArray QSweepAnswer::exportToJson(bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject[ID_KEY] = m_id;
@@ -93,18 +93,8 @@ QByteArray QSweepAnswer::exportToJson() const
 
     QJsonDocument doc(jsonObject);
 
-    return doc.toJson(QJsonDocument::Compact);
-}
-
-QByteArray QSweepAnswer::exportToJsonBinary() const
-{
-    QJsonObject jsonObject;
-    jsonObject[ID_KEY] = m_id;
-    jsonObject[TYPE_ANSWER_KEY] = static_cast<qint32>(m_typeAnswer);
-    jsonObject[DT_ANSWER_KEY] = m_dateTimeAnswer.toUTC().toString(DT_FORMAT);
-    jsonObject[DATA_KEY] = QString(m_data.toBase64());
-
-    QJsonDocument doc(jsonObject);
-
-    return doc.toBinaryData();
+    if(binary)
+        return doc.toBinaryData();
+    else
+        return doc.toJson(QJsonDocument::Compact);
 }

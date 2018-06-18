@@ -12,7 +12,7 @@
 #include <math.h>
 #include <inttypes.h>
 
-class QSweepParams;
+//class QSweepParams;
 
 #define FD_BUFFER_SIZE (8*1024)
 
@@ -37,7 +37,8 @@ public:
     explicit SweepWorker(QObject *parent = nullptr);
 
 public slots:
-    void onRunSweepWorker(const QSweepParams &value);
+    //void onRunSweepWorker(const QSweepParams &value);
+    void onRunSweepWorker(const QByteArray &value);
     void onStopSweepWorker();
 
 signals:

@@ -13,7 +13,8 @@ class HackrfInfo : public QObject
 public:
     explicit HackrfInfo(QObject *parent = nullptr);
 
-    int getHackrfInfo();
+public slots:
+    void onRunHackrfInfo(const QByteArray &value);
 
 signals:
     void sendHackrfInfo(const QSweepAnswer &);
@@ -29,6 +30,7 @@ private:
     hackrf_device* device;
 
     void errorHackrf(const QString &, int result);
+    int hackrfInfo(const QByteArray &);
 };
 
 #endif // HACKRFINFO_H

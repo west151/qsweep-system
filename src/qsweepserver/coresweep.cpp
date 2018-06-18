@@ -7,7 +7,6 @@
 
 #include "hackrfinfo.h"
 #include "sweepworker.h"
-#include "ctrlsweepworker.h"
 #include "qsweeptopic.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
@@ -18,7 +17,7 @@
 #endif
 
 CoreSweep::CoreSweep(QObject *parent) : QObject(parent),
-    ptrHackrfInfo(new HackrfInfo(this)),    
+    ptrHackrfInfo(new HackrfInfo(this)),
     ptrMqttClient(new QMqttClient(this)),
     ptrSweepTopic(new QSweepTopic(this))
 {
@@ -53,24 +52,15 @@ void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
 
 void CoreSweep::initialization()
 {
-    ptrCtrlSweepWorker = new CtrlSweepWorker(this);
-
     ptrSweepWorker = new SweepWorker;
     ptrSweepThread = new QThread;
-
     ptrSweepWorker->moveToThread(ptrSweepThread);
 
     connect(this, &CoreSweep::sendRunSweepWorker,
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
 
-//    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendRunSweepWorker,
-//            ptrSweepWorker, &SweepWorker::onRunSweepWorker);
-
-    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendStopSweepWorker,
-            ptrSweepWorker, &SweepWorker::onStopSweepWorker);
-
-//    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendParamsSweepWorker,
-//            ptrSweepWorker, &SweepWorker::onParamsSweepWorker);
+//    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendStopSweepWorker,
+//            ptrSweepWorker, &SweepWorker::onStopSweepWorker);
 
     ptrSweepThread->start();
 
@@ -87,6 +77,8 @@ void CoreSweep::initialization()
             this , &CoreSweep::pingReceived);
 
     // HackRF Info
+    connect(this, &CoreSweep::sendRunSweepInfo,
+            ptrHackrfInfo, &HackrfInfo::onRunHackrfInfo);
     connect(ptrHackrfInfo, &HackrfInfo::sendHackrfInfo,
             this, &CoreSweep::sendingMessage);
 }
@@ -107,28 +99,15 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
 {
     QString ctrl(message);
 
-//    if(ctrl.contains("run")){
-//#ifdef QT_DEBUG
-//        qDebug() << Q_FUNC_INFO << tr("start");
-//#endif
-
-//        QSweepParams params;
-//        ptrCtrlSweepWorker->startSweepWorker(params);
-//    }
-
     QSweepRequest request(message, false);
 
     if(request.isValid()){
         switch (request.typeRequest()) {
         case TypeRequest::INFO:
-            ptrHackrfInfo->getHackrfInfo();
+            emit sendRunSweepInfo(message);
             break;
         case TypeRequest::SWEEP_SPECTR:
-        {
-            QSweepParams params;
-            emit sendRunSweepWorker(params);
-//            ptrCtrlSweepWorker->startSweepWorker(params);
-        }
+            emit sendRunSweepWorker(message);
             break;
         default:
             break;

@@ -9,10 +9,8 @@
 
 class HackrfInfo;
 class SweepWorker;
-class CtrlSweepWorker;
 class QSweepTopic;
 class QSweepAnswer;
-class QSweepParams;
 
 class CoreSweep : public QObject
 {
@@ -25,13 +23,13 @@ public:
     void onConnectToHost(const QString &host, const quint16 &port);
 
 signals:
-    void sendRunSweepWorker(const QSweepParams &);
+    void sendRunSweepInfo(const QByteArray &);
+    void sendRunSweepWorker(const QByteArray &);
 
 private:
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};
     SweepWorker* ptrSweepWorker {Q_NULLPTR};
     QPointer<QThread> ptrSweepThread;
-    CtrlSweepWorker* ptrCtrlSweepWorker {Q_NULLPTR};
 
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};

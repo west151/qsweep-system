@@ -29,8 +29,7 @@ public:
     void setDateTimeRequest(const QDateTime &value = QDateTime::currentDateTimeUtc());
     QDateTime dateTimeRequest()const;
 
-    QByteArray exportToJson() const;
-    QByteArray exportToJsonBinary() const;
+    QByteArray exportToJson(bool binary = false) const;
 
 private:
     bool m_valid;

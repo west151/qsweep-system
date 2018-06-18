@@ -12,8 +12,10 @@ HackrfInfo::HackrfInfo(QObject *parent) : QObject(parent)
 
 }
 
-int HackrfInfo::getHackrfInfo()
+int HackrfInfo::hackrfInfo(const QByteArray &value)
 {
+    Q_UNUSED(value)
+
     result = hackrf_init();
 
     if (result != HACKRF_SUCCESS) {
@@ -138,6 +140,11 @@ int HackrfInfo::getHackrfInfo()
     hackrf_exit();
 
     return EXIT_SUCCESS;
+}
+
+void HackrfInfo::onRunHackrfInfo(const QByteArray &value)
+{
+    hackrfInfo(value);
 }
 
 void HackrfInfo::errorHackrf(const QString &text, int result)

@@ -68,7 +68,7 @@ QDateTime QSweepRequest::dateTimeRequest() const
     return m_dateTimeRequest;
 }
 
-QByteArray QSweepRequest::exportToJson() const
+QByteArray QSweepRequest::exportToJson(bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject[ID_KEY] = m_id;
@@ -77,17 +77,8 @@ QByteArray QSweepRequest::exportToJson() const
 
     QJsonDocument doc(jsonObject);
 
-    return doc.toJson(QJsonDocument::Compact);
-}
-
-QByteArray QSweepRequest::exportToJsonBinary() const
-{
-    QJsonObject jsonObject;
-    jsonObject[ID_KEY] = m_id;
-    jsonObject[TYPE_REQUEST_KEY] = static_cast<qint32>(m_typeRequest);
-    jsonObject[DT_REQUEST_KEY] = m_dateTimeRequest.toUTC().toString(DT_FORMAT);
-
-    QJsonDocument doc(jsonObject);
-
-    return doc.toBinaryData();
+    if(binary)
+        return doc.toBinaryData();
+    else
+        return doc.toJson(QJsonDocument::Compact);
 }

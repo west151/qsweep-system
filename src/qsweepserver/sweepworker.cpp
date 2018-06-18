@@ -158,7 +158,7 @@ SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 {
 }
 
-void SweepWorker::onRunSweepWorker(const QSweepParams &value)
+void SweepWorker::onRunSweepWorker(const QByteArray &value)
 {
 //    freq_min = freqMin;
 //    freq_max = freqMax;
