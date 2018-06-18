@@ -109,7 +109,7 @@ QString QHackrfInfo::libHackrfVersion() const
     return m_libHackrfVersion;
 }
 
-QByteArray QHackrfInfo::exportToJson() const
+QByteArray QHackrfInfo::exportToJson(bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject[INDEX_KEY] = m_index;
@@ -121,20 +121,9 @@ QByteArray QHackrfInfo::exportToJson() const
 
     QJsonDocument doc(jsonObject);
 
-    return doc.toJson(QJsonDocument::Compact);
-}
+    if(binary)
+        return doc.toBinaryData();
+    else
+        return doc.toJson(QJsonDocument::Compact);
 
-QByteArray QHackrfInfo::exportToJsonBinary() const
-{
-    QJsonObject jsonObject;
-    jsonObject[INDEX_KEY] = m_index;
-    jsonObject[SERIAL_NUMBERS_KEY] = m_serialNumbers;
-    jsonObject[BOARD_ID_KEY] = m_boardID;
-    jsonObject[FIRMWARE_VERSION_KEY] = m_firmwareVersion;
-    jsonObject[PART_ID_NUMBER_KEY] = m_partIDNumber;
-    jsonObject[LIB_HACKRF_VERSION_KEY] = m_libHackrfVersion;
-
-    QJsonDocument doc(jsonObject);
-
-    return doc.toBinaryData();
 }
