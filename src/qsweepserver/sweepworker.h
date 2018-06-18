@@ -12,7 +12,7 @@
 #include <math.h>
 #include <inttypes.h>
 
-class SweepParams;
+class QSweepParams;
 
 #define FD_BUFFER_SIZE (8*1024)
 
@@ -46,7 +46,7 @@ public:
 public slots:
     void onRunSweepWorker();
     void onStopSweepWorker();
-    void onParamsSweepWorker(const SweepParams &);
+    void onParamsSweepWorker(const QSweepParams &);
 
 signals:
     void sendSignal();

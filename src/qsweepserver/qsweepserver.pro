@@ -14,12 +14,10 @@ SOURCES += \
     coresweep.cpp \
     sweepworker.cpp \
     hackrfinfo.cpp \
-    ctrlsweepworker.cpp \
-    sweepparams.cpp
+    ctrlsweepworker.cpp
 
 HEADERS += \
     coresweep.h \
     sweepworker.h \
     hackrfinfo.h \
-    ctrlsweepworker.h \
-    sweepparams.h
+    ctrlsweepworker.h

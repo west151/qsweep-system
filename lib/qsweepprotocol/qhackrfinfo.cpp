@@ -2,7 +2,6 @@
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
-#include <QtCore/QUuid>
 
 static const QString INDEX_KEY = QStringLiteral("index");
 static const QString SERIAL_NUMBERS_KEY = QStringLiteral("serial");

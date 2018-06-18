@@ -1,6 +1,6 @@
 #include "sweepworker.h"
 
-#include "sweepparams.h"
+#include "qsweepparams.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -390,7 +390,7 @@ void SweepWorker::onStopSweepWorker()
 
 }
 
-void SweepWorker::onParamsSweepWorker(const SweepParams &value)
+void SweepWorker::onParamsSweepWorker(const QSweepParams &value)
 {
 //    freq_min = freqMin;
 //    freq_max = freqMax;
