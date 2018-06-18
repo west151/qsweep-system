@@ -18,6 +18,7 @@ public slots:
 
 signals:
     void sendHackrfInfo(const QSweepAnswer &);
+    //void sendHackrfInfo(const QByteArray &);
 
 private:
     int result = HACKRF_SUCCESS;

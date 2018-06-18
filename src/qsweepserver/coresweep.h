@@ -43,6 +43,7 @@ private:
     void pingReceived();
     void connecting();
     void sendingMessage(const QSweepAnswer &);
+    void onSendingMessage(const QByteArray &);
 };
 
 #endif // CORESWEEP_H

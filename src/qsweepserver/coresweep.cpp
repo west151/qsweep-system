@@ -180,3 +180,8 @@ void CoreSweep::sendingMessage(const QSweepAnswer &value)
         break;
     }
 }
+
+void CoreSweep::onSendingMessage(const QByteArray &value)
+{
+
+}

@@ -160,6 +160,9 @@ SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 
 void SweepWorker::onRunSweepWorker(const QByteArray &value)
 {
+#ifdef QT_DEBUG
+        qDebug() << "Request:" << QString(value);
+#endif
 //    freq_min = freqMin;
 //    freq_max = freqMax;
 //    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz

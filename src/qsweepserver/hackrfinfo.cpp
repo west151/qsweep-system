@@ -133,7 +133,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
 #endif
 
         answerData.setDataAnswer(info.exportToJson());
-        sendHackrfInfo(answerData);
+        emit sendHackrfInfo(answerData);
     }
 
     hackrf_device_list_free(list);
