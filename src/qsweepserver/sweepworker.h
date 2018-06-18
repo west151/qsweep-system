@@ -36,17 +36,9 @@ class SweepWorker : public QObject
 public:
     explicit SweepWorker(QObject *parent = nullptr);
 
-    //
-//    int runSweepWorker(const uint32_t &freqMin = 30 /* MHz */,
-//                       const uint32_t &freqMax = 6000 /* MHz */,
-//                       const uint32_t &fftBinWidth = 500000 /* Hz */,
-//                       const unsigned int &lnaGain = 0,
-//                       const unsigned int &vgaGain = 0);
-
 public slots:
-    void onRunSweepWorker();
+    void onRunSweepWorker(const QSweepParams &value);
     void onStopSweepWorker();
-    void onParamsSweepWorker(const QSweepParams &);
 
 signals:
     void sendSignal();
@@ -70,9 +62,6 @@ private:
 
     static int rx_callback(hackrf_transfer *transfer);
     int hackrf_rx_callback(unsigned char *buffer, uint32_t length);
-
-    void testSender();
-
 };
 
 //fprintf(stderr, "Usage:\n");

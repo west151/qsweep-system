@@ -1,6 +1,7 @@
 #include "userinterface.h"
 
 #include "qsweeprequest.h"
+#include "qsweepparams.h"
 
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_hostname("127.0.0.1"),
@@ -52,10 +53,10 @@ void UserInterface::onConnectToHost()
     emit sendConnectToHost(m_hostname, m_port);
 }
 
-void UserInterface::onSendMessageToHost()
-{
-    emit sendMessageToHost();
-}
+//void UserInterface::onSendMessageToHost()
+//{
+//    emit sendMessageToHost();
+//}
 
 void UserInterface::onDisconnectFromHost()
 {
@@ -67,5 +68,13 @@ void UserInterface::onRequestSweepInfo()
     QSweepRequest info(this);
     info.setTypeRequest(TypeRequest::INFO);
 
-    emit sendRequestSweepInfo(info);
+    emit sendRequestSweepServer(info);
+}
+
+void UserInterface::onRequestSweepSpectr()
+{
+    QSweepRequest info(this);
+    info.setTypeRequest(TypeRequest::SWEEP_SPECTR);
+
+    emit sendRequestSweepServer(info);
 }

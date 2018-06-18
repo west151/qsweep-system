@@ -11,21 +11,17 @@
 #include "qsweeptopic.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
-
+#include "qsweepparams.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
 #endif
 
 CoreSweep::CoreSweep(QObject *parent) : QObject(parent),
-    ptrHackrfInfo(new HackrfInfo(this)),
-    ptrSweepWorker(new SweepWorker),
-    ptrSweepThread(new QThread),
-    ptrCtrlSweepWorker(new CtrlSweepWorker(this)),
+    ptrHackrfInfo(new HackrfInfo(this)),    
     ptrMqttClient(new QMqttClient(this)),
     ptrSweepTopic(new QSweepTopic(this))
 {
-
 }
 
 int CoreSweep::runCoreSweep(int argc, char *argv[])
@@ -57,14 +53,24 @@ void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
 
 void CoreSweep::initialization()
 {
+    ptrCtrlSweepWorker = new CtrlSweepWorker(this);
+
+    ptrSweepWorker = new SweepWorker;
+    ptrSweepThread = new QThread;
+
     ptrSweepWorker->moveToThread(ptrSweepThread);
 
-    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendRunSweepWorker,
+    connect(this, &CoreSweep::sendRunSweepWorker,
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
+
+//    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendRunSweepWorker,
+//            ptrSweepWorker, &SweepWorker::onRunSweepWorker);
+
     connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendStopSweepWorker,
             ptrSweepWorker, &SweepWorker::onStopSweepWorker);
-    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendParamsSweepWorker,
-            ptrSweepWorker, &SweepWorker::onParamsSweepWorker);
+
+//    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendParamsSweepWorker,
+//            ptrSweepWorker, &SweepWorker::onParamsSweepWorker);
 
     ptrSweepThread->start();
 
@@ -101,25 +107,37 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
 {
     QString ctrl(message);
 
-    if(ctrl.contains("run")){
-#ifdef QT_DEBUG
-        qDebug() << Q_FUNC_INFO << tr("start");
-#endif
+//    if(ctrl.contains("run")){
+//#ifdef QT_DEBUG
+//        qDebug() << Q_FUNC_INFO << tr("start");
+//#endif
 
-        ptrCtrlSweepWorker->startSweepWorkerTest();
-    }
+//        QSweepParams params;
+//        ptrCtrlSweepWorker->startSweepWorker(params);
+//    }
 
     QSweepRequest request(message, false);
 
     if(request.isValid()){
-        if(request.typeRequest() == TypeRequest::INFO){
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << "isValid:";
-            qDebug() << Q_FUNC_INFO << topic.name();
-            qDebug() << Q_FUNC_INFO << ctrl;
-#endif
+        switch (request.typeRequest()) {
+        case TypeRequest::INFO:
             ptrHackrfInfo->getHackrfInfo();
+            break;
+        case TypeRequest::SWEEP_SPECTR:
+        {
+            QSweepParams params;
+            emit sendRunSweepWorker(params);
+//            ptrCtrlSweepWorker->startSweepWorker(params);
         }
+            break;
+        default:
+            break;
+        }
+
+#ifdef QT_DEBUG
+        qDebug() << "Server: TOPIC" << topic.name();
+        qDebug() << "Server: JSON" << ctrl;
+#endif
     }
 }
 

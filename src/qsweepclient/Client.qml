@@ -7,7 +7,7 @@ ClientForm {
     }
 
     buttonSendData.onClicked: {
-        userInterface.onSendMessageToHost()
+        userInterface.onRequestSweepSpectr()
     }
 
     buttonConnect.onClicked: {

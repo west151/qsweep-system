@@ -9,7 +9,12 @@ CtrlSweepWorker::CtrlSweepWorker(QObject *parent) : QObject(parent)
 
 }
 
-void CtrlSweepWorker::startSweepWorkerTest()
+//void CtrlSweepWorker::startSweepWorkerTest()
+//{
+//    emit sendRunSweepWorker();
+//}
+
+void CtrlSweepWorker::startSweepWorker(const QSweepParams &value)
 {
-    emit sendRunSweepWorker();
+    emit sendRunSweepWorker(value);
 }

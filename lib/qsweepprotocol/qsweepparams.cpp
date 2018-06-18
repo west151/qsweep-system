@@ -28,7 +28,8 @@ QSweepParams::QSweepParams(const QByteArray &json, bool binary)
         doc = QJsonDocument::fromJson(json);
 
     QJsonObject jsonObject = doc.object();
-    m_frequency_min = jsonObject[FREQUENCY_MIN_KEY].toString().toUInt();
+    bool ok;
+    m_frequency_min = jsonObject[FREQUENCY_MIN_KEY].toString().toUInt(&ok, 10);
     m_frequency_max = jsonObject[FREQUENCY_MAX_KEY].toString().toUInt();
     m_fft_bin_width = jsonObject[FFT_BIN_WIDTH_KEY].toString().toUInt();
     m_lna_gain = jsonObject[LNA_GAIN_KEY].toString().toUInt();

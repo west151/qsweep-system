@@ -25,9 +25,10 @@ public:
     bool connectedToHost()const;
 
     Q_INVOKABLE void onConnectToHost();
-    Q_INVOKABLE void onSendMessageToHost();
+//    Q_INVOKABLE void onSendMessageToHost();
     Q_INVOKABLE void onDisconnectFromHost();
     Q_INVOKABLE void onRequestSweepInfo();
+    Q_INVOKABLE void onRequestSweepSpectr();
 
 signals:
     void hostChanged();
@@ -36,7 +37,9 @@ signals:
     void sendConnectToHost(const QString &host, const quint16 &port);
     void sendMessageToHost();
     void sendDisconnectFromHost();
-    void sendRequestSweepInfo(const QSweepRequest &);
+    //void sendRequestSweepInfo(const QSweepRequest &);
+    void sendRequestSweepServer(const QSweepRequest &);
+    //void sendRequestSweepSpectr(const QSweepRequest &);
 
 private:
     QString m_hostname;

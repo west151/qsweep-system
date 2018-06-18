@@ -10,7 +10,7 @@ class QSWEEPPROTOCOLSHARED_EXPORT QSweepParams : public QObject
     Q_OBJECT
 public:
     explicit QSweepParams(QObject *parent = nullptr);
-    QSweepParams(const QByteArray &json, bool binary = false);
+    explicit QSweepParams(const QByteArray &json, bool binary = false);
 
     void setLnaGain(const quint32 &);
     quint32 lnaGain()const;

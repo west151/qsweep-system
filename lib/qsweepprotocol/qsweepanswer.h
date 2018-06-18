@@ -8,7 +8,8 @@
 
 enum class TypeAnswer: qint32 {
     UNKNOWN = 0,
-    INFO
+    INFO,
+    SWEEP_SPECTR
 };
 
 class QSWEEPPROTOCOLSHARED_EXPORT QSweepAnswer : public QObject

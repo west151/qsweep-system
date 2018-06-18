@@ -154,17 +154,11 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
     return 0;
 }
 
-void SweepWorker::testSender()
-{
-
-}
-
 SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 {
-
 }
 
-void SweepWorker::onRunSweepWorker()
+void SweepWorker::onRunSweepWorker(const QSweepParams &value)
 {
 //    freq_min = freqMin;
 //    freq_max = freqMax;
@@ -390,17 +384,17 @@ void SweepWorker::onStopSweepWorker()
 
 }
 
-void SweepWorker::onParamsSweepWorker(const QSweepParams &value)
-{
-//    freq_min = freqMin;
-//    freq_max = freqMax;
-//    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
-//    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
-//    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
+//void SweepWorker::onParamsSweepWorker(const QSweepParams &value)
+//{
+////    freq_min = freqMin;
+////    freq_max = freqMax;
+////    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
+////    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
+////    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
 
-//    const uint32_t &freqMin = 30 /* MHz */,
-//            const uint32_t &freqMax = 6000 /* MHz */,
-//            const uint32_t &fftBinWidth = 500000 /* Hz */,
-//            const unsigned int &lnaGain = 0,
-//            const unsigned int &vgaGain = 0
-}
+////    const uint32_t &freqMin = 30 /* MHz */,
+////            const uint32_t &freqMax = 6000 /* MHz */,
+////            const uint32_t &fftBinWidth = 500000 /* Hz */,
+////            const unsigned int &lnaGain = 0,
+////            const unsigned int &vgaGain = 0
+//}

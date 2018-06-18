@@ -7,7 +7,7 @@
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
 
-class QSweepParams;
+#include "qsweepparams.h"
 
 class CtrlSweepWorker : public QObject
 {
@@ -15,13 +15,14 @@ class CtrlSweepWorker : public QObject
 public:
     explicit CtrlSweepWorker(QObject *parent = nullptr);
 
-public slots:
-    void startSweepWorkerTest();
+//public slots:
+//    void startSweepWorkerTest();
+    void startSweepWorker(const QSweepParams &);
 
 signals:
-    void sendRunSweepWorker();
+    //void sendRunSweepWorker();
     void sendStopSweepWorker();
-    void sendParamsSweepWorker(const QSweepParams &);
+    void sendRunSweepWorker(const QSweepParams &);
 
 private:
     QMqttClient *m_client;

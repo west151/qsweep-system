@@ -12,6 +12,7 @@ class SweepWorker;
 class CtrlSweepWorker;
 class QSweepTopic;
 class QSweepAnswer;
+class QSweepParams;
 
 class CoreSweep : public QObject
 {
@@ -22,6 +23,9 @@ public:
     int runCoreSweep(int argc, char *argv[]);
 
     void onConnectToHost(const QString &host, const quint16 &port);
+
+signals:
+    void sendRunSweepWorker(const QSweepParams &);
 
 private:
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};
