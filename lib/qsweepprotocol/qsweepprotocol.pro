@@ -29,7 +29,8 @@ SOURCES += \
     qsweeprequest.cpp \
     qsweeptopic.cpp \
     qsweepanswer.cpp \
-    qhackrfinfo.cpp
+    qhackrfinfo.cpp \
+    qsweepparams.cpp
 
 HEADERS += \
         qsweepprotocol_global.h \  
@@ -37,7 +38,8 @@ HEADERS += \
     qsweeprequest.h \
     qsweeptopic.h \
     qsweepanswer.h \
-    qhackrfinfo.h
+    qhackrfinfo.h \
+    qsweepparams.h
 
 #unix {
 #    target.path = /usr/lib
