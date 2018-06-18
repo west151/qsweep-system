@@ -17,17 +17,9 @@ int HackrfInfo::getHackrfInfo()
     result = hackrf_init();
 
     if (result != HACKRF_SUCCESS) {
-#ifdef QT_DEBUG
-        qDebug() << tr("hackrf_init() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                 << tr("(%1)").arg(result);
-#endif
+        errorHackrf(tr("hackrf_init() failed:"), result);
         return EXIT_FAILURE;
     }
-
-#ifdef QT_DEBUG
-    qDebug() << tr("libhackrf version:") << hackrf_library_release()
-             << tr("(%1)").arg(hackrf_library_version());
-#endif
 
     list = hackrf_device_list();
 
@@ -87,43 +79,32 @@ int HackrfInfo::getHackrfInfo()
 
         result = hackrf_board_partid_serialno_read(device, &read_partid_serialno);
 
-        if (result != HACKRF_SUCCESS)
+        if (result == HACKRF_SUCCESS)
         {
-
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_board_partid_serialno_read() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
-
+            QString partIDNumber;
+            partIDNumber.append("0x");
+            partIDNumber.append(QString::number(read_partid_serialno.part_id[0], 16));
+            partIDNumber.append(" 0x");
+            partIDNumber.append(QString::number(read_partid_serialno.part_id[1], 16));
+            info.setPartIDNumber(partIDNumber);
+        }else{
+            errorHackrf(tr("hackrf_board_partid_serialno_read() failed:"), result);
             return EXIT_FAILURE;
         }
-        //        printf("Part ID Number: 0x%08x 0x%08x\n",
-        //                    read_partid_serialno.part_id[0],
-        //                    read_partid_serialno.part_id[1]);
-
-#ifdef QT_DEBUG
-        qDebug() << tr("Part ID Number:") << read_partid_serialno.part_id[0] << read_partid_serialno.part_id[1];
-#endif
 
         result = hackrf_get_operacake_boards(device, &operacakes[0]);
 
-        if ((result != HACKRF_SUCCESS) && (result != HACKRF_ERROR_USB_API_VERSION))
-        {
-
-#ifdef QT_DEBUG
-            qDebug() << tr("hackrf_get_operacake_boards() failed:") << hackrf_error_name(static_cast<hackrf_error>(result))
-                     << tr("(%1)").arg(result);
-#endif
-
+        if ((result != HACKRF_SUCCESS) && (result != HACKRF_ERROR_USB_API_VERSION)) {
+            errorHackrf(tr("hackrf_get_operacake_boards() failed:"), result);
             return EXIT_FAILURE;
         }
+
         if(result == HACKRF_SUCCESS) {
             for(int j=0; j<8; j++) {
                 if(operacakes[j] == 0)
                     break;
-                // printf("Operacake found, address: 0x%02x\n", operacakes[j]);
 #ifdef QT_DEBUG
-                qDebug() << tr("Operacake found, address:") << operacakes[j];
+                qDebug() << tr("Operacake found, address: 0x%1").arg(QString::number(operacakes[j], 16));
 #endif
             }
         }
@@ -132,11 +113,20 @@ int HackrfInfo::getHackrfInfo()
         if (result != HACKRF_SUCCESS)
             errorHackrf(tr("hackrf_close() failed:"), result);
 
+        QString libStr;
+        libStr.append(hackrf_library_release());
+        libStr.append("(");
+        libStr.append(hackrf_library_version());
+        libStr.append(")");
+        info.setLibHackrfVersion(libStr);
+
 #ifdef QT_DEBUG
         qDebug() << tr("---------------------------- %1 -------------------------------").arg(i);
         qDebug() << tr("Serial number:") << info.serialNumbers();
         qDebug() << tr("Board ID Number:") << info.boardID();
         qDebug() << tr("Firmware Version:") << info.firmwareVersion();
+        qDebug() << tr("Part ID Number:") << info.partIDNumber();
+        qDebug() << tr("Libhackrf Version:") << info.libHackrfVersion();
         qDebug() << tr("--------------------------------------------------------------");
 #endif
 

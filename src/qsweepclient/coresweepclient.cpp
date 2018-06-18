@@ -113,6 +113,8 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
     qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
     qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
+    qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
+    qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
     qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
 #endif
 

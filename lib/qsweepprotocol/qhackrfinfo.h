@@ -26,6 +26,12 @@ public:
     void setFirmwareVersion(const QString &);
     QString firmwareVersion()const;
 
+    void setPartIDNumber(const QString &);
+    QString partIDNumber()const;
+
+    void setLibHackrfVersion(const QString &);
+    QString libHackrfVersion() const;
+
     QByteArray exportToJson() const;
     QByteArray exportToJsonBinary() const;
 
@@ -35,6 +41,8 @@ private:
     QString m_serialNumbers;
     QString m_boardID;
     QString m_firmwareVersion;
+    QString m_partIDNumber;
+    QString m_libHackrfVersion;
 };
 
 #endif // QHACKRFINFO_H

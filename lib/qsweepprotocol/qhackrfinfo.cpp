@@ -8,6 +8,8 @@ static const QString INDEX_KEY = QStringLiteral("index");
 static const QString SERIAL_NUMBERS_KEY = QStringLiteral("serial");
 static const QString BOARD_ID_KEY = QStringLiteral("board_id");
 static const QString FIRMWARE_VERSION_KEY = QStringLiteral("firmware_version");
+static const QString PART_ID_NUMBER_KEY = QStringLiteral("part_id_number");
+static const QString LIB_HACKRF_VERSION_KEY = QStringLiteral("lib_hackrf_version");
 
 QHackrfInfo::QHackrfInfo(QObject *parent) : QObject(parent)
 {
@@ -16,6 +18,8 @@ QHackrfInfo::QHackrfInfo(QObject *parent) : QObject(parent)
     m_serialNumbers.clear();
     m_boardID.clear();
     m_firmwareVersion.clear();
+    m_partIDNumber.clear();
+    m_libHackrfVersion.clear();
 }
 
 QHackrfInfo::QHackrfInfo(const QByteArray &json, bool binary)
@@ -31,6 +35,8 @@ QHackrfInfo::QHackrfInfo(const QByteArray &json, bool binary)
     m_serialNumbers = jsonObject[SERIAL_NUMBERS_KEY].toString();
     m_boardID = jsonObject[BOARD_ID_KEY].toString();
     m_firmwareVersion = jsonObject[FIRMWARE_VERSION_KEY].toString();
+    m_partIDNumber = jsonObject[PART_ID_NUMBER_KEY].toString();
+    m_libHackrfVersion = jsonObject[LIB_HACKRF_VERSION_KEY].toString();
 
     if(!doc.isEmpty())
         m_valid = true;
@@ -83,6 +89,26 @@ QString QHackrfInfo::firmwareVersion() const
     return m_firmwareVersion;
 }
 
+void QHackrfInfo::setPartIDNumber(const QString &value)
+{
+    m_partIDNumber = value;
+}
+
+QString QHackrfInfo::partIDNumber() const
+{
+    return m_partIDNumber;
+}
+
+void QHackrfInfo::setLibHackrfVersion(const QString &value)
+{
+    m_libHackrfVersion = value;
+}
+
+QString QHackrfInfo::libHackrfVersion() const
+{
+    return m_libHackrfVersion;
+}
+
 QByteArray QHackrfInfo::exportToJson() const
 {
     QJsonObject jsonObject;
@@ -90,6 +116,8 @@ QByteArray QHackrfInfo::exportToJson() const
     jsonObject[SERIAL_NUMBERS_KEY] = m_serialNumbers;
     jsonObject[BOARD_ID_KEY] = m_boardID;
     jsonObject[FIRMWARE_VERSION_KEY] = m_firmwareVersion;
+    jsonObject[PART_ID_NUMBER_KEY] = m_partIDNumber;
+    jsonObject[LIB_HACKRF_VERSION_KEY] = m_libHackrfVersion;
 
     QJsonDocument doc(jsonObject);
 
@@ -103,6 +131,8 @@ QByteArray QHackrfInfo::exportToJsonBinary() const
     jsonObject[SERIAL_NUMBERS_KEY] = m_serialNumbers;
     jsonObject[BOARD_ID_KEY] = m_boardID;
     jsonObject[FIRMWARE_VERSION_KEY] = m_firmwareVersion;
+    jsonObject[PART_ID_NUMBER_KEY] = m_partIDNumber;
+    jsonObject[LIB_HACKRF_VERSION_KEY] = m_libHackrfVersion;
 
     QJsonDocument doc(jsonObject);
 
