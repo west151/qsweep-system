@@ -5,12 +5,16 @@ include(../../protocol.pri)
 
 HEADERS += \
     coresweepclient.h \
-    userinterface.h
+    userinterface.h \
+    model/messagelogmodel.h \
+    model/hackrfinfomodel.h
 
 SOURCES += \
     coresweepclient.cpp \
     userinterface.cpp \
-    qsweepclient.cpp
+    qsweepclient.cpp \
+    model/messagelogmodel.cpp \
+    model/hackrfinfomodel.cpp
 
 RESOURCES += qml.qrc
 
