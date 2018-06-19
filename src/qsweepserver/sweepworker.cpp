@@ -1,6 +1,7 @@
 #include "sweepworker.h"
 
 #include "qsweepparams.h"
+#include "qsweeprequest.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -160,24 +161,21 @@ SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 
 void SweepWorker::onRunSweepWorker(const QByteArray &value)
 {
-#ifdef QT_DEBUG
-        qDebug() << "Request:" << QString(value);
-#endif
-//    freq_min = freqMin;
-//    freq_max = freqMax;
-//    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
-//    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
-//    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    const QSweepRequest request(value, false);
+    const QSweepParams params(request.dataRequest());
+
+    fft_bin_width = params.fftBinWidth();    // FFT bin width (frequency resolution) in Hz
+    lna_gain = params.lnaGain();     // RX LNA (IF) gain, 0-40dB, 8dB steps
+    vga_gain = params.vgaGain();     // RX VGA (baseband) gain, 0-62dB, 2dB steps
 
     if (0 == num_ranges) {
-        frequencies[0] = (uint16_t)freq_min;
-        frequencies[1] = (uint16_t)freq_max;
+        frequencies[0] = (uint16_t)params.frequencyMin();
+        frequencies[1] = (uint16_t)params.frequencyMax();
         num_ranges++;
     }
 
     fftSize = DEFAULT_SAMPLE_RATE_HZ / fft_bin_width;
-
-    one_shot = true;
+    one_shot = params.oneShot();
 
     amp = true;
 
@@ -337,6 +335,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     }
 
     result = hackrf_is_streaming(device);
+
     if (do_exit) {
         fprintf(stderr, "\nExiting...\n");
     } else {
@@ -386,18 +385,3 @@ void SweepWorker::onStopSweepWorker()
 {
 
 }
-
-//void SweepWorker::onParamsSweepWorker(const QSweepParams &value)
-//{
-////    freq_min = freqMin;
-////    freq_max = freqMax;
-////    fft_bin_width = fftBinWidth;    // FFT bin width (frequency resolution) in Hz
-////    lna_gain = lnaGain;     // RX LNA (IF) gain, 0-40dB, 8dB steps
-////    vga_gain = vgaGain;     // RX VGA (baseband) gain, 0-62dB, 2dB steps
-
-////    const uint32_t &freqMin = 30 /* MHz */,
-////            const uint32_t &freqMax = 6000 /* MHz */,
-////            const uint32_t &fftBinWidth = 500000 /* Hz */,
-////            const unsigned int &lnaGain = 0,
-////            const unsigned int &vgaGain = 0
-//}

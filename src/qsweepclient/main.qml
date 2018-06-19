@@ -7,7 +7,7 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    title: qsTr("Tabs")
+    title: qsTr("Spectr")
 
     SwipeView {
         id: swipeView
@@ -18,6 +18,10 @@ ApplicationWindow {
         }
 
         SweepControl {
+        }
+
+        SweepSpectr {
+
         }
 
         SweepInfo {
@@ -36,6 +40,9 @@ ApplicationWindow {
         }
         TabButton {
             text: qsTr("Control")
+        }
+        TabButton {
+            text: qsTr("Spectr")
         }
         TabButton {
             text: qsTr("Info")

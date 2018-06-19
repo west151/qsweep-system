@@ -25,7 +25,6 @@ public:
     bool connectedToHost()const;
 
     Q_INVOKABLE void onConnectToHost();
-//    Q_INVOKABLE void onSendMessageToHost();
     Q_INVOKABLE void onDisconnectFromHost();
     Q_INVOKABLE void onRequestSweepInfo();
     Q_INVOKABLE void onRequestSweepSpectr();

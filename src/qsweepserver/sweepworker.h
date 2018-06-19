@@ -37,7 +37,6 @@ public:
     explicit SweepWorker(QObject *parent = nullptr);
 
 public slots:
-    //void onRunSweepWorker(const QSweepParams &value);
     void onRunSweepWorker(const QByteArray &value);
     void onStopSweepWorker();
 
@@ -56,8 +55,8 @@ private:
     uint32_t num_samples = DEFAULT_SAMPLE_COUNT;    // Number of samples per frequency, 16384-4294967296
     uint32_t fft_bin_width = 500000;    // FFT bin width (frequency resolution) in Hz\n")
     int step_count;
-    uint32_t freq_min = 30;      // freq_min = 0;
-    uint32_t freq_max = 6000;   // freq_max = 6000;
+//    uint32_t freq_min = 30;      // freq_min = 0;
+//    uint32_t freq_max = 6000;   // freq_max = 6000;
 
     hackrf_device* device = NULL;
 

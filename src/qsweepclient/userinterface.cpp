@@ -53,11 +53,6 @@ void UserInterface::onConnectToHost()
     emit sendConnectToHost(m_hostname, m_port);
 }
 
-//void UserInterface::onSendMessageToHost()
-//{
-//    emit sendMessageToHost();
-//}
-
 void UserInterface::onDisconnectFromHost()
 {
     emit sendDisconnectFromHost();
@@ -74,6 +69,11 @@ void UserInterface::onRequestSweepInfo()
 void UserInterface::onRequestSweepSpectr()
 {
     QSweepRequest info(this);
+    QSweepParams params(this);
+    params.setFrequencyMin(2300);
+    params.setFrequencyMax(2700);
+
+    info.setDataRequest(params.exportToJson());
     info.setTypeRequest(TypeRequest::SWEEP_SPECTR);
 
     emit sendRequestSweepServer(info);

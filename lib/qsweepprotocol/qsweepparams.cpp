@@ -8,11 +8,13 @@ static const QString FREQUENCY_MAX_KEY = QStringLiteral("frequency_max");
 static const QString FFT_BIN_WIDTH_KEY = QStringLiteral("fft_bin_width");
 static const QString LNA_GAIN_KEY = QStringLiteral("lna_gain");
 static const QString VGA_GAIN_KEY = QStringLiteral("vga_gain");
+static const QString ONE_SHOT_KEY = QStringLiteral("one_shot");
 
 QSweepParams::QSweepParams(QObject *parent) : QObject(parent)
 {
     m_valid = false;
-    m_frequency_min = 1;
+    m_one_shot = true;
+    m_frequency_min = 30;
     m_frequency_max = 6000;
     m_fft_bin_width = 500000;
     m_lna_gain = 0;
@@ -34,11 +36,22 @@ QSweepParams::QSweepParams(const QByteArray &json, bool binary)
     m_fft_bin_width = jsonObject[FFT_BIN_WIDTH_KEY].toString().toUInt();
     m_lna_gain = jsonObject[LNA_GAIN_KEY].toString().toUInt();
     m_vga_gain = jsonObject[VGA_GAIN_KEY].toString().toUInt();
+    m_one_shot = jsonObject[ONE_SHOT_KEY].toBool();
 
     if(!doc.isEmpty())
         m_valid = true;
     else
         m_valid = false;
+}
+
+void QSweepParams::setOneShot(const bool &value)
+{
+    m_one_shot = value;
+}
+
+bool QSweepParams::oneShot() const
+{
+    return m_one_shot;
 }
 
 void QSweepParams::setLnaGain(const quint32 &value)
@@ -99,6 +112,7 @@ QByteArray QSweepParams::exportToJson(bool binary) const
     jsonObject[FFT_BIN_WIDTH_KEY] = QString::number(m_fft_bin_width);
     jsonObject[LNA_GAIN_KEY] = QString::number(m_lna_gain);
     jsonObject[VGA_GAIN_KEY] = QString::number(m_vga_gain);
+    jsonObject[ONE_SHOT_KEY] = m_one_shot;
 
     QJsonDocument doc(jsonObject);
 

@@ -29,6 +29,9 @@ public:
     void setDateTimeRequest(const QDateTime &value = QDateTime::currentDateTimeUtc());
     QDateTime dateTimeRequest()const;
 
+    void setDataRequest(const QByteArray &json);
+    QByteArray dataRequest()const;
+
     QByteArray exportToJson(bool binary = false) const;
 
 private:
@@ -36,6 +39,7 @@ private:
     QString m_id;
     TypeRequest m_typeRequest;
     QDateTime m_dateTimeRequest;
+    QByteArray m_data;
 };
 
 #endif // QSWEEPREQUEST_H
