@@ -24,7 +24,6 @@ uint32_t amp_enable;
 bool antenna = false;
 uint32_t antenna_enable;
 
-//bool binary_output = false;
 bool one_shot = true;
 volatile bool sweep_started = false;
 volatile bool do_exit = false;
@@ -116,8 +115,6 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
-        //qDebug() << "fft_bin_width:" << (float)fft_bin_width;
-
         printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
                time_str,
                (uint64_t)(frequency),
@@ -153,6 +150,15 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
     //printf("RETURN 0\n");
 
     return 0;
+}
+
+void SweepWorker::errorHackrf(const QString &text, int result)
+{
+#ifdef QT_DEBUG
+    qDebug() << text
+             << hackrf_error_name(static_cast<hackrf_error>(result))
+             << tr("(%1)").arg(result);
+#endif
 }
 
 SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
@@ -211,30 +217,26 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     result = hackrf_init();
     if( result != HACKRF_SUCCESS ) {
-        fprintf(stderr, "hackrf_init() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
+        errorHackrf("hackrf_init() failed:", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     result = hackrf_open_by_serial(serial_number, &device);
     if( result != HACKRF_SUCCESS ) {
-        fprintf(stderr, "hackrf_open() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
+        errorHackrf("hackrf_open() failed:", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     fd = fopen(path, "wb");
     if( fd == NULL ) {
         fprintf(stderr, "Failed to open file: %s\n", path);
         exit(0);
-        //return EXIT_FAILURE;
     }
     /* Change fd buffer to have bigger one to store or read data on/to HDD */
     result = setvbuf(fd , NULL , _IOFBF , FD_BUFFER_SIZE);
     if( result != 0 ) {
         fprintf(stderr, "setvbuf() failed: %d\n", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     fprintf(stderr, "call hackrf_sample_rate_set(%.03f MHz)\n",
@@ -243,10 +245,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     result = hackrf_set_sample_rate_manual(device, DEFAULT_SAMPLE_RATE_HZ, 1);
 
     if( result != HACKRF_SUCCESS ) {
-        fprintf(stderr, "hackrf_sample_rate_set() failed: %s (%d)\n",
-                hackrf_error_name(static_cast<hackrf_error>(result)), result);
+        errorHackrf("hackrf_sample_rate_set() failed:", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     fprintf(stderr, "call hackrf_baseband_filter_bandwidth_set(%.03f MHz)\n",
@@ -254,19 +254,16 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     result = hackrf_set_baseband_filter_bandwidth(device, DEFAULT_BASEBAND_FILTER_BANDWIDTH);
     if( result != HACKRF_SUCCESS ) {
-        fprintf(stderr, "hackrf_baseband_filter_bandwidth_set() failed: %s (%d)\n",
-                hackrf_error_name(static_cast<hackrf_error>(result)), result);
+        errorHackrf("hackrf_baseband_filter_bandwidth_set() failed:", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     result = hackrf_set_vga_gain(device, vga_gain);
     result |= hackrf_set_lna_gain(device, lna_gain);
     result |= hackrf_start_rx(device, rx_callback, NULL);
     if (result != HACKRF_SUCCESS) {
-        fprintf(stderr, "hackrf_start_rx() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
+        errorHackrf("hackrf_start_rx() failed:", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     /*
@@ -282,32 +279,27 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
                 frequencies[2*i], frequencies[2*i+1]);
     }
 
-
     result = hackrf_init_sweep(device, frequencies, num_ranges, num_samples,
             TUNE_STEP * FREQ_ONE_MHZ, OFFSET, INTERLEAVED);
 
     if( result != HACKRF_SUCCESS ) {
-        fprintf(stderr, "hackrf_init_sweep() failed: %s (%d)\n",
-               hackrf_error_name(static_cast<hackrf_error>(result)), result);
+        errorHackrf("hackrf_init_sweep() failed:", result);
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     if (amp) {
         fprintf(stderr, "call hackrf_set_amp_enable(%u)\n", amp_enable);
         result = hackrf_set_amp_enable(device, (uint8_t)amp_enable);
         if (result != HACKRF_SUCCESS) {
-            fprintf(stderr, "hackrf_set_amp_enable() failed: %s (%d)\n",
-                    hackrf_error_name(static_cast<hackrf_error>(result)), result);
+            errorHackrf("hackrf_set_amp_enable() failed:", result);
             exit(0);
-            //return EXIT_FAILURE;
         }
     }
 
     gettimeofday(&t_start, NULL);
     gettimeofday(&time_start, NULL);
 
-    fprintf(stderr, "Stop with Ctrl-C\n");
+    //fprintf(stderr, "Stop with Ctrl-C\n");
 
     while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false)) {
         uint32_t byte_count_now;
@@ -350,7 +342,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     if(device != NULL) {
         result = hackrf_stop_rx(device);
         if(result != HACKRF_SUCCESS) {
-            fprintf(stderr, "hackrf_stop_rx() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
+            errorHackrf("hackrf_stop_rx() failed:", result);
         } else {
             fprintf(stderr, "hackrf_stop_rx() done\n");
         }
@@ -358,7 +350,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         result = hackrf_close(device);
 
         if(result != HACKRF_SUCCESS) {
-            fprintf(stderr, "hackrf_close() failed: %s (%d)\n", hackrf_error_name(static_cast<hackrf_error>(result)), result);
+            errorHackrf("hackrf_close() failed:", result);
         } else {
             fprintf(stderr, "hackrf_close() done\n");
         }
@@ -378,7 +370,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     fftwf_free(pwr);
     fftwf_free(window);
 
-    //return EXIT_SUCCESS;
+    do_exit = false;
 }
 
 void SweepWorker::onStopSweepWorker()

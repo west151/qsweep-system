@@ -12,8 +12,6 @@
 #include <math.h>
 #include <inttypes.h>
 
-//class QSweepParams;
-
 #define FD_BUFFER_SIZE (8*1024)
 
 #define FREQ_ONE_MHZ (1000000ull)
@@ -41,7 +39,7 @@ public slots:
     void onStopSweepWorker();
 
 signals:
-    void sendSignal();
+    void sendSweepWorkerMessagelog(const QByteArray &value);
 
 private:
     int opt, i, result = 0;
@@ -55,13 +53,12 @@ private:
     uint32_t num_samples = DEFAULT_SAMPLE_COUNT;    // Number of samples per frequency, 16384-4294967296
     uint32_t fft_bin_width = 500000;    // FFT bin width (frequency resolution) in Hz\n")
     int step_count;
-//    uint32_t freq_min = 30;      // freq_min = 0;
-//    uint32_t freq_max = 6000;   // freq_max = 6000;
 
     hackrf_device* device = NULL;
 
     static int rx_callback(hackrf_transfer *transfer);
     int hackrf_rx_callback(unsigned char *buffer, uint32_t length);
+    void errorHackrf(const QString &, int result);
 };
 
 //fprintf(stderr, "Usage:\n");
