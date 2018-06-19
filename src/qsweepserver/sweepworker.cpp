@@ -2,6 +2,8 @@
 
 #include "qsweepparams.h"
 #include "qsweeprequest.h"
+#include "qsweepanswer.h"
+#include "qsweepmessagelog.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -161,6 +163,17 @@ void SweepWorker::errorHackrf(const QString &text, int result)
 #endif
 }
 
+void SweepWorker::sweepWorkerMessagelog(const QString &value)
+{
+    QSweepAnswer answer;
+    answer.setTypeAnswer(TypeAnswer::SWEEP_MESSAGE_LOG);
+    QSweepMessageLog log;
+    log.setTextMessage(value);
+    answer.setDataAnswer(log.exportToJson());
+
+    emit sendSweepWorkerMessagelog(answer.exportToJson());
+}
+
 SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 {
 }
@@ -318,6 +331,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         if (byte_count_now == 0) {
             exit_code = EXIT_FAILURE;
             fprintf(stderr, "\nCouldn't transfer any bytes for one second.\n");
+            sweepWorkerMessagelog(tr("Couldn't transfer any bytes for one second."));
             break;
         }
     }
@@ -326,6 +340,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     if (do_exit) {
         fprintf(stderr, "\nExiting...\n");
+        sweepWorkerMessagelog(tr("Exiting..."));
     } else {
         fprintf(stderr, "\nExiting... hackrf_is_streaming() result: %s (%d)\n",
                hackrf_error_name(static_cast<hackrf_error>(result)), result);
@@ -341,6 +356,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
             errorHackrf("hackrf_stop_rx() failed:", result);
         } else {
             fprintf(stderr, "hackrf_stop_rx() done\n");
+            sweepWorkerMessagelog(tr("hackrf_stop_rx() done"));
         }
 
         result = hackrf_close(device);
@@ -349,16 +365,19 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
             errorHackrf("hackrf_close() failed:", result);
         } else {
             fprintf(stderr, "hackrf_close() done\n");
+            sweepWorkerMessagelog(tr("hackrf_close() done"));
         }
 
         hackrf_exit();
         fprintf(stderr, "hackrf_exit() done\n");
+        sweepWorkerMessagelog(tr("hackrf_exit() done"));
     }
 
     if(fd != NULL) {
         fclose(fd);
         fd = NULL;
         fprintf(stderr, "fclose(fd) done\n");
+        sweepWorkerMessagelog(tr("fclose(fd) done"));
     }
 
     fftwf_free(fftwIn);
@@ -371,5 +390,5 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
 void SweepWorker::onStopSweepWorker()
 {
-
+    do_exit = true;
 }

@@ -125,21 +125,21 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         QSweepAnswer answer(message);
         QSweepMessageLog log(answer.dataAnswer());
 
-#ifdef QT_DEBUG
-        qDebug() << "---------------------------------------------------";
-        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
-        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
-#endif
+//#ifdef QT_DEBUG
+//        qDebug() << "---------------------------------------------------";
+//        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
+//        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
+//#endif
     }
     default:
         break;
     }
 
-#ifdef QT_DEBUG
-    qDebug() << "---------------------------------------------------";
-    qDebug() << Q_FUNC_INFO << topic.name() << ":" << message;
-    qDebug() << "---------------------------------------------------";
-#endif
+//#ifdef QT_DEBUG
+//    qDebug() << "---------------------------------------------------";
+//    qDebug() << Q_FUNC_INFO << topic.name() << ":" << message;
+//    qDebug() << "---------------------------------------------------";
+//#endif
 }
 
 void CoreSweepClient::updateLogStateChange()

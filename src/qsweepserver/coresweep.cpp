@@ -58,6 +58,8 @@ void CoreSweep::initialization()
 
     connect(this, &CoreSweep::sendRunSweepWorker,
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
+    connect(ptrSweepWorker, &SweepWorker::sendSweepWorkerMessagelog,
+            this, &CoreSweep::onSendingMessageRequest);
 
 //    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendStopSweepWorker,
 //            ptrSweepWorker, &SweepWorker::onStopSweepWorker);
@@ -181,7 +183,25 @@ void CoreSweep::sendingMessage(const QSweepAnswer &value)
     }
 }
 
-void CoreSweep::onSendingMessage(const QByteArray &value)
+void CoreSweep::onSendingMessageRequest(const QByteArray &value)
 {
+    if (ptrMqttClient->state() == QMqttClient::Connected)
+    {
+        const QSweepAnswer answer(value, false);
 
+        switch (answer.typeAnswer()) {
+        case TypeAnswer::INFO:
+        {
+            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), answer.exportToJson());
+        }
+            break;
+        case TypeAnswer::SWEEP_MESSAGE_LOG:
+        {
+            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), answer.exportToJson());
+        }
+            break;
+        default:
+            break;
+        }
+    }
 }

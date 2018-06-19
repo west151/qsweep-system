@@ -59,6 +59,7 @@ private:
     static int rx_callback(hackrf_transfer *transfer);
     int hackrf_rx_callback(unsigned char *buffer, uint32_t length);
     void errorHackrf(const QString &, int result);
+    void sweepWorkerMessagelog(const QString &);
 };
 
 //fprintf(stderr, "Usage:\n");

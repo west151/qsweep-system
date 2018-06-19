@@ -58,6 +58,7 @@ QByteArray QSweepMessageLog::exportToJson(bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject[TEXT_MESSAGE_KEY] = m_textMessage;
+    jsonObject[DT_KEY] = m_dateTime.toUTC().toString(DT_FORMAT);
 
     QJsonDocument doc(jsonObject);
 
