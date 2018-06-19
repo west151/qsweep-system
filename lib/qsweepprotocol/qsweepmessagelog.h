@@ -14,6 +14,7 @@ public:
     QSweepMessageLog(const QByteArray &json, bool binary = false);
 
     bool isValid()const;
+    QDateTime dateTime()const;
 
     QString textMessage()const;
     void setTextMessage(const QString &);

@@ -9,6 +9,7 @@
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 #include "qhackrfinfo.h"
+#include "qsweepmessagelog.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -107,19 +108,29 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         QHackrfInfo info(answer.dataAnswer());
 
 #ifdef QT_DEBUG
-    qDebug() << "---------------------------------------------------";
-    qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
-    qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
-    qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
-    qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
-    qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
-    qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
-    qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
-    qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
+        qDebug() << "---------------------------------------------------";
+        qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
+        qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
+        qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
+        qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
+        qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
+        qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
+        qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
+        qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
 #endif
-
     }
         break;
+    case QSweepTopic::TOPIC_MESSAGE_LOG:
+    {
+        QSweepAnswer answer(message);
+        QSweepMessageLog log(answer.dataAnswer());
+
+#ifdef QT_DEBUG
+        qDebug() << "---------------------------------------------------";
+        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
+        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
+#endif
+    }
     default:
         break;
     }
@@ -142,6 +153,16 @@ void CoreSweepClient::updateLogStateChange()
         auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO));
 
         if (!subscription)
+        {
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";
+#endif
+            return;
+        }
+
+        auto subscription1 = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG));
+
+        if (!subscription1)
         {
 #ifdef QT_DEBUG
             qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";

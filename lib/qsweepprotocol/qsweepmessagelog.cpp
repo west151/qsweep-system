@@ -39,6 +39,11 @@ bool QSweepMessageLog::isValid() const
     return m_valid;
 }
 
+QDateTime QSweepMessageLog::dateTime() const
+{
+    return m_dateTime;
+}
+
 QString QSweepMessageLog::textMessage() const
 {
     return m_textMessage;
