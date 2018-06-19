@@ -88,8 +88,6 @@ void CoreSweepClient::initialization()
             this, &CoreSweepClient::pingReceived);
     connect(ptrMqttClient, &QMqttClient::pingResponseReceived,
             this , &CoreSweepClient::pingReceived);
-//    connect(ptrUserInterface, &UserInterface::sendMessageToHost,
-//            this, &CoreSweepClient::sendingMessage);
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
 }
