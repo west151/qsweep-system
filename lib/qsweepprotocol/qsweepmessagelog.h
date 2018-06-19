@@ -2,31 +2,28 @@
 #define QSWEEPMESSAGELOG_H
 
 #include <QObject>
+#include <QtCore/qdatetime.h>
 
 #include "qsweepprotocol_global.h"
 
 class QSWEEPPROTOCOLSHARED_EXPORT QSweepMessageLog : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString textMessage READ textMessage WRITE setTextMessage NOTIFY textMessageChanged)
-
 public:
     explicit QSweepMessageLog(QObject *parent = nullptr);
+    QSweepMessageLog(const QByteArray &json, bool binary = false);
+
+    bool isValid()const;
 
     QString textMessage()const;
+    void setTextMessage(const QString &);
 
-signals:
-    void textMessageChanged(const QString &textMessage);
-
-public slots:
-    void setTextMessage(const QString &textMessage);
-
-    QByteArray exportToJson() const;
-    QByteArray exportToJsonBinary() const;
+    QByteArray exportToJson(bool binary = false) const;
 
 private:
-    QString m_id;
+    bool m_valid;
     QString m_textMessage;
+    QDateTime m_dateTime;
 };
 
 #endif // QSWEEPMESSAGELOG_H

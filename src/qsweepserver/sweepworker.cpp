@@ -188,13 +188,11 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     if(4 > fftSize) {
         fprintf(stderr,"argument error: FFT bin width (-w) must be no more than one quarter the sample rate\n");
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     if(16368 < fftSize) {
         fprintf(stderr,	"argument error: FFT bin width (-w) too small, resulted in more than 16368 FFT bins\n");
         exit(0);
-        //return EXIT_FAILURE;
     }
 
     /* In interleaved mode, the FFT bin selection works best if the total
@@ -275,8 +273,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         step_count = 1 + (frequencies[2*i+1] - frequencies[2*i] - 1)
                 / TUNE_STEP;
         frequencies[2*i+1] = frequencies[2*i] + step_count * TUNE_STEP;
-        fprintf(stderr, "Sweeping from %u MHz to %u MHz\n",
-                frequencies[2*i], frequencies[2*i+1]);
+        fprintf(stderr, "Sweeping from %u MHz to %u MHz\n", frequencies[2*i], frequencies[2*i+1]);
     }
 
     result = hackrf_init_sweep(device, frequencies, num_ranges, num_samples,
@@ -299,8 +296,6 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     gettimeofday(&t_start, NULL);
     gettimeofday(&time_start, NULL);
 
-    //fprintf(stderr, "Stop with Ctrl-C\n");
-
     while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false)) {
         uint32_t byte_count_now;
         struct timeval time_now;
@@ -314,6 +309,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
         time_difference = TimevalDiff(&time_now, &time_start);
         rate = (float)byte_count_now / time_difference;
+
         fprintf(stderr, "%4.1f MiB / %5.3f sec = %4.1f MiB/second\n",
                 (byte_count_now / 1e6f), time_difference, (rate / 1e6f) );
 
