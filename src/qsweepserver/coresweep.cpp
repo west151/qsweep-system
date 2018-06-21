@@ -50,6 +50,13 @@ void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
     }
 }
 
+void CoreSweep::onDataFromWorker(const QByteArray &value)
+{
+#ifdef QT_DEBUG
+    qDebug() << Q_FUNC_INFO << "::" << QString(value);
+#endif
+}
+
 void CoreSweep::initialization()
 {
     ptrSweepWorker = new SweepWorker;
@@ -60,9 +67,9 @@ void CoreSweep::initialization()
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
     connect(ptrSweepWorker, &SweepWorker::sendSweepWorkerMessagelog,
             this, &CoreSweep::onSendingMessageRequest);
-
-//    connect(ptrCtrlSweepWorker, &CtrlSweepWorker::sendStopSweepWorker,
-//            ptrSweepWorker, &SweepWorker::onStopSweepWorker);
+    // TEST
+    connect(SweepWorker::getInstance(), &SweepWorker::sendData,
+            this, &CoreSweep::onDataFromWorker);
 
     ptrSweepThread->start();
 
@@ -83,6 +90,11 @@ void CoreSweep::initialization()
             ptrHackrfInfo, &HackrfInfo::onRunHackrfInfo);
     connect(ptrHackrfInfo, &HackrfInfo::sendHackrfInfo,
             this, &CoreSweep::sendingMessage);
+
+#ifdef QT_DEBUG
+    qDebug() << QThread::currentThreadId();
+    qDebug() << ptrSweepThread->currentThread();
+#endif
 }
 
 void CoreSweep::launching()

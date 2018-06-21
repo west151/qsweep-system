@@ -12,6 +12,9 @@
 #include <math.h>
 #include <inttypes.h>
 
+#include "fifobuffer.h"
+#include "ringbuffer.h"
+
 #define FD_BUFFER_SIZE (8*1024)
 
 #define FREQ_ONE_MHZ (1000000ull)
@@ -33,6 +36,9 @@ class SweepWorker : public QObject
     Q_OBJECT
 public:
     explicit SweepWorker(QObject *parent = nullptr);
+    static SweepWorker* getInstance();
+
+    void onTestDataCallbacks(const QByteArray &value);
 
 public slots:
     void onRunSweepWorker(const QByteArray &value);
@@ -40,8 +46,11 @@ public slots:
 
 signals:
     void sendSweepWorkerMessagelog(const QByteArray &value);
+    void sendData(const QByteArray &value);
 
 private:
+    static SweepWorker* m_instance;
+
     int opt, i, result = 0;
     const char* path = "/dev/null";
     const char* serial_number = NULL;
@@ -58,6 +67,12 @@ private:
 
     static int rx_callback(hackrf_transfer *transfer);
     int hackrf_rx_callback(unsigned char *buffer, uint32_t length);
+    float logPower(fftwf_complex in, float scale);
+    float TimevalDiff(const struct timeval *a, const struct timeval *b);
+
+    FifoBuffer *m_fifo;
+    RingBuffer *m_ringBuffer;
+
     void errorHackrf(const QString &, int result);
     void sweepWorkerMessagelog(const QString &);
 };

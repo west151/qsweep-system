@@ -1,5 +1,7 @@
 #include "sweepworker.h"
 
+#include <QThread>
+
 #include "qsweepparams.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
@@ -45,21 +47,34 @@ char time_str[50];
 #include <sys/time.h>
 #endif
 
-static float TimevalDiff(const struct timeval *a, const struct timeval *b) {
-   return (a->tv_sec - b->tv_sec) + 1e-6f * (a->tv_usec - b->tv_usec);
+SweepWorker* SweepWorker::m_instance = 0;
+
+SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
+{
+     m_fifo = new FifoBuffer();
+     m_ringBuffer = new RingBuffer(1024);
 }
 
-float logPower(fftwf_complex in, float scale)
+SweepWorker *SweepWorker::getInstance()
 {
-    float re = in[0] * scale;
-    float im = in[1] * scale;
-    float magsq = re * re + im * im;
-    return log2f(magsq) * 10.0f / log2(10.0f);
+    if (m_instance == 0)
+        m_instance = new SweepWorker();
+    return m_instance;
+}
+
+void SweepWorker::onTestDataCallbacks(const QByteArray &value)
+{
+    const QByteArray test(value);
+
+    //qDebug() << test;
+
+    emit sendData(test);
 }
 
 int SweepWorker::rx_callback(hackrf_transfer *transfer)
 {
     SweepWorker *obj = (SweepWorker *)transfer->rx_ctx;
+    if( transfer->valid_length == 0) return(0);
     return obj->hackrf_rx_callback(transfer->buffer, transfer->valid_length);
 }
 
@@ -89,6 +104,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
             buf += SAMPLES_PER_BLOCK;
             continue;
         }
+
         if(!sweep_started) {
             if (frequency == (uint64_t)(FREQ_ONE_MHZ*frequencies[0])) {
                 sweep_started = true;
@@ -97,26 +113,34 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
                 continue;
             }
         }
+
         if((FREQ_MAX_MHZ * FREQ_ONE_MHZ) < frequency) {
             buf += SAMPLES_PER_BLOCK;
             continue;
         }
+
         /* copy to fftwIn as floats */
         buf += SAMPLES_PER_BLOCK - (fftSize * 2);
         for(int i=0; i < fftSize; i++) {
             fftwIn[i][0] = buf[i*2] * window[i] * 1.0f / 128.0f;
             fftwIn[i][1] = buf[i*2+1] * window[i] * 1.0f / 128.0f;
         }
+
         buf += fftSize * 2;
         fftwf_execute(fftwPlan);
         for (int i=0; i < fftSize; i++) {
             pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
+
+            // test
+            //m_ringBuffer->addSample(logPower(fftwOut[i], 1.0f / fftSize));
+            //m_ringBuffer->addSample(1.1);
         }
 
         time_now = time(NULL);
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
+        //---------------------------------------------------------------------
         printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
                time_str,
                (uint64_t)(frequency),
@@ -127,7 +151,9 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
             printf(", %.2f", pwr[i]);
         }
         printf(" ups1 (%u) \n", (uint32_t)((1+(fftSize*7)/8)-(1+(fftSize*5)/8)));
+        //---------------------------------------------------------------------
 
+        //---------------------------------------------------------------------
         printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
                time_str,
                (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
@@ -138,11 +164,20 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
             printf(", %.2f", pwr[i]);
         }
         printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
+        //---------------------------------------------------------------------
 
-        //        }
+        QByteArray test("1111111111111");
+        getInstance()->onTestDataCallbacks(test);
+
         if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
                         >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))) {
             do_exit = true;
+
+            qDebug() << "======================================";
+            qDebug() << (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+                     << " >= "
+                     << (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]);
+            qDebug() << "======================================";
         }
 
         //qDebug() << "BLOCKS_PER_TRANSFER";
@@ -152,6 +187,19 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
     //printf("RETURN 0\n");
 
     return 0;
+}
+
+float SweepWorker::logPower(fftwf_complex in, float scale)
+{
+    float re = in[0] * scale;
+    float im = in[1] * scale;
+    float magsq = re * re + im * im;
+    return log2f(magsq) * 10.0f / log2(10.0f);
+}
+
+float SweepWorker::TimevalDiff(const timeval *a, const timeval *b)
+{
+    return (a->tv_sec - b->tv_sec) + 1e-6f * (a->tv_usec - b->tv_usec);
 }
 
 void SweepWorker::errorHackrf(const QString &text, int result)
@@ -172,10 +220,6 @@ void SweepWorker::sweepWorkerMessagelog(const QString &value)
     answer.setDataAnswer(log.exportToJson());
 
     emit sendSweepWorkerMessagelog(answer.exportToJson());
-}
-
-SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
-{
 }
 
 void SweepWorker::onRunSweepWorker(const QByteArray &value)
@@ -222,6 +266,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     fftwPlan = fftwf_plan_dft_1d(fftSize, fftwIn, fftwOut, FFTW_FORWARD, FFTW_MEASURE);
     pwr = (float*)fftwf_malloc(sizeof(float) * fftSize);
     window = (float*)fftwf_malloc(sizeof(float) * fftSize);
+
     for (i = 0; i < fftSize; i++) {
         window[i] = 0.5f * (1.0f - cos(2 * M_PI * i / (fftSize - 1)));
     }
@@ -384,6 +429,13 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     fftwf_free(fftwOut);
     fftwf_free(pwr);
     fftwf_free(window);
+
+//#ifdef QT_DEBUG
+//    qDebug() << "--------------------------";
+//    qDebug() << "FFT Size:" << fftSize;
+//    qDebug() << "RING_BUFFER Available Read:" << m_ringBuffer->availableRead();
+//    qDebug() << "--------------------------";
+//#endif
 
     do_exit = false;
 }

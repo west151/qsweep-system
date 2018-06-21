@@ -22,6 +22,8 @@ public:
 
     void onConnectToHost(const QString &host, const quint16 &port);
 
+    void onDataFromWorker(const QByteArray &value);
+
 signals:
     void sendRunSweepInfo(const QByteArray &);
     void sendRunSweepWorker(const QByteArray &);
