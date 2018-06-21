@@ -22,4 +22,5 @@ HEADERS += \
     sweepworker.h \
     hackrfinfo.h \
     ringbuffer.h \
-    fifobuffer.h
+    fifobuffer.h \
+    constant.h

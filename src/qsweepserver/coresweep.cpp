@@ -53,7 +53,7 @@ void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
 void CoreSweep::onDataFromWorker(const QByteArray &value)
 {
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << "::" << QString(value);
+    qDebug() << Q_FUNC_INFO << ">" << value << "size" << value.size();
 #endif
 }
 

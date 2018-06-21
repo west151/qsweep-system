@@ -11,8 +11,6 @@
 #include <QtCore/qdebug.h>
 #endif
 
-#define _FILE_OFFSET_BITS 64
-
 int num_ranges = 0;
 uint16_t frequencies[MAX_SWEEP_RANGES*2];
 
@@ -25,8 +23,8 @@ struct timeval t_start;
 bool amp = false;
 uint32_t amp_enable;
 
-bool antenna = false;
-uint32_t antenna_enable;
+//bool antenna = false;
+//uint32_t antenna_enable;
 
 bool one_shot = true;
 volatile bool sweep_started = false;
@@ -51,8 +49,7 @@ SweepWorker* SweepWorker::m_instance = 0;
 
 SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 {
-     m_fifo = new FifoBuffer();
-     m_ringBuffer = new RingBuffer(1024);
+
 }
 
 SweepWorker *SweepWorker::getInstance()
@@ -64,11 +61,8 @@ SweepWorker *SweepWorker::getInstance()
 
 void SweepWorker::onTestDataCallbacks(const QByteArray &value)
 {
-    const QByteArray test(value);
 
-    //qDebug() << test;
-
-    emit sendData(test);
+    emit sendData(value);
 }
 
 int SweepWorker::rx_callback(hackrf_transfer *transfer)
@@ -130,10 +124,6 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         fftwf_execute(fftwPlan);
         for (int i=0; i < fftSize; i++) {
             pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
-
-            // test
-            //m_ringBuffer->addSample(logPower(fftwOut[i], 1.0f / fftSize));
-            //m_ringBuffer->addSample(1.1);
         }
 
         time_now = time(NULL);
@@ -160,14 +150,14 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
                (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
                fftSize);
 
+        QByteArray power;
         for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
             printf(", %.2f", pwr[i]);
+            power.append(pwr[i]);
         }
         printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
         //---------------------------------------------------------------------
-
-        QByteArray test("1111111111111");
-        getInstance()->onTestDataCallbacks(test);
+        getInstance()->onTestDataCallbacks(power);
 
         if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
                         >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))) {
@@ -243,12 +233,12 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     amp = true;
 
     if(4 > fftSize) {
-        fprintf(stderr,"argument error: FFT bin width (-w) must be no more than one quarter the sample rate\n");
+        fprintf(stderr,"argument error: FFT bin width must be no more than one quarter the sample rate\n");
         exit(0);
     }
 
     if(16368 < fftSize) {
-        fprintf(stderr,	"argument error: FFT bin width (-w) too small, resulted in more than 16368 FFT bins\n");
+        fprintf(stderr,	"argument error: FFT bin width too small, resulted in more than 16368 FFT bins\n");
         exit(0);
     }
 
