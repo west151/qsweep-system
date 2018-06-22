@@ -71,7 +71,8 @@ void UserInterface::onRequestSweepSpectr()
     QSweepRequest info(this);
     QSweepParams params(this);
     params.setFrequencyMin(2300);
-    params.setFrequencyMax(2700);
+    params.setFrequencyMax(2320);
+    //params.setFrequencyMax(2700);
 
     info.setDataRequest(params.exportToJson());
     info.setTypeRequest(TypeRequest::SWEEP_SPECTR);

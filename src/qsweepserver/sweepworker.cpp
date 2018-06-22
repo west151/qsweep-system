@@ -428,6 +428,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 //#endif
 
     do_exit = false;
+    num_ranges = 0;
 }
 
 void SweepWorker::onStopSweepWorker()
