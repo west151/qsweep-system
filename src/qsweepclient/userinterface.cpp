@@ -6,7 +6,9 @@
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_hostname("127.0.0.1"),
     m_port(1883),
-    isConnectedToHost(false)
+    isConnectedToHost(false),
+    m_freqMin(30),
+    m_freqMax(6000)
 {
 
 }
@@ -48,6 +50,30 @@ bool UserInterface::connectedToHost() const
     return isConnectedToHost;
 }
 
+void UserInterface::setFrequencyMin(const quint32 &value)
+{
+    m_freqMin = value;
+
+    emit sendFrequencyMinChanged();
+}
+
+quint32 UserInterface::frequencyMin() const
+{
+    return m_freqMin;
+}
+
+void UserInterface::setFrequencyMax(const quint32 &value)
+{
+    m_freqMax = value;
+
+    emit sendFrequencyMaxChanged();
+}
+
+quint32 UserInterface::frequencyMax() const
+{
+    return m_freqMax;
+}
+
 void UserInterface::onConnectToHost()
 {
     emit sendConnectToHost(m_hostname, m_port);
@@ -70,9 +96,8 @@ void UserInterface::onRequestSweepSpectr()
 {
     QSweepRequest info(this);
     QSweepParams params(this);
-    params.setFrequencyMin(2300);
-    params.setFrequencyMax(2320);
-    //params.setFrequencyMax(2700);
+    params.setFrequencyMin(m_freqMin);
+    params.setFrequencyMax(m_freqMax);
 
     info.setDataRequest(params.exportToJson());
     info.setTypeRequest(TypeRequest::SWEEP_SPECTR);
