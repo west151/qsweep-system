@@ -55,7 +55,7 @@ private:
     QString m_hostname;
     quint16 m_port;
     bool isConnectedToHost;
-
+    // spectr params
     quint32 m_freqMin;
     quint32 m_freqMax;
 };
