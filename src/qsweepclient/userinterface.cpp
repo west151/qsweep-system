@@ -8,7 +8,10 @@ UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_port(1883),
     isConnectedToHost(false),
     m_freqMin(30),
-    m_freqMax(6000)
+    m_freqMax(6000),
+    m_lnaGain(0),
+    m_vgaGain(0),
+    m_oneShot(true)
 {
 
 }
@@ -72,6 +75,42 @@ void UserInterface::setFrequencyMax(const quint32 &value)
 quint32 UserInterface::frequencyMax() const
 {
     return m_freqMax;
+}
+
+void UserInterface::setLnaGain(const quint32 &value)
+{
+    m_lnaGain = value;
+
+    emit sendLnaGainChanged();
+}
+
+quint32 UserInterface::lnaGain() const
+{
+    return m_lnaGain;
+}
+
+void UserInterface::setVgaGain(const quint32 &value)
+{
+    m_vgaGain = value;
+
+    emit sendVgaGainChanged();
+}
+
+quint32 UserInterface::vgaGain() const
+{
+    return m_vgaGain;
+}
+
+void UserInterface::setOneShot(const bool &value)
+{
+    m_oneShot = value;
+
+    emit sendOneShotChanged();
+}
+
+bool UserInterface::oneShot() const
+{
+    return m_oneShot;
 }
 
 void UserInterface::onConnectToHost()

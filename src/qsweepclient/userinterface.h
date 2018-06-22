@@ -14,6 +14,8 @@ class UserInterface : public QObject
     // spectr params
     Q_PROPERTY(quint32 frequencyMin READ frequencyMin WRITE setFrequencyMin NOTIFY sendFrequencyMinChanged)
     Q_PROPERTY(quint32 frequencyMax READ frequencyMax WRITE setFrequencyMax NOTIFY sendFrequencyMaxChanged)
+    Q_PROPERTY(quint32 lnaGain READ lnaGain WRITE setLnaGain NOTIFY sendLnaGainChanged)
+    Q_PROPERTY(quint32 vgaGain READ vgaGain WRITE setVgaGain NOTIFY sendVgaGainChanged)
 
 public:
     explicit UserInterface(QObject *parent = nullptr);
@@ -30,9 +32,14 @@ public:
     // spectr params
     void setFrequencyMin(const quint32 &);
     quint32 frequencyMin()const;
-
     void setFrequencyMax(const quint32 &);
     quint32 frequencyMax()const;
+    void setLnaGain(const quint32 &);
+    quint32 lnaGain()const;
+    void setVgaGain(const quint32 &);
+    quint32 vgaGain()const;
+    void setOneShot(const bool &);
+    bool oneShot()const;
 
     Q_INVOKABLE void onConnectToHost();
     Q_INVOKABLE void onDisconnectFromHost();
@@ -50,6 +57,9 @@ signals:
     // spectr params
     void sendFrequencyMinChanged();
     void sendFrequencyMaxChanged();
+    void sendLnaGainChanged();
+    void sendVgaGainChanged();
+    void sendOneShotChanged();
 
 private:
     QString m_hostname;
@@ -58,6 +68,9 @@ private:
     // spectr params
     quint32 m_freqMin;
     quint32 m_freqMax;
+    quint32 m_lnaGain;
+    quint32 m_vgaGain;
+    bool m_oneShot;
 };
 
 #endif // USERINTERFACE_H
