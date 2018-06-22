@@ -6,10 +6,6 @@ ClientForm {
         userInterface.onDisconnectFromHost()
     }
 
-    buttonSendData.onClicked: {
-        userInterface.onRequestSweepSpectr()
-    }
-
     buttonConnect.onClicked: {
         userInterface.host = textEditAddress.text
         userInterface.port = textEditPort.text

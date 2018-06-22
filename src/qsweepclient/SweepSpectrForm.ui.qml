@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias btnStart: btnStart
     property alias textInputFreqMax: textInputFreqMax
     property alias textInputFreqMin: textInputFreqMin
 
@@ -18,15 +19,6 @@ Item {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.top: parent.top
-
-            Label {
-                id: label
-                x: 391
-                y: 59
-                text: qsTr("Label")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-            }
         }
 
         Frame {
@@ -39,16 +31,6 @@ Item {
             anchors.bottomMargin: 0
             anchors.top: parent.top
             anchors.topMargin: 0
-
-            Label {
-                id: label1
-                y: 396
-                text: qsTr("Label")
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 19
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-            }
 
             TextField {
                 id: textInputFreqMin
@@ -70,16 +52,29 @@ Item {
 
             Label {
                 id: label2
-                x: 80
+                x: 46
                 y: 12
-                text: qsTr("min")
+                text: qsTr("Freq min")
             }
 
             Label {
                 id: label3
-                x: 77
+                x: 43
                 y: 64
-                text: qsTr("max")
+                text: qsTr("Freq max")
+            }
+
+            Button {
+                id: btnStart
+                x: 99
+                y: 392
+                width: 69
+                height: 40
+                text: qsTr("Run")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 0
             }
         }
     }

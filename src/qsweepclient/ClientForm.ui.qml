@@ -6,7 +6,6 @@ Item {
     width: 640
     height: 480
     property alias buttonDisconnect: buttonDisconnect
-    property alias buttonSendData: buttonSendData
     property alias buttonConnect: buttonConnect
     property alias textEditPort: textEditPort
     property alias textEditAddress: textEditAddress
@@ -65,18 +64,9 @@ Item {
         }
 
         Button {
-            id: buttonSendData
-            x: 288
-            y: 14
-            width: 93
-            height: 26
-            text: qsTr("Send data")
-        }
-
-        Button {
             id: buttonDisconnect
-            x: 175
-            y: 56
+            x: 283
+            y: 14
             width: 93
             height: 26
             text: qsTr("Disconnect")
