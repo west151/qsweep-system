@@ -1,18 +1,21 @@
 #ifndef QHACKRFINFO_H
 #define QHACKRFINFO_H
 
-#include <QObject>
+#include <QtCore/qshareddata.h>
+#include <QtCore/qmetatype.h>
 
 #include "qsweepprotocol_global.h"
 
-class QSWEEPPROTOCOLSHARED_EXPORT QHackrfInfo : public QObject
-{
-    Q_OBJECT
-public:
-    explicit QHackrfInfo(QObject *parent = nullptr);
-    QHackrfInfo(const QByteArray &json, bool binary = false);
+class QHackrfInfoData;
 
-    bool isValid()const;
+class QSWEEPPROTOCOLSHARED_EXPORT QHackrfInfo
+{
+public:
+    QHackrfInfo();
+    QHackrfInfo(const QHackrfInfo &);
+    QHackrfInfo(const QByteArray &json, const bool binary = false);
+    QHackrfInfo &operator=(const QHackrfInfo &);
+    ~QHackrfInfo();
 
     void setIndexBoard(const qint32 &);
     qint32 indexBoard()const;
@@ -32,16 +35,14 @@ public:
     void setLibHackrfVersion(const QString &);
     QString libHackrfVersion() const;
 
-    QByteArray exportToJson(bool binary = false) const;
+    bool isValid() const;
+
+    QByteArray exportToJson(const bool binary = false) const;
 
 private:
-    bool m_valid;
-    qint32 m_index;
-    QString m_serialNumbers;
-    QString m_boardID;
-    QString m_firmwareVersion;
-    QString m_partIDNumber;
-    QString m_libHackrfVersion;
+    QSharedDataPointer<QHackrfInfoData> data;
 };
+
+Q_DECLARE_METATYPE(QHackrfInfo)
 
 #endif // QHACKRFINFO_H

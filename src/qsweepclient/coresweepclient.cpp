@@ -10,7 +10,6 @@
 #include "qsweepanswer.h"
 #include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
-#include "model/hackrfinfomodel.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -19,12 +18,9 @@
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
     ptrMqttClient(new QMqttClient(this)),
-    ptrSweepTopic(new QSweepTopic(this)),
-    ptrHackrfInfoModel(new HackrfInfoModel(this))
+    ptrSweepTopic(new QSweepTopic(this))
 {
 //    https://stackoverflow.com/questions/49560780/mqt-qmqtt-qt-core-module-in-thread-strange-behaviour-from-animal-help-project
-
-
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -41,7 +37,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
-    context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
+    context->setContextProperty("hackrfInfoModel", &m_hackrfInfoModel);
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (ptrEngine->rootObjects().isEmpty())
@@ -96,9 +92,6 @@ void CoreSweepClient::initialization()
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
 
-    // Model
-    connect(this, &CoreSweepClient::sendHackrfInfoToModel,
-            ptrHackrfInfoModel, &HackrfInfoModel::addResult);
 }
 
 void CoreSweepClient::launching()
@@ -112,20 +105,20 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     case QSweepTopic::TOPIC_INFO:
     {
         QSweepAnswer answer(message);
+        const QHackrfInfo info(answer.dataAnswer(), false);
 
-        const auto info = new QHackrfInfo(answer.dataAnswer());
-        if(info->isValid()){
-            emit sendHackrfInfoToModel(info);
+        if(info.isValid()){
+            m_hackrfInfoModel.addResult(info);
 
 #ifdef QT_DEBUG
             qDebug() << "---------------------------------------------------";
             qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
-            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info->indexBoard();
-            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info->serialNumbers();
-            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info->boardID();
-            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info->firmwareVersion();
-            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info->partIDNumber();
-            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info->libHackrfVersion();
+            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
+            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
+            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
+            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
+            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
+            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
             qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
 #endif
         }
@@ -206,18 +199,6 @@ void CoreSweepClient::connecting()
 #ifdef QT_DEBUG
     qDebug() << Q_FUNC_INFO;
 #endif
-}
-
-void CoreSweepClient::sendingMessage()
-{
-    if(ptrMqttClient) {
-        if (ptrMqttClient->state() == QMqttClient::Connected) {
-            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), "run");
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << "test";
-#endif
-        }
-    }
 }
 
 void CoreSweepClient::sendingRequest(const QSweepRequest &value)

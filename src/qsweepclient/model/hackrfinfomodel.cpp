@@ -1,8 +1,12 @@
 #include "hackrfinfomodel.h"
 
+#ifdef QT_DEBUG
+#include <QtCore/qdebug.h>
+#endif
+
 HackrfInfoModel::HackrfInfoModel(QObject *parent): QAbstractListModel(parent)
 {
-
+    m_data.clear();
 }
 
 QVariant HackrfInfoModel::data(const QModelIndex &index, int role) const
@@ -10,31 +14,33 @@ QVariant HackrfInfoModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if ((index.row() >= 0) && (index.row() < m_data.size()))
+    if ((index.row() >= 0) && (index.row() < m_data.size())){
         switch (role) {
         case DATAROLE_INDEX_BOARD:
-            return m_data.at(index.row())->indexBoard();
+            return m_data.at(index.row()).indexBoard();
         case DATAROLE_SERIAL_NUMBERS:
-            return m_data.at(index.row())->serialNumbers();
+            return m_data.at(index.row()).serialNumbers();
         case DATAROLE_BOARD_ID:
-            return m_data.at(index.row())->boardID();
+            return m_data.at(index.row()).boardID();
         case DATAROLE_FIRMWARE_VERSION:
-            return m_data.at(index.row())->firmwareVersion();
+            return m_data.at(index.row()).firmwareVersion();
         case DATAROLE_PART_ID_NUMBER:
-            return m_data.at(index.row())->partIDNumber();
+            return m_data.at(index.row()).partIDNumber();
         case DATAROLE_HACKRF_VERSION:
-            return m_data.at(index.row())->libHackrfVersion();
+            return m_data.at(index.row()).libHackrfVersion();
         }
+    }
 
     return QVariant();
 }
 
 int HackrfInfoModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
-        return m_data.size();
-    else
+    if (parent.isValid())
         return 0;
+    else
+        return m_data.size();
+
 }
 
 QHash<int, QByteArray> HackrfInfoModel::roleNames() const
@@ -60,9 +66,9 @@ void HackrfInfoModel::clearResult()
     }
 }
 
-void HackrfInfoModel::addResult(QHackrfInfo *data)
+void HackrfInfoModel::addResult(const QHackrfInfo &data)
 {
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
-    m_data << data;
+    m_data.append(data);
     endInsertRows();
 }

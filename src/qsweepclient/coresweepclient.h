@@ -7,10 +7,11 @@
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
 
+#include "model/hackrfinfomodel.h"
+
 class UserInterface;
 class QSweepTopic;
 class QSweepRequest;
-class HackrfInfoModel;
 class QHackrfInfo;
 
 class CoreSweepClient : public QObject
@@ -19,9 +20,6 @@ class CoreSweepClient : public QObject
 public:
     explicit CoreSweepClient(QObject *parent = nullptr);
     int runCoreSweepClient(int argc, char *argv[]);
-
-signals:
-    void sendHackrfInfoToModel(QHackrfInfo*);
 
 public slots:
     void onConnectToHost(const QString &host, const quint16 &port);
@@ -32,7 +30,7 @@ private:
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
-    HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
+    HackrfInfoModel m_hackrfInfoModel;
 
     void initialization();
     void launching();
@@ -42,7 +40,7 @@ private:
     void brokerDisconnected();
     void pingReceived();
     void connecting();
-    void sendingMessage();
+//    void sendingMessage();
     void sendingRequest(const QSweepRequest &);
 };
 

@@ -185,9 +185,6 @@ void CoreSweep::sendingMessage(const QSweepAnswer &value)
     case TypeAnswer::INFO:
         if (ptrMqttClient->state() == QMqttClient::Connected) {
             qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value.exportToJson());
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result;
-#endif
         }
         break;
     default:
@@ -215,5 +212,9 @@ void CoreSweep::onSendingMessageRequest(const QByteArray &value)
         default:
             break;
         }
+
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
+#endif
     }
 }

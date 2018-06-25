@@ -20,14 +20,14 @@ public:
     explicit HackrfInfoModel(QObject* parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
-    int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
     void clearResult();
-    void addResult(QHackrfInfo *);
+    void addResult(const QHackrfInfo &);
 
 private:
-    QList<QHackrfInfo*> m_data;
+    QList<QHackrfInfo> m_data;
 };
 
 #endif // HACKRFINFOMODEL_H
