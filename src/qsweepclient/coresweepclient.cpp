@@ -10,6 +10,7 @@
 #include "qsweepanswer.h"
 #include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
+#include "model/hackrfinfomodel.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -18,9 +19,12 @@
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
     ptrMqttClient(new QMqttClient(this)),
-    ptrSweepTopic(new QSweepTopic(this))
+    ptrSweepTopic(new QSweepTopic(this)),
+    ptrHackrfInfoModel(new HackrfInfoModel(this))
 {
 //    https://stackoverflow.com/questions/49560780/mqt-qmqtt-qt-core-module-in-thread-strange-behaviour-from-animal-help-project
+
+
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -35,9 +39,10 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     ptrEngine = new QQmlApplicationEngine(this);
 
-    ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
+    context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
+    ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (ptrEngine->rootObjects().isEmpty())
         return -1;
@@ -90,6 +95,10 @@ void CoreSweepClient::initialization()
             this , &CoreSweepClient::pingReceived);
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
+
+    // Model
+    connect(this, &CoreSweepClient::sendHackrfInfoToModel,
+            ptrHackrfInfoModel, &HackrfInfoModel::addResult);
 }
 
 void CoreSweepClient::launching()
@@ -103,19 +112,23 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     case QSweepTopic::TOPIC_INFO:
     {
         QSweepAnswer answer(message);
-        QHackrfInfo info(answer.dataAnswer());
+
+        const auto info = new QHackrfInfo(answer.dataAnswer());
+        if(info->isValid()){
+            emit sendHackrfInfoToModel(info);
 
 #ifdef QT_DEBUG
-        qDebug() << "---------------------------------------------------";
-        qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
-        qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
-        qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
-        qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
-        qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
-        qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
-        qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
-        qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
+            qDebug() << "---------------------------------------------------";
+            qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
+            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info->indexBoard();
+            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info->serialNumbers();
+            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info->boardID();
+            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info->firmwareVersion();
+            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info->partIDNumber();
+            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info->libHackrfVersion();
+            qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
 #endif
+        }
     }
         break;
     case QSweepTopic::TOPIC_MESSAGE_LOG:

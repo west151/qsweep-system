@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias listView: listView
     property alias buttonUpdate: buttonUpdate
 
     Frame {
@@ -40,47 +41,6 @@ Item {
             ListView {
                 id: listView
                 anchors.fill: parent
-                model: ListModel {
-                    ListElement {
-                        name: "Grey"
-                        colorCode: "grey"
-                    }
-
-                    ListElement {
-                        name: "Red"
-                        colorCode: "red"
-                    }
-
-                    ListElement {
-                        name: "Blue"
-                        colorCode: "blue"
-                    }
-
-                    ListElement {
-                        name: "Green"
-                        colorCode: "green"
-                    }
-                }
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row1
-                        Rectangle {
-                            width: 40
-                            height: 40
-                            color: colorCode
-                        }
-
-                        Text {
-                            text: name
-                            anchors.verticalCenter: parent.verticalCenter
-                            font.bold: true
-                        }
-                        spacing: 10
-                    }
-                }
             }
         }
     }

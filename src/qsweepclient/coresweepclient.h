@@ -10,6 +10,8 @@
 class UserInterface;
 class QSweepTopic;
 class QSweepRequest;
+class HackrfInfoModel;
+class QHackrfInfo;
 
 class CoreSweepClient : public QObject
 {
@@ -19,6 +21,7 @@ public:
     int runCoreSweepClient(int argc, char *argv[]);
 
 signals:
+    void sendHackrfInfoToModel(QHackrfInfo*);
 
 public slots:
     void onConnectToHost(const QString &host, const quint16 &port);
@@ -29,6 +32,7 @@ private:
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
+    HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
 
     void initialization();
     void launching();

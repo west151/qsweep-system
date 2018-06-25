@@ -4,6 +4,9 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias switchOneShot: switchOneShot
+    property alias textInputVGAGain: textInputVGAGain
+    property alias textInputLNAGain: textInputLNAGain
     property alias btnStart: btnStart
     property alias textInputFreqMax: textInputFreqMax
     property alias textInputFreqMin: textInputFreqMin
@@ -75,6 +78,47 @@ Item {
                 anchors.rightMargin: 0
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
+            }
+
+            TextField {
+                id: textInputLNAGain
+                x: 111
+                y: 106
+                width: 57
+                height: 40
+                text: qsTr("0")
+            }
+
+            Label {
+                id: label
+                x: 44
+                y: 118
+                text: qsTr("LNA gain")
+            }
+
+            TextField {
+                id: textInputVGAGain
+                x: 111
+                y: 157
+                width: 57
+                height: 40
+                text: qsTr("0")
+            }
+
+            Label {
+                id: label1
+                x: 43
+                y: 169
+                text: qsTr("VGA gain")
+            }
+
+            Switch {
+                id: switchOneShot
+                x: 25
+                y: 210
+                text: qsTr("One Shot")
+                wheelEnabled: false
+                checked: true
             }
         }
     }
