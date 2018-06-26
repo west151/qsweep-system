@@ -1,9 +1,5 @@
 #include "hackrfinfomodel.h"
 
-#ifdef QT_DEBUG
-#include <QtCore/qdebug.h>
-#endif
-
 HackrfInfoModel::HackrfInfoModel(QObject *parent): QAbstractListModel(parent)
 {
     m_data.clear();

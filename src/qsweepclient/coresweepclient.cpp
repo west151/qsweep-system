@@ -38,6 +38,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", &m_hackrfInfoModel);
+    context->setContextProperty("messageLogModel", &m_messageLogModel);
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (ptrEngine->rootObjects().isEmpty())
@@ -128,12 +129,13 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     {
         QSweepAnswer answer(message);
         QSweepMessageLog log(answer.dataAnswer());
+        m_messageLogModel.addResult(log);
 
-//#ifdef QT_DEBUG
-//        qDebug() << "---------------------------------------------------";
-//        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
-//        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
-//#endif
+#ifdef QT_DEBUG
+        qDebug() << "---------------------------------------------------";
+        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
+        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
+#endif
     }
     default:
         break;

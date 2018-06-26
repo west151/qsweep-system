@@ -8,6 +8,7 @@
 #include <QtMqtt/QMqttSubscription>
 
 #include "model/hackrfinfomodel.h"
+#include "model/messagelogmodel.h"
 
 class UserInterface;
 class QSweepTopic;
@@ -31,6 +32,7 @@ private:
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
     HackrfInfoModel m_hackrfInfoModel;
+    MessageLogModel m_messageLogModel;
 
     void initialization();
     void launching();

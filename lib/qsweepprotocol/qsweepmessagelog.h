@@ -22,7 +22,7 @@ public:
     QString textMessage()const;
     void setTextMessage(const QString &);
 
-    QDateTime dateTimeCreateMessage()const;
+    QDateTime dateTime()const;
 
     QByteArray exportToJson(const bool binary = false) const;
 

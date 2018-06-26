@@ -85,7 +85,7 @@ void QSweepMessageLog::setTextMessage(const QString &value)
     data->m_textMessage = value;
 }
 
-QDateTime QSweepMessageLog::dateTimeCreateMessage() const
+QDateTime QSweepMessageLog::dateTime() const
 {
     return data->m_dateTime;
 }
