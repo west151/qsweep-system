@@ -116,9 +116,11 @@ bool CoreSweepClient::readSettings(const QString &file) const
         QFile file(fileConfig);
 
         if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            const SweepClientSettings settings(file.readAll());
+            const SweepClientSettings settings(file.readAll(), false);
             ptrUserInterface->onSweepClientSettings(settings);
             file.close();
+
+            return true;
         }else
             return false;
     }
@@ -126,10 +128,17 @@ bool CoreSweepClient::readSettings(const QString &file) const
     return false;
 }
 
-bool CoreSweepClient::launching() const
+void CoreSweepClient::launching()
 {
+    // connect to mqtt broker
+    if(ptrMqttClient)
+    {
+        ptrMqttClient->setHostname(ptrUserInterface->sweepClientSettings().hostBroker());
+        ptrMqttClient->setPort(ptrUserInterface->sweepClientSettings().portBroker());
 
-    return false;
+        if (ptrMqttClient->state() == QMqttClient::Disconnected)
+            ptrMqttClient->connectToHost();
+    }
 }
 
 void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)

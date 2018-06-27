@@ -36,6 +36,7 @@ public:
 
     // mqtt broker params
     void onSweepClientSettings(const SweepClientSettings &);
+    SweepClientSettings sweepClientSettings()const;
 
     void setHostBroker(const QString &);
     QString hostBroker()const;

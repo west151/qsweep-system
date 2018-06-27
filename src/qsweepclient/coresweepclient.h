@@ -9,6 +9,7 @@
 
 #include "model/hackrfinfomodel.h"
 #include "model/messagelogmodel.h"
+#include "settings/sweepclientsettings.h"
 
 class UserInterface;
 class QSweepTopic;
@@ -36,7 +37,7 @@ private:
 
     void initialization();
     bool readSettings(const QString &) const;
-    bool launching() const;
+    void launching();
 
     void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
     void updateLogStateChange();

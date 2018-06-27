@@ -47,6 +47,11 @@ void UserInterface::onSweepClientSettings(const SweepClientSettings &value)
     m_sweepClientSettings = value;
 }
 
+SweepClientSettings UserInterface::sweepClientSettings() const
+{
+    return m_sweepClientSettings;
+}
+
 void UserInterface::setHostBroker(const QString &value)
 {
     m_sweepClientSettings.setHostBroker(value);
