@@ -42,6 +42,35 @@ quint16 UserInterface::port() const
     return m_port;
 }
 
+void UserInterface::onSweepClientSettings(const SweepClientSettings &value)
+{
+    m_sweepClientSettings = value;
+}
+
+void UserInterface::setHostBroker(const QString &value)
+{
+    m_sweepClientSettings.setHostBroker(value);
+
+    emit hostBrokerChanged();
+}
+
+QString UserInterface::hostBroker() const
+{
+    return m_sweepClientSettings.hostBroker();
+}
+
+void UserInterface::setPortBroker(const quint16 &value)
+{
+    m_sweepClientSettings.setPortBroker(value);
+
+    emit portBrokerChanged();
+}
+
+quint16 UserInterface::portBroker() const
+{
+    return m_sweepClientSettings.portBroker();
+}
+
 void UserInterface::setConnectedToHost(const bool &value)
 {
     isConnectedToHost = value;

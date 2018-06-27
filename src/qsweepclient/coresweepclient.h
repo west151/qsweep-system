@@ -35,7 +35,7 @@ private:
     MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
 
     void initialization();
-    bool readSettings() const;
+    bool readSettings(const QString &) const;
     bool launching() const;
 
     void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());

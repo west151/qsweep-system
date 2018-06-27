@@ -7,14 +7,16 @@ HEADERS += \
     coresweepclient.h \
     userinterface.h \
     model/messagelogmodel.h \
-    model/hackrfinfomodel.h
+    model/hackrfinfomodel.h \
+    settings/sweepclientsettings.h
 
 SOURCES += \
     coresweepclient.cpp \
     userinterface.cpp \
     qsweepclient.cpp \
     model/messagelogmodel.cpp \
-    model/hackrfinfomodel.cpp
+    model/hackrfinfomodel.cpp \
+    settings/sweepclientsettings.cpp
 
 RESOURCES += qml.qrc
 

@@ -3,6 +3,8 @@
 #include <QGuiApplication>
 #include <QQmlContext>
 #include <QDateTime>
+#include <QFileInfo>
+#include <QDir>
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
@@ -14,6 +16,8 @@
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
 #endif
+
+static const QString config_suffix(QString(".json"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
@@ -34,6 +38,10 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     initialization();
+
+    if(readSettings(app.applicationFilePath())){
+        launching();
+    }
 
     ptrEngine = new QQmlApplicationEngine(this);
 
@@ -97,8 +105,23 @@ void CoreSweepClient::initialization()
 
 }
 
-bool CoreSweepClient::readSettings() const
+bool CoreSweepClient::readSettings(const QString &file) const
 {
+    QFileInfo info(file);
+    QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+    QFileInfo config(fileConfig);
+
+    if(config.exists())
+    {
+        QFile file(fileConfig);
+
+        if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            SweepClientSettings settings(file.readAll());
+            ptrUserInterface->onSweepClientSettings(settings);
+            file.close();
+        }else
+            return false;
+    }
 
     return false;
 }
