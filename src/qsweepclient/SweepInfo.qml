@@ -31,9 +31,7 @@ SweepInfoForm {
                     wrapMode: Text.WordWrap
                     anchors.verticalCenter: parent.verticalCenter
                     font.pointSize: 13
-
                 }
-
                 spacing: 10
             }
         }

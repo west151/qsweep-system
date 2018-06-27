@@ -288,6 +288,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     fprintf(stderr, "call hackrf_sample_rate_set(%.03f MHz)\n",
             ((float)DEFAULT_SAMPLE_RATE_HZ/(float)FREQ_ONE_MHZ));
 
+    sweepWorkerMessagelog(tr("call hackrf_sample_rate_set(%1 MHz)").arg((float)DEFAULT_SAMPLE_RATE_HZ/(float)FREQ_ONE_MHZ));
+
     result = hackrf_set_sample_rate_manual(device, DEFAULT_SAMPLE_RATE_HZ, 1);
 
     if( result != HACKRF_SUCCESS ) {
@@ -297,6 +299,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     fprintf(stderr, "call hackrf_baseband_filter_bandwidth_set(%.03f MHz)\n",
             ((float)DEFAULT_BASEBAND_FILTER_BANDWIDTH/(float)FREQ_ONE_MHZ));
+
+    sweepWorkerMessagelog(tr("call hackrf_baseband_filter_bandwidth_set(%1 MHz)").arg((float)DEFAULT_BASEBAND_FILTER_BANDWIDTH/(float)FREQ_ONE_MHZ));
 
     result = hackrf_set_baseband_filter_bandwidth(device, DEFAULT_BASEBAND_FILTER_BANDWIDTH);
     if( result != HACKRF_SUCCESS ) {
@@ -322,6 +326,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
                 / TUNE_STEP;
         frequencies[2*i+1] = frequencies[2*i] + step_count * TUNE_STEP;
         fprintf(stderr, "Sweeping from %u MHz to %u MHz\n", frequencies[2*i], frequencies[2*i+1]);
+        sweepWorkerMessagelog(tr("Sweeping from %1 MHz to %2 MHz").arg(frequencies[2*i]).arg(frequencies[2*i+1]));
     }
 
     result = hackrf_init_sweep(device, frequencies, num_ranges, num_samples,
@@ -361,12 +366,13 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         fprintf(stderr, "%4.1f MiB / %5.3f sec = %4.1f MiB/second\n",
                 (byte_count_now / 1e6f), time_difference, (rate / 1e6f) );
 
+        sweepWorkerMessagelog(tr("%1 MiB / %2 sec = %3 MiB/second").arg((byte_count_now/1e6f)).arg(time_difference).arg((rate/1e6f)) );
+
         time_start = time_now;
 
         if (byte_count_now == 0) {
             exit_code = EXIT_FAILURE;
             fprintf(stderr, "\nCouldn't transfer any bytes for one second.\n");
-            sweepWorkerMessagelog(tr("Couldn't transfer any bytes for one second."));
             break;
         }
     }

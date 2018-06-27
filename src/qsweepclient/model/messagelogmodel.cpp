@@ -1,4 +1,5 @@
 #include "messagelogmodel.h"
+#include <QtCore/QDateTime>
 
 MessageLogModel::MessageLogModel(QObject *parent): QAbstractListModel(parent)
 {
@@ -49,8 +50,8 @@ QVariant MessageLogModel::data(const QModelIndex &index, int role) const
         switch (role) {
 //        case DATAROLE_MESSAGE_TYPE:
 //            return m_data.at(index.row()).messageLogType();
-//        case DATAROLE_DT_MESSAGE:
-//            return m_data.at(index.row()).dateTimeCreateMessage();
+        case DATAROLE_DT_MESSAGE:
+            return m_data.at(index.row()).dateTime().toUTC().toString("hh:mm:ss.zzz");
         case DATAROLE_MESSAGE_TEXT:
             return m_data.at(index.row()).textMessage();
         }

@@ -9,9 +9,22 @@ ApplicationWindow {
     height: 480
     title: qsTr("Spectr")
 
+    Top{
+        id: idTopForm
+        width: window.width
+    }
+
     SwipeView {
         id: swipeView
-        anchors.fill: parent
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        anchors.top: parent.top
+        anchors.topMargin: idTopForm.height
+
         currentIndex: tabBar.currentIndex
 
         Client {
@@ -21,7 +34,6 @@ ApplicationWindow {
         }
 
         SweepSpectr {
-
         }
 
         SweepInfo {
