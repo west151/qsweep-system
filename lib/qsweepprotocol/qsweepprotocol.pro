@@ -30,7 +30,8 @@ SOURCES += \
     qsweeptopic.cpp \
     qsweepanswer.cpp \
     qhackrfinfo.cpp \
-    qsweepparams.cpp
+    qsweepparams.cpp \
+    qsweepspectr.cpp
 
 HEADERS += \
         qsweepprotocol_global.h \  
@@ -39,7 +40,8 @@ HEADERS += \
     qsweeptopic.h \
     qsweepanswer.h \
     qhackrfinfo.h \
-    qsweepparams.h
+    qsweepparams.h \
+    qsweepspectr.h
 
 #unix {
 #    target.path = /usr/lib
