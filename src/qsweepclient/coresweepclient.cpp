@@ -116,7 +116,7 @@ bool CoreSweepClient::readSettings(const QString &file) const
         QFile file(fileConfig);
 
         if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            SweepClientSettings settings(file.readAll());
+            const SweepClientSettings settings(file.readAll());
             ptrUserInterface->onSweepClientSettings(settings);
             file.close();
         }else
