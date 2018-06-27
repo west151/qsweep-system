@@ -31,18 +31,18 @@ private:
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
-    HackrfInfoModel m_hackrfInfoModel;
-    MessageLogModel m_messageLogModel;
+    HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
+    MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
 
     void initialization();
-    void launching();
+    bool readSettings() const;
+    bool launching() const;
 
     void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
     void updateLogStateChange();
     void brokerDisconnected();
     void pingReceived();
     void connecting();
-//    void sendingMessage();
     void sendingRequest(const QSweepRequest &);
 };
 

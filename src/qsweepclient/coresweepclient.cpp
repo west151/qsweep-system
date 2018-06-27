@@ -18,7 +18,9 @@
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
     ptrMqttClient(new QMqttClient(this)),
-    ptrSweepTopic(new QSweepTopic(this))
+    ptrSweepTopic(new QSweepTopic(this)),
+    ptrHackrfInfoModel(new HackrfInfoModel(this)),
+    ptrMessageLogModel(new MessageLogModel(this))
 {
 //    https://stackoverflow.com/questions/49560780/mqt-qmqtt-qt-core-module-in-thread-strange-behaviour-from-animal-help-project
 }
@@ -37,8 +39,8 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
-    context->setContextProperty("hackrfInfoModel", &m_hackrfInfoModel);
-    context->setContextProperty("messageLogModel", &m_messageLogModel);
+    context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
+    context->setContextProperty("messageLogModel", ptrMessageLogModel);
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (ptrEngine->rootObjects().isEmpty())
@@ -95,9 +97,16 @@ void CoreSweepClient::initialization()
 
 }
 
-void CoreSweepClient::launching()
+bool CoreSweepClient::readSettings() const
 {
 
+    return false;
+}
+
+bool CoreSweepClient::launching() const
+{
+
+    return false;
 }
 
 void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -109,7 +118,7 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         const QHackrfInfo info(answer.dataAnswer(), false);
 
         if(info.isValid()){
-            m_hackrfInfoModel.addResult(info);
+            ptrHackrfInfoModel->addResult(info);
 
 //#ifdef QT_DEBUG
 //            qDebug() << "---------------------------------------------------";
@@ -129,7 +138,7 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     {
         QSweepAnswer answer(message);
         QSweepMessageLog log(answer.dataAnswer());
-        m_messageLogModel.addResult(log);
+        ptrMessageLogModel->addResult(log);
 
 //#ifdef QT_DEBUG
 //        qDebug() << "---------------------------------------------------";

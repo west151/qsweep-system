@@ -194,6 +194,14 @@ void SweepWorker::errorHackrf(const QString &text, int result)
              << hackrf_error_name(static_cast<hackrf_error>(result))
              << tr("(%1)").arg(result);
 #endif
+
+    QString msg(text);
+    msg.append("\n");
+    msg.append(hackrf_error_name(static_cast<hackrf_error>(result)));
+    msg.append("\n");
+    msg.append(tr("code (%1)").arg(result));
+
+    sweepWorkerMessagelog(msg);
 }
 
 void SweepWorker::sweepWorkerMessagelog(const QString &value)
@@ -212,9 +220,9 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     const QSweepRequest request(value, false);
     const QSweepParams params(request.dataRequest());
 
-    fft_bin_width = params.fftBinWidth();    // FFT bin width (frequency resolution) in Hz
-    lna_gain = params.lnaGain();     // RX LNA (IF) gain, 0-40dB, 8dB steps
-    vga_gain = params.vgaGain();     // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    fft_bin_width = params.fftBinWidth();   // FFT bin width (frequency resolution) in Hz
+    lna_gain = params.lnaGain();            // RX LNA (IF) gain, 0-40dB, 8dB steps
+    vga_gain = params.vgaGain();            // RX VGA (baseband) gain, 0-62dB, 2dB steps
 
     if (0 == num_ranges) {
         frequencies[0] = (uint16_t)params.frequencyMin();
@@ -336,6 +344,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     if (amp) {
         fprintf(stderr, "call hackrf_set_amp_enable(%u)\n", amp_enable);
+        sweepWorkerMessagelog(tr("call hackrf_set_amp_enable(%1)").arg(amp_enable) );
         result = hackrf_set_amp_enable(device, (uint8_t)amp_enable);
         if (result != HACKRF_SUCCESS) {
             errorHackrf("hackrf_set_amp_enable() failed:", result);
