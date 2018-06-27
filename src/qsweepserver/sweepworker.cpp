@@ -169,12 +169,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
                      << (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]);
             qDebug() << "======================================";
         }
-
-        //qDebug() << "BLOCKS_PER_TRANSFER";
-
     } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
-
-    //printf("RETURN 0\n");
 
     return 0;
 }
@@ -234,11 +229,13 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     if(4 > fftSize) {
         fprintf(stderr,"argument error: FFT bin width must be no more than one quarter the sample rate\n");
+        sweepWorkerMessagelog(tr("argument error: FFT bin width must be no more than one quarter the sample rate"));
         exit(0);
     }
 
     if(16368 < fftSize) {
         fprintf(stderr,	"argument error: FFT bin width too small, resulted in more than 16368 FFT bins\n");
+        sweepWorkerMessagelog(tr("argument error: FFT bin width too small, resulted in more than 16368 FFT bins"));
         exit(0);
     }
 

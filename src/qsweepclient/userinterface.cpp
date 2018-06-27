@@ -11,6 +11,7 @@ UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_freqMax(6000),
     m_lnaGain(0),
     m_vgaGain(0),
+    m_fftBinWidth(500000),
     m_oneShot(true)
 {
 
@@ -113,6 +114,18 @@ bool UserInterface::oneShot() const
     return m_oneShot;
 }
 
+void UserInterface::setFFTBinWidth(const quint32 &value)
+{
+    m_fftBinWidth = value;
+
+    emit sendFFTBinWidthChanged();
+}
+
+quint32 UserInterface::fftBinWidth() const
+{
+    return m_fftBinWidth;
+}
+
 void UserInterface::onConnectToHost()
 {
     emit sendConnectToHost(m_hostname, m_port);
@@ -137,6 +150,9 @@ void UserInterface::onRequestSweepSpectr()
     QSweepParams params(this);
     params.setFrequencyMin(m_freqMin);
     params.setFrequencyMax(m_freqMax);
+    params.setFFTBinWidth(m_fftBinWidth);
+    params.setLnaGain(m_lnaGain);
+    params.setVgaGain(m_vgaGain);
 
     info.setDataRequest(params.exportToJson());
     info.setTypeRequest(TypeRequest::SWEEP_SPECTR);

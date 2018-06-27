@@ -52,9 +52,9 @@ void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
 
 void CoreSweep::onDataFromWorker(const QByteArray &value)
 {
-#ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << ">" << value << "size" << value.size();
-#endif
+//#ifdef QT_DEBUG
+//    qDebug() << Q_FUNC_INFO << ">" << value << "size" << value.size();
+//#endif
 }
 
 void CoreSweep::initialization()
@@ -111,7 +111,7 @@ void CoreSweep::launching()
 
 void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
-    QString ctrl(message);
+//    QString ctrl(message);
 
     QSweepRequest request(message, false);
 
@@ -127,10 +127,10 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
             break;
         }
 
-#ifdef QT_DEBUG
-        qDebug() << "Server: TOPIC" << topic.name();
-        qDebug() << "Server: JSON" << ctrl;
-#endif
+//#ifdef QT_DEBUG
+//        qDebug() << "Server: TOPIC" << topic.name();
+//        qDebug() << "Server: JSON" << ctrl;
+//#endif
     }
 }
 
@@ -213,8 +213,8 @@ void CoreSweep::onSendingMessageRequest(const QByteArray &value)
             break;
         }
 
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
-#endif
+//#ifdef QT_DEBUG
+//            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
+//#endif
     }
 }

@@ -30,8 +30,8 @@ SweepSpectrForm {
         userInterface.frequencyMax = textInputFreqMax.text
         userInterface.lnaGain = textInputLNAGain.text
         userInterface.vgaGain = textInputVGAGain.text
+        userInterface.fftBinWidth = textInputFFTBinWidth.text
         userInterface.oneShot = switchOneShot.checkable
-
         userInterface.onRequestSweepSpectr()
     }
 }

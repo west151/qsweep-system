@@ -111,17 +111,17 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         if(info.isValid()){
             m_hackrfInfoModel.addResult(info);
 
-#ifdef QT_DEBUG
-            qDebug() << "---------------------------------------------------";
-            qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
-            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
-            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
-            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
-            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
-            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
-            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
-            qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
-#endif
+//#ifdef QT_DEBUG
+//            qDebug() << "---------------------------------------------------";
+//            qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
+//            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
+//            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
+//            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
+//            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
+//            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
+//            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
+//            qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
+//#endif
         }
     }
         break;
@@ -131,11 +131,11 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         QSweepMessageLog log(answer.dataAnswer());
         m_messageLogModel.addResult(log);
 
-#ifdef QT_DEBUG
-        qDebug() << "---------------------------------------------------";
-        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
-        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
-#endif
+//#ifdef QT_DEBUG
+//        qDebug() << "---------------------------------------------------";
+//        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
+//        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
+//#endif
     }
     default:
         break;

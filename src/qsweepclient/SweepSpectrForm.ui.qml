@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias textInputFFTBinWidth: textInputFFTBinWidth
     property alias switchOneShot: switchOneShot
     property alias textInputVGAGain: textInputVGAGain
     property alias textInputLNAGain: textInputLNAGain
@@ -114,11 +115,32 @@ Item {
 
             Switch {
                 id: switchOneShot
-                x: 25
-                y: 210
+                x: 31
+                y: 266
                 text: qsTr("One Shot")
                 wheelEnabled: false
                 checked: true
+            }
+
+            Row {
+                x: 13
+                y: 203
+            }
+
+            TextField {
+                id: textInputFFTBinWidth
+                x: 99
+                y: 215
+                width: 69
+                height: 40
+                text: qsTr("500000")
+            }
+
+            Label {
+                id: label4
+                x: 1
+                y: 226
+                text: qsTr("FFT bin width")
             }
         }
     }

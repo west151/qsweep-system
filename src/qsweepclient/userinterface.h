@@ -16,6 +16,7 @@ class UserInterface : public QObject
     Q_PROPERTY(quint32 frequencyMax READ frequencyMax WRITE setFrequencyMax NOTIFY sendFrequencyMaxChanged)
     Q_PROPERTY(quint32 lnaGain READ lnaGain WRITE setLnaGain NOTIFY sendLnaGainChanged)
     Q_PROPERTY(quint32 vgaGain READ vgaGain WRITE setVgaGain NOTIFY sendVgaGainChanged)
+    Q_PROPERTY(quint32 fftBinWidth READ fftBinWidth WRITE setFFTBinWidth NOTIFY sendFFTBinWidthChanged)
     Q_PROPERTY(bool oneShot READ oneShot WRITE setOneShot NOTIFY sendOneShotChanged)
 
 public:
@@ -41,6 +42,8 @@ public:
     quint32 vgaGain()const;
     void setOneShot(const bool &);
     bool oneShot()const;
+    void setFFTBinWidth(const quint32 &);
+    quint32 fftBinWidth()const;
 
     Q_INVOKABLE void onConnectToHost();
     Q_INVOKABLE void onDisconnectFromHost();
@@ -61,6 +64,7 @@ signals:
     void sendLnaGainChanged();
     void sendVgaGainChanged();
     void sendOneShotChanged();
+    void sendFFTBinWidthChanged();
 
 private:
     QString m_hostname;
@@ -71,6 +75,7 @@ private:
     quint32 m_freqMax;
     quint32 m_lnaGain;
     quint32 m_vgaGain;
+    quint32 m_fftBinWidth;
     bool m_oneShot;
 };
 
