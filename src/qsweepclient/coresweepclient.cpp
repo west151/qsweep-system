@@ -83,12 +83,6 @@ void CoreSweepClient::onDisconnectFromHost()
 
 void CoreSweepClient::initialization()
 {
-    // User interface
-    connect(ptrUserInterface, &UserInterface::sendConnectToHost,
-            this, &CoreSweepClient::onConnectToHost);
-    connect(ptrUserInterface, &UserInterface::sendDisconnectFromHost,
-            this, &CoreSweepClient::onDisconnectFromHost);
-
     // MQTT
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweepClient::messageReceived);

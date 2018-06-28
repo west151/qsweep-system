@@ -4,9 +4,6 @@
 #include "qsweepparams.h"
 
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
-    m_hostname("127.0.0.1"),
-    m_port(1883),
-    isConnectedToHost(false),
     m_freqMin(30),
     m_freqMax(6000),
     m_lnaGain(0),
@@ -16,31 +13,6 @@ UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_pingReceivedCount(0)
 {
 
-}
-
-void UserInterface::setHost(const QString &host)
-{
-    m_hostname.clear();
-    m_hostname = host;
-
-    emit hostChanged();
-}
-
-QString UserInterface::host() const
-{
-    return m_hostname;
-}
-
-void UserInterface::setPort(const quint16 &port)
-{
-    m_port = port;
-
-    emit portChanged();
-}
-
-quint16 UserInterface::port() const
-{
-    return m_port;
 }
 
 void UserInterface::onSweepClientSettings(const SweepClientSettings &value)
@@ -87,18 +59,6 @@ void UserInterface::setPortBroker(const quint16 &value)
 quint16 UserInterface::portBroker() const
 {
     return m_sweepClientSettings.portBroker();
-}
-
-void UserInterface::setConnectedToHost(const bool &value)
-{
-    isConnectedToHost = value;
-
-     emit connectedToHostChanged();
-}
-
-bool UserInterface::connectedToHost() const
-{
-    return isConnectedToHost;
 }
 
 void UserInterface::setFrequencyMin(const quint32 &value)
@@ -171,16 +131,6 @@ void UserInterface::setFFTBinWidth(const quint32 &value)
 quint32 UserInterface::fftBinWidth() const
 {
     return m_fftBinWidth;
-}
-
-void UserInterface::onConnectToHost()
-{
-    emit sendConnectToHost(m_hostname, m_port);
-}
-
-void UserInterface::onDisconnectFromHost()
-{
-    emit sendDisconnectFromHost();
 }
 
 void UserInterface::onRequestSweepInfo()
