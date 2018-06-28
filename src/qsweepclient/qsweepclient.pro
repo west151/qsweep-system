@@ -1,4 +1,4 @@
-QT += quick mqtt
+QT += charts qml quick mqtt
 
 include(../../common.pri)
 include(../../protocol.pri)

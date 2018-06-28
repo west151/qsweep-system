@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias frameChart: frameChart
     property alias textInputFFTBinWidth: textInputFFTBinWidth
     property alias switchOneShot: switchOneShot
     property alias textInputVGAGain: textInputVGAGain

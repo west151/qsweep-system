@@ -1,6 +1,6 @@
 #include "coresweepclient.h"
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlContext>
 #include <QDateTime>
 #include <QFileInfo>
@@ -35,7 +35,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QCoreApplication::setApplicationName("CoreSweepClient");
     QCoreApplication::setApplicationVersion("1.0");
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     initialization();
 

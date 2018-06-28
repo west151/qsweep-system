@@ -122,42 +122,48 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
 
         buf += fftSize * 2;
         fftwf_execute(fftwPlan);
+        // test
+        printf(" BLOCKS_PER_TRANSFER: (%u) \n", BLOCKS_PER_TRANSFER);
+        printf(" fftSize: (%u) \n", fftSize);
         for (int i=0; i < fftSize; i++) {
             pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
+
+            // test
+            printf(", %.2f", logPower(fftwOut[i], 1.0f / fftSize));
         }
 
         time_now = time(NULL);
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
-        //---------------------------------------------------------------------
-        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-               time_str,
-               (uint64_t)(frequency),
-               (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
-               fftSize);
+//        //---------------------------------------------------------------------
+//        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+//               time_str,
+//               (uint64_t)(frequency),
+//               (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
+//               fftSize);
 
-        for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++) {
-            printf(", %.2f", pwr[i]);
-        }
-        printf(" ups1 (%u) \n", (uint32_t)((1+(fftSize*7)/8)-(1+(fftSize*5)/8)));
-        //---------------------------------------------------------------------
+//        for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++) {
+//            printf(", %.2f", pwr[i]);
+//        }
+//        printf(" ups1 (%u) \n", (uint32_t)((1+(fftSize*7)/8)-(1+(fftSize*5)/8)));
+//        //---------------------------------------------------------------------
 
-        //---------------------------------------------------------------------
-        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-               time_str,
-               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
-               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
-               fftSize);
+//        //---------------------------------------------------------------------
+//        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+//               time_str,
+//               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
+//               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
+//               fftSize);
 
-        QByteArray power;
-        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
-            printf(", %.2f", pwr[i]);
-            power.append(pwr[i]);
-        }
-        printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
-        //---------------------------------------------------------------------
-        getInstance()->onTestDataCallbacks(power);
+//        QByteArray power;
+//        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
+//            printf(", %.2f", pwr[i]);
+//            power.append(pwr[i]);
+//        }
+//        printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
+//        //---------------------------------------------------------------------
+//        getInstance()->onTestDataCallbacks(power);
 
         if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
                         >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))) {
