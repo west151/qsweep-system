@@ -30,9 +30,6 @@ ApplicationWindow {
         Client {
         }
 
-        SweepControl {
-        }
-
         SweepSpectr {
         }
 
@@ -49,9 +46,6 @@ ApplicationWindow {
 
         TabButton {
             text: qsTr("Connect")
-        }
-        TabButton {
-            text: qsTr("Control")
         }
         TabButton {
             text: qsTr("Spectr")

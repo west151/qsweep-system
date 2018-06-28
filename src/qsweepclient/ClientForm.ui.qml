@@ -3,73 +3,71 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.0
 
 Item {
+    id: item1
     width: 640
     height: 480
-    property alias buttonDisconnect: buttonDisconnect
-    property alias buttonConnect: buttonConnect
-    property alias textEditPort: textEditPort
-    property alias textEditAddress: textEditAddress
+    property alias labelPingReceivedCount: labelPingReceivedCount
+    property alias labelPortBroker: labelPortBroker
+    property alias labelHostBroker: labelHostBroker
 
-    Page {
-        id: page
-        anchors.fill: parent
+    Frame {
+        id: frame
+        anchors.right: parent.right
+        anchors.rightMargin: 8
+        anchors.left: parent.left
+        anchors.leftMargin: 8
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 8
+        anchors.top: parent.top
+        anchors.topMargin: 8
 
-        Text {
-            id: textAddress
-            x: 21
-            y: 20
-            text: qsTr("ip:")
-            font.bold: true
-            font.pixelSize: 12
-        }
+        Grid {
+            id: grid
+            width: 258
+            height: 97
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.top: parent.top
+            anchors.topMargin: 0
+            spacing: 11
+            columns: 2
 
-        TextEdit {
-            id: textEditAddress
-            x: 40
-            y: 20
-            width: 53
-            height: 13
-            text: qsTr("127.0.0.1")
-            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 12
-        }
+            Label {
+                id: labelHost
+                text: qsTr("Host broker:")
+                font.pointSize: 14
+            }
 
-        TextEdit {
-            id: textEditPort
-            x: 131
-            y: 20
-            height: 13
-            text: qsTr("1883")
-            Layout.preferredHeight: 20
-            Layout.preferredWidth: 80
-            font.pixelSize: 12
-        }
+            Label {
+                id: labelHostBroker
+                text: qsTr("host")
+                font.pointSize: 14
+            }
 
-        Text {
-            id: textPort
-            x: 99
-            y: 20
-            text: qsTr("port:")
-            font.bold: true
-            font.pixelSize: 12
-        }
+            Label {
+                id: labelPort
+                text: qsTr("Port broker:")
+                font.pointSize: 14
+            }
 
-        Button {
-            id: buttonConnect
-            x: 175
-            y: 14
-            width: 93
-            height: 26
-            text: qsTr("Connect")
-        }
 
-        Button {
-            id: buttonDisconnect
-            x: 283
-            y: 14
-            width: 93
-            height: 26
-            text: qsTr("Disconnect")
+            Label {
+                id: labelPortBroker
+                text: qsTr("port")
+                font.pointSize: 14
+            }
+
+            Label {
+                id: labelPingCount
+                text: qsTr("Ping Received:")
+                font.pointSize: 14
+            }
+
+            Label {
+                id: labelPingReceivedCount
+                text: qsTr("count")
+                font.pointSize: 14
+            }
         }
     }
 }

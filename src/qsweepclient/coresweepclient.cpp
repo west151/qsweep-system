@@ -232,9 +232,7 @@ void CoreSweepClient::brokerDisconnected()
 
 void CoreSweepClient::pingReceived()
 {
-#ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO;
-#endif
+    ptrUserInterface->onPingReceived();
 }
 
 void CoreSweepClient::connecting()

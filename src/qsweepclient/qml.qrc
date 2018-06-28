@@ -4,8 +4,6 @@
         <file>qtquickcontrols2.conf</file>
         <file>Client.qml</file>
         <file>ClientForm.ui.qml</file>
-        <file>SweepControl.qml</file>
-        <file>SweepControlForm.ui.qml</file>
         <file>SweepMessageLog.qml</file>
         <file>SweepMessageLogForm.ui.qml</file>
         <file>SweepInfo.qml</file>

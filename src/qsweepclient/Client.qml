@@ -2,13 +2,18 @@ import QtQuick 2.4
 
 ClientForm {
 
-    buttonDisconnect.onClicked: {
-        userInterface.onDisconnectFromHost()
-    }
+    labelHostBroker.text: userInterface.hostBroker
+    labelPortBroker.text: userInterface.portBroker
+    labelPingReceivedCount.text: userInterface.pingReceivedCount
 
-    buttonConnect.onClicked: {
-        userInterface.host = textEditAddress.text
-        userInterface.port = textEditPort.text
-        userInterface.onConnectToHost()
-    }
+
+//    buttonDisconnect.onClicked: {
+//        userInterface.onDisconnectFromHost()
+//    }
+
+//    buttonConnect.onClicked: {
+//        userInterface.host = textEditAddress.text
+//        userInterface.port = textEditPort.text
+//        userInterface.onConnectToHost()
+//    }
 }

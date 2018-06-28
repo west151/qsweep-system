@@ -12,7 +12,8 @@ UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_lnaGain(0),
     m_vgaGain(0),
     m_fftBinWidth(500000),
-    m_oneShot(true)
+    m_oneShot(true),
+    m_pingReceivedCount(0)
 {
 
 }
@@ -50,6 +51,18 @@ void UserInterface::onSweepClientSettings(const SweepClientSettings &value)
 SweepClientSettings UserInterface::sweepClientSettings() const
 {
     return m_sweepClientSettings;
+}
+
+void UserInterface::onPingReceived()
+{
+    m_pingReceivedCount = m_pingReceivedCount + 1;
+
+    emit pingReceivedCountChanged();
+}
+
+quint32 UserInterface::pingReceivedCount() const
+{
+    return m_pingReceivedCount;
 }
 
 void UserInterface::setHostBroker(const QString &value)

@@ -23,6 +23,7 @@ class UserInterface : public QObject
     // mqtt broker params
     Q_PROPERTY(QString hostBroker READ hostBroker WRITE setHostBroker NOTIFY hostBrokerChanged)
     Q_PROPERTY(quint16 portBroker READ portBroker WRITE setPortBroker NOTIFY portBrokerChanged)
+    Q_PROPERTY(quint32 pingReceivedCount READ pingReceivedCount NOTIFY pingReceivedCountChanged)
 
 public:
     explicit UserInterface(QObject *parent = nullptr);
@@ -37,6 +38,8 @@ public:
     // mqtt broker params
     void onSweepClientSettings(const SweepClientSettings &);
     SweepClientSettings sweepClientSettings()const;
+    void onPingReceived();
+    quint32 pingReceivedCount()const;
 
     void setHostBroker(const QString &);
     QString hostBroker()const;
@@ -80,6 +83,7 @@ signals:
     // mqtt broker params
     void hostBrokerChanged();
     void portBrokerChanged();
+    void pingReceivedCountChanged();
 
 private:
     QString m_hostname;
@@ -96,6 +100,7 @@ private:
 
     // mqtt broker params
     SweepClientSettings m_sweepClientSettings;
+    quint32 m_pingReceivedCount;
 };
 
 #endif // USERINTERFACE_H
