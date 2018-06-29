@@ -1,41 +1,32 @@
 import QtQuick 2.4
+import QtQuick.Controls 2.3
 import QtCharts 2.2
 
 SweepSpectrForm {
 
+    ChartView {
+        id: chartViewSpectr
+        parent: frameChart
+        anchors.fill: parent
+        //title: "Line"
+        antialiasing: true
 
-        Text {
-            id: name
-            text: qsTr("text")
-            //anchors.fill: frameChart
-//            anchors.top: frameChart.top
-//            anchors.bottom: frameChart.bottom
-//            anchors.right: frameChart.right
-//            anchors.left: frameChart.right
+        animationOptions: ChartView.NoAnimation
+        theme: ChartView.ChartThemeDark
+        property bool openGL: true
+        property bool openGLSupported: true
+
+        LineSeries {
+            name: "LineSeries"
+            XYPoint { x: 0; y: 0 }
+            XYPoint { x: 1; y: 2.1 }
+            XYPoint { x: 2; y: 3.3 }
+            XYPoint { x: 3; y: 2.1 }
+            XYPoint { x: 4; y: 4.9 }
+            XYPoint { x: 5; y: 3.0 }
+            XYPoint { x: 6; y: 3.3 }
         }
-
-//    ChartView {
-//        //id: chartViewSpectr
-//        title: "Line"
-//        //anchors.fill: frameChart
-//        antialiasing: true
-
-//        animationOptions: ChartView.NoAnimation
-//        theme: ChartView.ChartThemeDark
-//        property bool openGL: true
-//        property bool openGLSupported: true
-
-//        LineSeries {
-//            name: "LineSeries"
-//            XYPoint { x: 0; y: 0 }
-//            XYPoint { x: 1; y: 2.1 }
-//            XYPoint { x: 2; y: 3.3 }
-//            XYPoint { x: 3; y: 2.1 }
-//            XYPoint { x: 4; y: 4.9 }
-//            XYPoint { x: 5; y: 3.0 }
-//            XYPoint { x: 6; y: 3.3 }
-//        }
-//    }
+    }
 
 
     textInputFreqMin{
