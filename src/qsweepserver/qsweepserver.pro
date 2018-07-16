@@ -13,14 +13,10 @@ SOURCES += \
     qsweepserver.cpp \
     coresweep.cpp \
     sweepworker.cpp \
-    hackrfinfo.cpp \
-    ringbuffer.cpp \
-    fifobuffer.cpp
+    hackrfinfo.cpp
 
 HEADERS += \
     coresweep.h \
     sweepworker.h \
     hackrfinfo.h \
-    ringbuffer.h \
-    fifobuffer.h \
     constant.h

@@ -25,7 +25,8 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrMqttClient(new QMqttClient(this)),
     ptrSweepTopic(new QSweepTopic(this)),
     ptrHackrfInfoModel(new HackrfInfoModel(this)),
-    ptrMessageLogModel(new MessageLogModel(this))
+    ptrMessageLogModel(new MessageLogModel(this)),
+    ptrDataSource(new DataSource(this))
 {
 //    https://stackoverflow.com/questions/49560780/mqt-qmqtt-qt-core-module-in-thread-strange-behaviour-from-animal-help-project
 }
@@ -46,16 +47,11 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     ptrEngine = new QQmlApplicationEngine(this);
 
-//    DataSource dataSource(&viewer);
-//    viewer.rootContext()->setContextProperty("dataSource", &dataSource);
-
-    DataSource dataSource(this);
-
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
     context->setContextProperty("messageLogModel", ptrMessageLogModel);
-    context->setContextProperty("dataSource", &dataSource);
+    context->setContextProperty("dataSource", ptrDataSource);
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (ptrEngine->rootObjects().isEmpty())

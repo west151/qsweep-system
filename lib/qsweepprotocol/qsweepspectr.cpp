@@ -12,11 +12,13 @@ public:
     QSweepSpectrData(const QSweepSpectrData &other) : QSharedData(other)
     {
         m_valid = other.m_valid;
+        m_powers = other.m_powers;
     }
 
     ~QSweepSpectrData() {}
 
     bool m_valid;
+    QVector<PowerSpectr> m_powers;
 };
 
 QSweepSpectr::QSweepSpectr() : data(new QSweepSpectrData)

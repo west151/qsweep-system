@@ -4,6 +4,10 @@
 #include <QtCore/QRandomGenerator>
 #include <QtCore/QtMath>
 
+#ifdef QT_DEBUG
+#include <QtCore/qdebug.h>
+#endif
+
 QT_CHARTS_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QAbstractSeries *)
@@ -14,7 +18,7 @@ DataSource::DataSource(QObject *parent) : QObject(parent)
     qRegisterMetaType<QAbstractSeries*>();
     qRegisterMetaType<QAbstractAxis*>();
 
-    generateData(0, 5, 1024);
+    generateData(0, 10, 1024);
 }
 
 void DataSource::update(QAbstractSeries *series)

@@ -14,10 +14,6 @@
 
 #include "constant.h"
 
-//#include "fifobuffer.h"
-//#include "ringbuffer.h"
-
-
 class SweepWorker : public QObject
 {
     Q_OBJECT
@@ -56,9 +52,6 @@ private:
     int hackrf_rx_callback(unsigned char *buffer, uint32_t length);
     float logPower(fftwf_complex in, float scale);
     float TimevalDiff(const struct timeval *a, const struct timeval *b);
-
-//    FifoBuffer *m_fifo;
-//    RingBuffer *m_ringBuffer;
 
     void errorHackrf(const QString &, int result);
     void sweepWorkerMessagelog(const QString &);

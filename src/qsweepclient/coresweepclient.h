@@ -15,6 +15,7 @@ class UserInterface;
 class QSweepTopic;
 class QSweepRequest;
 class QHackrfInfo;
+class DataSource;
 
 class CoreSweepClient : public QObject
 {
@@ -34,6 +35,7 @@ private:
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
     HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
     MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
+    DataSource* ptrDataSource{Q_NULLPTR};
 
     void initialization();
     bool readSettings(const QString &) const;
