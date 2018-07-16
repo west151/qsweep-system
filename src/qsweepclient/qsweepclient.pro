@@ -8,7 +8,8 @@ HEADERS += \
     userinterface.h \
     model/messagelogmodel.h \
     model/hackrfinfomodel.h \
-    settings/sweepclientsettings.h
+    settings/sweepclientsettings.h \
+    chart/datasource.h
 
 SOURCES += \
     coresweepclient.cpp \
@@ -16,7 +17,8 @@ SOURCES += \
     qsweepclient.cpp \
     model/messagelogmodel.cpp \
     model/hackrfinfomodel.cpp \
-    settings/sweepclientsettings.cpp
+    settings/sweepclientsettings.cpp \
+    chart/datasource.cpp
 
 RESOURCES += qml.qrc
 

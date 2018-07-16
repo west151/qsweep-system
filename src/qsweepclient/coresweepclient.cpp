@@ -12,6 +12,7 @@
 #include "qsweepanswer.h"
 #include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
+#include "chart/datasource.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -45,10 +46,16 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     ptrEngine = new QQmlApplicationEngine(this);
 
+//    DataSource dataSource(&viewer);
+//    viewer.rootContext()->setContextProperty("dataSource", &dataSource);
+
+    DataSource dataSource(this);
+
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
     context->setContextProperty("messageLogModel", ptrMessageLogModel);
+    context->setContextProperty("dataSource", &dataSource);
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     if (ptrEngine->rootObjects().isEmpty())

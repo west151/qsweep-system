@@ -16,16 +16,54 @@ SweepSpectrForm {
         property bool openGL: true
         property bool openGLSupported: true
 
-        LineSeries {
-            name: "LineSeries"
-            XYPoint { x: 0; y: 0 }
-            XYPoint { x: 1; y: 2.1 }
-            XYPoint { x: 2; y: 3.3 }
-            XYPoint { x: 3; y: 2.1 }
-            XYPoint { x: 4; y: 4.9 }
-            XYPoint { x: 5; y: 3.0 }
-            XYPoint { x: 6; y: 3.3 }
+        ValueAxis {
+            id: axisY1
+            min: -1
+            max: 4
         }
+
+        ValueAxis {
+            id: axisY2
+            min: -10
+            max: 5
+        }
+
+        ValueAxis {
+            id: axisX
+            min: 0
+            max: 1024
+        }
+
+        LineSeries {
+            id: lineSeries1
+            name: "signal 1"
+            axisX: axisX
+            axisY: axisY1
+            useOpenGL: chartViewSpectr.openGL
+        }
+
+        //![2]
+        Timer {
+            id: refreshTimer
+            interval: 1 / 60 * 1000 // 60 Hz
+            running: true
+            repeat: true
+            onTriggered: {
+                dataSource.update(chartViewSpectr.series(0));
+                //dataSource.update(chartView.series(1));
+            }
+        }
+
+//        LineSeries {
+//            name: "LineSeries"
+//            XYPoint { x: 0; y: 0 }
+//            XYPoint { x: 1; y: 2.1 }
+//            XYPoint { x: 2; y: 3.3 }
+//            XYPoint { x: 3; y: 2.1 }
+//            XYPoint { x: 4; y: 4.9 }
+//            XYPoint { x: 5; y: 3.0 }
+//            XYPoint { x: 6; y: 3.3 }
+//        }
     }
 
 
