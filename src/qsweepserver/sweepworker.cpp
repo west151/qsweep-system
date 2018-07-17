@@ -106,10 +106,12 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
     byte_count += length;
     buf = (int8_t*) buffer;
 
-    for(int j=0; j<BLOCKS_PER_TRANSFER; j++) {
+    for(int j=0; j<BLOCKS_PER_TRANSFER; j++)
+    {
         if(do_exit) {
             return 0;
         }
+
         ubuf = (uint8_t*) buf;
         if(ubuf[0] == 0x7F && ubuf[1] == 0x7F) {
             frequency = ((uint64_t)(ubuf[9]) << 56) | ((uint64_t)(ubuf[8]) << 48) | ((uint64_t)(ubuf[7]) << 40)
