@@ -15,7 +15,7 @@ public:
         TOPIC_CTRL,
         TOPIC_INFO,
         TOPIC_DATA,
-        TOPIC_SPECTR
+        TOPIC_POWER_SPECTR
     };
 
     explicit QSweepTopic(QObject *parent = nullptr);

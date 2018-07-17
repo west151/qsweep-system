@@ -10,6 +10,7 @@
 #include "qsweeptopic.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
+#include "qsweepspectr.h"
 #include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
 #include "chart/datasource.h"
@@ -175,6 +176,20 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 //        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
 //#endif
     }
+        break;
+    case QSweepTopic::TOPIC_POWER_SPECTR:
+    {
+        QSweepAnswer answer(message);
+        QSweepSpectr powers(answer.dataAnswer());
+
+#ifdef QT_DEBUG
+        qDebug() << "---------------------------------------------------";
+        qDebug() << Q_FUNC_INFO << tr("Power spectr count:") << powers.powerSpectr().count();
+        qDebug() << Q_FUNC_INFO << tr("Power spectr size:") << powers.exportToJson().size();
+        qDebug() << Q_FUNC_INFO << tr("Power spectr content:") << powers.exportToJson();
+#endif
+    }
+        break;
     default:
         break;
     }
@@ -192,6 +207,8 @@ void CoreSweepClient::updateLogStateChange()
             + QLatin1String(": State Change")
             + QString::number(ptrMqttClient->state());
 
+    // Subscribers topic
+
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
         auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO));
@@ -207,6 +224,16 @@ void CoreSweepClient::updateLogStateChange()
         auto subscription1 = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG));
 
         if (!subscription1)
+        {
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";
+#endif
+            return;
+        }
+
+        auto subscription2 = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR));
+
+        if (!subscription2)
         {
 #ifdef QT_DEBUG
             qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";

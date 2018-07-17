@@ -18,16 +18,6 @@ struct PowerSpectr
     PowerSpectr() {}
 };
 
-//printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-//       time_str,
-//       (uint64_t)(frequency),
-//       (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
-//       fftSize);
-
-//quint32 m_fft_bin_width;   // FFT bin width (frequency resolution) in Hz\n")
-//quint32 m_frequency_min;   // frequency min MHz
-//quint32 m_frequency_max;   // frequency max MHz
-
 class QSweepSpectrData;
 
 class QSWEEPPROTOCOLSHARED_EXPORT QSweepSpectr
@@ -40,6 +30,9 @@ public:
     ~QSweepSpectr();
 
     bool isValid() const;
+
+    void setPowerSpectr(const QVector<PowerSpectr> &);
+    QVector<PowerSpectr> powerSpectr()const;
 
     QByteArray exportToJson(const bool binary = false) const;
 

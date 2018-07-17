@@ -67,9 +67,13 @@ void CoreSweep::initialization()
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
     connect(ptrSweepWorker, &SweepWorker::sendSweepWorkerMessagelog,
             this, &CoreSweep::onSendingMessageRequest);
+    // Power spectr
+    connect(SweepWorker::getInstance(), &SweepWorker::sendPowerSpectr,
+            this, &CoreSweep::onSendingMessageRequest);
+
     // TEST
-    connect(SweepWorker::getInstance(), &SweepWorker::sendData,
-            this, &CoreSweep::onDataFromWorker);
+//    connect(SweepWorker::getInstance(), &SweepWorker::sendData,
+//            this, &CoreSweep::onDataFromWorker);
 
     ptrSweepThread->start();
 
@@ -207,6 +211,11 @@ void CoreSweep::onSendingMessageRequest(const QByteArray &value)
         case TypeAnswer::SWEEP_MESSAGE_LOG:
         {
             ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), answer.exportToJson());
+        }
+            break;
+        case TypeAnswer::SWEEP_POWER_SPECTR:
+        {
+            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR), answer.exportToJson());
         }
             break;
         default:

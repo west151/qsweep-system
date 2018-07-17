@@ -65,6 +65,27 @@ void SweepWorker::onTestDataCallbacks(const QByteArray &value)
     emit sendData(value);
 }
 
+void SweepWorker::onDataPowerSpectrCallbacks(const PowerSpectr &power, const bool &isSending)
+{
+    m_powerSpectrBuffer.append(power);
+
+    if(isSending)
+    {
+        qDebug() << "-------------------------------";
+        qDebug() << "Sending data" << m_powerSpectrBuffer.count();
+
+        QSweepAnswer answer;
+        answer.setTypeAnswer(TypeAnswer::SWEEP_POWER_SPECTR);
+        QSweepSpectr spectr;
+        spectr.setPowerSpectr(m_powerSpectrBuffer);
+        answer.setDataAnswer(spectr.exportToJson());
+
+        emit sendPowerSpectr(answer.exportToJson());
+
+        m_powerSpectrBuffer.clear();
+    }
+}
+
 int SweepWorker::rx_callback(hackrf_transfer *transfer)
 {
     SweepWorker *obj = (SweepWorker *)transfer->rx_ctx;
@@ -123,20 +144,26 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         buf += fftSize * 2;
         fftwf_execute(fftwPlan);
 
-//        // test
-//        printf(" BLOCKS_PER_TRANSFER: (%u) \n", BLOCKS_PER_TRANSFER);
-//        printf(" fftSize: (%u) \n", fftSize);
-
-        for (int i=0; i < fftSize; i++) {
+        for(int i=0; i < fftSize; i++)
             pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
 
-            // test
-            //printf(", %.2f", logPower(fftwOut[i], 1.0f / fftSize));
-        }
+        // PowerSpectr for sending
+        PowerSpectr dataPowerSpectr;
+        bool isSending = false;
+        dataPowerSpectr.dateTime = QDateTime::currentDateTimeUtc();
 
         time_now = time(NULL);
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
+
+        dataPowerSpectr.m_frequency_min = (uint64_t)(frequency);
+        dataPowerSpectr.m_frequency_max = (uint64_t)(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
+        dataPowerSpectr.m_fft_bin_width = fftSize;
+
+        for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++)
+            dataPowerSpectr.m_power.append(pwr[i]);
+        // segment 1
+        getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr);
 
         //---------------------------------------------------------------------
         printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
@@ -152,24 +179,17 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         //---------------------------------------------------------------------
 
         //---------------------------------------------------------------------
-        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-               time_str,
-               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
-               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
-               fftSize);
+        dataPowerSpectr.m_power.clear();
+        dataPowerSpectr.m_frequency_min = (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
+        dataPowerSpectr.m_frequency_max = (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
+        dataPowerSpectr.m_fft_bin_width = fftSize;
 
-        QByteArray power;
-        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
-            printf(", %.2f", pwr[i]);
-            power.append(pwr[i]);
-        }
-        printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
-        //---------------------------------------------------------------------
-
-//        getInstance()->onTestDataCallbacks(power);
+        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++)
+            dataPowerSpectr.m_power.append(pwr[i]);
 
         if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
-                        >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))) {
+                        >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))){
+            isSending = true;
             do_exit = true;
 
             qDebug() << "======================================";
@@ -178,6 +198,20 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
                      << (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]);
             qDebug() << "======================================";
         }
+
+        // segment 2
+        getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr, isSending);
+
+        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+               time_str,
+               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
+               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
+               fftSize);
+
+        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
+            printf(", %.2f", pwr[i]);
+        }
+        printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
     } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
 
     return 0;

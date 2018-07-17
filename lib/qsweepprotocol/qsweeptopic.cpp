@@ -26,7 +26,7 @@ QString QSweepTopic::sweepTopic(const Topic value) const
     case TOPIC_DATA:
         return topic_data;
         break;
-    case TOPIC_SPECTR:
+    case TOPIC_POWER_SPECTR:
         return topic_spectr;
         break;
     default:
@@ -51,7 +51,7 @@ QSweepTopic::Topic QSweepTopic::sweepTopic(const QString &value)
         return TOPIC_DATA;
 
     if(value == topic_spectr)
-        return TOPIC_SPECTR;
+        return TOPIC_POWER_SPECTR;
 
     return TOPIC_UNKNOWN;
 }

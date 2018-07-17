@@ -9,7 +9,7 @@
 enum class TypeAnswer: qint32 {
     UNKNOWN = 0,
     INFO,
-    SWEEP_SPECTR,
+    SWEEP_POWER_SPECTR,
     SWEEP_MESSAGE_LOG
 };
 
