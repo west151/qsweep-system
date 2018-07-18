@@ -18,8 +18,8 @@ SweepSpectrForm {
 
         ValueAxis {
             id: axisY1
-            min: -1
-            max: 4
+            min: -90
+            max: 90
         }
 
         ValueAxis {
@@ -43,16 +43,16 @@ SweepSpectrForm {
         }
 
 
-//        Timer {
-//            id: refreshTimer
-//            interval: 1 / 60 * 1000 // 60 Hz
-//            running: true
-//            repeat: true
-//            onTriggered: {
-//                dataSource.update(chartViewSpectr.series(0));
-//                //dataSource.update(chartView.series(1));
-//            }
-//        }
+        Timer {
+            id: refreshTimer
+            interval: 1 / 60 * 1000 // 60 Hz
+            running: false
+            repeat: true
+            onTriggered: {
+                dataSource.update(chartViewSpectr.series(0));
+                //dataSource.update(chartView.series(1));
+            }
+        }
 
 //        LineSeries {
 //            name: "LineSeries"
@@ -64,6 +64,15 @@ SweepSpectrForm {
 //            XYPoint { x: 5; y: 3.0 }
 //            XYPoint { x: 6; y: 3.3 }
 //        }
+    }
+
+    Connections {
+        target: userInterface
+
+        onSendStartSpectr: {
+            console.log(qsTr("start Spectr"))
+            refreshTimer.running = true
+        }
     }
 
 

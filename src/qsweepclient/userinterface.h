@@ -66,6 +66,8 @@ signals:
     void hostBrokerChanged();
     void portBrokerChanged();
     void pingReceivedCountChanged();
+    // start update spectr
+    void sendStartSpectr();
 
 private:
     // spectr params

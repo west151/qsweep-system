@@ -28,6 +28,9 @@ public slots:
     void onConnectToHost(const QString &host, const quint16 &port);
     void onDisconnectFromHost();
 
+signals:
+    void sendStartSpectr();
+
 private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
     UserInterface* ptrUserInterface {Q_NULLPTR};

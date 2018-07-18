@@ -100,6 +100,8 @@ void CoreSweepClient::initialization()
             this , &CoreSweepClient::pingReceived);
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
+    connect(this, &CoreSweepClient::sendStartSpectr,
+            ptrUserInterface, &UserInterface::sendStartSpectr);
 
 }
 
@@ -181,6 +183,8 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     {
         QSweepAnswer answer(message);
         QSweepSpectr powers(answer.dataAnswer());
+
+        emit sendStartSpectr();
 
 #ifdef QT_DEBUG
         qDebug() << "---------------------------------------------------";
