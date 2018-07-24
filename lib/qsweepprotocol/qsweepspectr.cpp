@@ -10,6 +10,7 @@ static const QString POWERS_KEY = QStringLiteral("powers");
 static const QString FREQUENCY_MIN_KEY = QStringLiteral("frequency_min");
 static const QString FREQUENCY_MAX_KEY = QStringLiteral("frequency_max");
 static const QString FFT_BIN_WIDTH_KEY = QStringLiteral("fft_bin_width");
+static const QString FFT_SIZE_KEY = QStringLiteral("fft_size");
 static const QString DT_KEY = QStringLiteral("dt");
 static const QString DATA_KEY = QStringLiteral("data");
 
@@ -59,7 +60,8 @@ QSweepSpectr::QSweepSpectr(const QByteArray &json, const bool binary) : data(new
         auto dt = QDateTime::fromString(objectPowerSpectr.value(DT_KEY).toString(), DT_FORMAT);
         dt.setTimeSpec(Qt::UTC);
         powerSpectr.dateTime = dt;
-        powerSpectr.m_fft_bin_width = objectPowerSpectr.value(FFT_BIN_WIDTH_KEY).toString().toUInt();
+        powerSpectr.m_fft_bin_width = objectPowerSpectr.value(FFT_BIN_WIDTH_KEY).toString().toDouble();
+        powerSpectr.m_fft_size = objectPowerSpectr.value(FFT_SIZE_KEY).toString().toUInt();
         powerSpectr.m_frequency_min = objectPowerSpectr.value(FREQUENCY_MIN_KEY).toString().toULongLong();
         powerSpectr.m_frequency_max = objectPowerSpectr.value(FREQUENCY_MAX_KEY).toString().toULongLong();
 
@@ -123,6 +125,7 @@ QByteArray QSweepSpectr::exportToJson(const bool binary) const
             objectPowerSpectr.insert(FREQUENCY_MIN_KEY, QString::number(powerSpectr.m_frequency_min));
             objectPowerSpectr.insert(FREQUENCY_MAX_KEY, QString::number(powerSpectr.m_frequency_max));
             objectPowerSpectr.insert(FFT_BIN_WIDTH_KEY, QString::number(powerSpectr.m_fft_bin_width));
+            objectPowerSpectr.insert(FFT_SIZE_KEY, QString::number(powerSpectr.m_fft_size));
 
             QStringList list;
             for(int w=0; w<powerSpectr.m_power.count(); ++w)

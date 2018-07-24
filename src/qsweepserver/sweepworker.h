@@ -39,7 +39,7 @@ private:
 
     int opt, i, result = 0;
     const char* path = "/dev/null";
-    const char* serial_number = NULL;
+    const char* serial_number = nullptr;
     int exit_code = EXIT_SUCCESS;
     struct timeval t_end;
     float time_diff;
@@ -49,7 +49,7 @@ private:
     uint32_t fft_bin_width = 500000;    // FFT bin width (frequency resolution) in Hz\n")
     int step_count;
 
-    hackrf_device* device = NULL;
+    hackrf_device* device = nullptr;
     QVector<PowerSpectr> m_powerSpectrBuffer;
 
     static int rx_callback(hackrf_transfer *transfer);

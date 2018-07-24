@@ -43,7 +43,7 @@ Item {
                 y: 0
                 width: 57
                 height: 40
-                text: qsTr("2500")
+                text: "2400"
             }
 
             TextField {

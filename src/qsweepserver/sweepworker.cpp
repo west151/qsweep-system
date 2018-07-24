@@ -31,9 +31,9 @@ volatile bool sweep_started = false;
 volatile bool do_exit = false;
 
 int fftSize = 20;
-fftwf_complex *fftwIn = NULL;
-fftwf_complex *fftwOut = NULL;
-fftwf_plan fftwPlan = NULL;
+fftwf_complex *fftwIn = nullptr;
+fftwf_complex *fftwOut = nullptr;
+fftwf_plan fftwPlan = nullptr;
 float* pwr;
 float* window;
 time_t time_now;
@@ -99,7 +99,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
     uint8_t* ubuf;
     uint64_t frequency; /* in Hz */
 
-    if(NULL == fd) {
+    if(nullptr == fd) {
         return -1;
     }
 
@@ -154,13 +154,14 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         bool isSending = false;
         dataPowerSpectr.dateTime = QDateTime::currentDateTimeUtc();
 
-        time_now = time(NULL);
+        time_now = time(nullptr);
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
         dataPowerSpectr.m_frequency_min = (uint64_t)(frequency);
         dataPowerSpectr.m_frequency_max = (uint64_t)(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
-        dataPowerSpectr.m_fft_bin_width = fftSize;
+        dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
+        dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
         for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++)
             dataPowerSpectr.m_power.append(pwr[i]);
@@ -184,7 +185,8 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         dataPowerSpectr.m_power.clear();
         dataPowerSpectr.m_frequency_min = (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
         dataPowerSpectr.m_frequency_max = (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
-        dataPowerSpectr.m_fft_bin_width = fftSize;
+        dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
+        dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
         for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++)
             dataPowerSpectr.m_power.append(pwr[i]);
@@ -324,12 +326,12 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     }
 
     fd = fopen(path, "wb");
-    if( fd == NULL ) {
+    if( fd == nullptr ) {
         fprintf(stderr, "Failed to open file: %s\n", path);
         exit(0);
     }
     /* Change fd buffer to have bigger one to store or read data on/to HDD */
-    result = setvbuf(fd , NULL , _IOFBF , FD_BUFFER_SIZE);
+    result = setvbuf(fd , nullptr , _IOFBF , FD_BUFFER_SIZE);
     if( result != 0 ) {
         fprintf(stderr, "setvbuf() failed: %d\n", result);
         exit(0);
@@ -360,7 +362,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     result = hackrf_set_vga_gain(device, vga_gain);
     result |= hackrf_set_lna_gain(device, lna_gain);
-    result |= hackrf_start_rx(device, rx_callback, NULL);
+    result |= hackrf_start_rx(device, rx_callback, nullptr);
     if (result != HACKRF_SUCCESS) {
         errorHackrf("hackrf_start_rx() failed:", result);
         exit(0);
@@ -397,8 +399,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         }
     }
 
-    gettimeofday(&t_start, NULL);
-    gettimeofday(&time_start, NULL);
+    gettimeofday(&t_start, nullptr);
+    gettimeofday(&time_start, nullptr);
 
     while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false)) {
         uint32_t byte_count_now;
@@ -406,7 +408,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         float time_difference, rate;
         sleep(1);
 
-        gettimeofday(&time_now, NULL);
+        gettimeofday(&time_now, nullptr);
 
         byte_count_now = byte_count;
         byte_count = 0;
@@ -438,11 +440,11 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
                hackrf_error_name(static_cast<hackrf_error>(result)), result);
     }
 
-    gettimeofday(&t_end, NULL);
+    gettimeofday(&t_end, nullptr);
     time_diff = TimevalDiff(&t_end, &t_start);
     fprintf(stderr, "Total time: %5.5f s\n", time_diff);
 
-    if(device != NULL) {
+    if(device != nullptr) {
         result = hackrf_stop_rx(device);
         if(result != HACKRF_SUCCESS) {
             errorHackrf("hackrf_stop_rx() failed:", result);
@@ -465,9 +467,9 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         sweepWorkerMessagelog(tr("hackrf_exit() done"));
     }
 
-    if(fd != NULL) {
+    if(fd != nullptr) {
         fclose(fd);
-        fd = NULL;
+        fd = nullptr;
         fprintf(stderr, "fclose(fd) done\n");
         sweepWorkerMessagelog(tr("fclose(fd) done"));
     }

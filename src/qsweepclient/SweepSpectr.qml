@@ -31,7 +31,7 @@ SweepSpectrForm {
         ValueAxis {
             id: axisX
             min: 0
-            max: 1024
+            max: 1024.1
         }
 
         LineSeries {
@@ -71,7 +71,8 @@ SweepSpectrForm {
 
         onSendStartSpectr: {
             console.log(qsTr("start Spectr"))
-            refreshTimer.running = true
+            //refreshTimer.running = true
+            dataSource.update(chartViewSpectr.series(0));
         }
     }
 
@@ -96,6 +97,26 @@ SweepSpectrForm {
     }
 
     switchOneShot {
+        enabled: false
+    }
+
+    textInputFFTBinWidth {
+        enabled: false
+    }
+
+    textInputFreqMin {
+        enabled: false
+    }
+
+    textInputFreqMax {
+        enabled: false
+    }
+
+    textInputLNAGain {
+        enabled: false
+    }
+
+    textInputVGAGain {
         enabled: false
     }
 

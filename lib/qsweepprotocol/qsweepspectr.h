@@ -11,9 +11,10 @@
 struct PowerSpectr
 {
     QDateTime dateTime;
-    quint32 m_fft_bin_width;   // FFT bin width (frequency resolution) in Hz\n")
-    quint64 m_frequency_min;   // frequency min Hz
-    quint64 m_frequency_max;   // frequency max Hz
+    qreal m_fft_bin_width = 0;      // FFT bin width (frequency resolution) in Hz\n")
+    quint32 m_fft_size = 0;
+    quint64 m_frequency_min = 0;    // frequency min Hz
+    quint64 m_frequency_max = 0;    // frequency max Hz
     QVector<qreal> m_power;
     PowerSpectr() {}
 };

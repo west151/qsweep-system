@@ -29,7 +29,6 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrMessageLogModel(new MessageLogModel(this)),
     ptrDataSource(new DataSource(this))
 {
-//    https://stackoverflow.com/questions/49560780/mqt-qmqtt-qt-core-module-in-thread-strange-behaviour-from-animal-help-project
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -102,7 +101,6 @@ void CoreSweepClient::initialization()
             this, &CoreSweepClient::sendingRequest);
     connect(this, &CoreSweepClient::sendStartSpectr,
             ptrUserInterface, &UserInterface::sendStartSpectr);
-
 }
 
 bool CoreSweepClient::readSettings(const QString &file) const
@@ -188,9 +186,24 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 
 #ifdef QT_DEBUG
         qDebug() << "---------------------------------------------------";
-        qDebug() << Q_FUNC_INFO << tr("Power spectr count:") << powers.powerSpectr().count();
-        qDebug() << Q_FUNC_INFO << tr("Power spectr size:") << powers.exportToJson().size();
-        qDebug() << Q_FUNC_INFO << tr("Power spectr content:") << powers.exportToJson();
+        qDebug() << powers.powerSpectr().count() << powers.powerSpectr().count()/4;
+
+        QVector<quint64> tmp;
+
+        for(int i=0; i<powers.powerSpectr().count(); ++i){
+
+            tmp.append(powers.powerSpectr().at(i).m_frequency_min);
+
+            qDebug() << powers.powerSpectr().at(i).m_frequency_min
+                     << powers.powerSpectr().at(i).m_frequency_max
+                     << powers.powerSpectr().at(i).m_fft_bin_width
+                     << powers.powerSpectr().at(i).m_fft_size
+                     << powers.powerSpectr().at(i).m_power;
+        }
+
+//        qDebug() << tmp;
+//        std::sort(tmp.begin(), tmp.end());
+//        qDebug() << tmp;
 #endif
     }
         break;
