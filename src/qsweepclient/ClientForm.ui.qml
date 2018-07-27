@@ -50,7 +50,6 @@ Item {
                 font.pointSize: 14
             }
 
-
             Label {
                 id: labelPortBroker
                 text: qsTr("port")

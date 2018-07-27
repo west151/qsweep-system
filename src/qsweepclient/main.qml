@@ -4,6 +4,7 @@ import QtQuick.VirtualKeyboard 2.3
 
 ApplicationWindow {
     id: window
+    objectName: "mainWindow"
     visible: true
     width: 640
     height: 480
@@ -11,6 +12,7 @@ ApplicationWindow {
 
     Top{
         id: idTopForm
+        objectName: "topForm"
         width: window.width
     }
 

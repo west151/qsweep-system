@@ -6,6 +6,7 @@
 #include <QtMqtt/QMqttClient>
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
+#include <QValueAxis>
 
 #include "model/hackrfinfomodel.h"
 #include "model/messagelogmodel.h"
@@ -16,6 +17,8 @@ class QSweepTopic;
 class QSweepRequest;
 class QHackrfInfo;
 class DataSource;
+
+QT_CHARTS_USE_NAMESPACE
 
 class CoreSweepClient : public QObject
 {
@@ -38,7 +41,10 @@ private:
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
     HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
     MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
-    DataSource* ptrDataSource{Q_NULLPTR};
+
+    DataSource* ptrDataSource {Q_NULLPTR};
+    QValueAxis* ptrAxisX {Q_NULLPTR};
+    QValueAxis* ptrAxisY {Q_NULLPTR};
 
     void initialization();
     bool readSettings(const QString &) const;

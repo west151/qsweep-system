@@ -39,20 +39,26 @@ Item {
 
             TextField {
                 id: textInputFreqMin
-                x: 111
-                y: 0
-                width: 57
                 height: 40
                 text: "2400"
+                anchors.left: parent.left
+                anchors.leftMargin: 111
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 0
             }
 
             TextField {
                 id: textInputFreqMax
                 x: 111
-                y: 52
                 width: 57
                 height: 40
                 text: qsTr("2700")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 52
             }
 
             Label {
@@ -85,10 +91,13 @@ Item {
             TextField {
                 id: textInputLNAGain
                 x: 111
-                y: 106
                 width: 57
                 height: 40
                 text: qsTr("0")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 106
             }
 
             Label {
@@ -101,10 +110,13 @@ Item {
             TextField {
                 id: textInputVGAGain
                 x: 111
-                y: 157
                 width: 57
                 height: 40
                 text: qsTr("0")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 157
             }
 
             Label {
@@ -131,10 +143,13 @@ Item {
             TextField {
                 id: textInputFFTBinWidth
                 x: 99
-                y: 215
                 width: 69
                 height: 40
                 text: qsTr("500000")
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 215
             }
 
             Label {
@@ -146,3 +161,9 @@ Item {
         }
     }
 }
+
+/*##^## Designer {
+    D{i:4;anchors_width:57;anchors_x:111;anchors_y:0}D{i:5;anchors_y:52}D{i:9;anchors_y:106}
+D{i:11;anchors_y:157}D{i:15;anchors_y:215}
+}
+ ##^##*/

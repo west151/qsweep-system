@@ -6,6 +6,7 @@ SweepSpectrForm {
 
     ChartView {
         id: chartViewSpectr
+        objectName: "chartViewSpectr"
         parent: frameChart
         anchors.fill: parent
         //title: "Line"
@@ -16,29 +17,12 @@ SweepSpectrForm {
         property bool openGL: true
         property bool openGLSupported: true
 
-        ValueAxis {
-            id: axisY1
-            min: -90
-            max: 90
-        }
-
-        ValueAxis {
-            id: axisY2
-            min: -10
-            max: 5
-        }
-
-        ValueAxis {
-            id: axisX
-            min: 0
-            max: 1024.1
-        }
-
         LineSeries {
-            id: lineSeries1
-            name: "signal 1"
-            axisX: axisX
-            axisY: axisY1
+            id: lineSeriesPower
+            objectName: "lineSeriesPower"
+//            name: "signal 1"
+            axisX: valueAxisX
+            axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
         }
 
@@ -49,7 +33,8 @@ SweepSpectrForm {
             running: false
             repeat: true
             onTriggered: {
-                dataSource.update(chartViewSpectr.series(0));
+                //dataSource.update(series)
+                //dataSource.update(chartViewSpectr.series(0));
                 //dataSource.update(chartView.series(1));
             }
         }

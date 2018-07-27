@@ -5,6 +5,8 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QDir>
+#include <QLineSeries>
+#include <QChartView>
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
@@ -27,7 +29,9 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrSweepTopic(new QSweepTopic(this)),
     ptrHackrfInfoModel(new HackrfInfoModel(this)),
     ptrMessageLogModel(new MessageLogModel(this)),
-    ptrDataSource(new DataSource(this))
+    ptrDataSource(new DataSource(this)),
+    ptrAxisX(new QValueAxis(this)),
+    ptrAxisY(new QValueAxis(this))
 {
 }
 
@@ -47,12 +51,35 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     ptrEngine = new QQmlApplicationEngine(this);
 
+    // Настройка осей графика
+    ptrAxisX = new QValueAxis(this);
+    ptrAxisX->setTitleText("Freq");
+    ptrAxisX->setMin(0);
+    ptrAxisX->setMax(1024);
+//    axisX->setLabelFormat("%i");
+//    axisX->setTickCount(1);
+
+    ptrAxisY = new QValueAxis(this);
+    ptrAxisY->setTitleText("Level");
+    ptrAxisY->setMin(-90);
+    ptrAxisY->setMax(90);
+//    axisY->setLabelFormat("%g");
+//    axisY->setTickCount(5);
+
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
     context->setContextProperty("messageLogModel", ptrMessageLogModel);
     context->setContextProperty("dataSource", ptrDataSource);
+    context->setContextProperty("valueAxisY", ptrAxisY);
+    context->setContextProperty("valueAxisX", ptrAxisX);
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
+
+    QObject *rootObject = ptrEngine->rootObjects().first();
+    QObject *qmlChartView = rootObject->findChild<QObject*>("chartViewSpectr");
+    qmlChartView->setProperty("title", tr("Signals"));
+
+    //QObject *qmlLineSeriesPower = rootObject->findChild<QObject*>("lineSeriesPower");
 
     if (ptrEngine->rootObjects().isEmpty())
         return -1;
