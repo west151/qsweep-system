@@ -217,6 +217,9 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 
         // for test
         ptrDataSource->updateDate(2400, 2500, tmpPowerSpectr);
+        // update axis max & min
+        ptrAxisY->setMin(ptrDataSource->minValue());
+        ptrAxisY->setMax(ptrDataSource->maxValue());
         // test
         emit sendStartSpectr();
 

@@ -15,13 +15,11 @@ Q_DECLARE_METATYPE(QAbstractAxis *)
 
 DataSource::DataSource(QObject *parent) : QObject(parent)
 {
-    m_minValue = -50;
-    m_maxValue = 50;
+    m_minValue = -100;
+    m_maxValue = 0;
 
     qRegisterMetaType<QAbstractSeries*>();
     qRegisterMetaType<QAbstractAxis*>();
-
-    //generateData(0, 10, 1024);
 }
 
 qreal DataSource::minValue() const
@@ -100,7 +98,7 @@ void DataSource::updateDate(const quint64 &f_min, const quint64 &f_max, const QV
         qreal freq = static_cast<qreal>(f_min);
         qreal step = 0.5;
 
-        for (qint32 j(0); j < tmpPower.size(); ++j) {
+        for (qint32 j=0; j < tmpPower.size(); ++j) {
             qreal x(0);
             qreal y(0);
 
