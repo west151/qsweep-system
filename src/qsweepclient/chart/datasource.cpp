@@ -15,23 +15,38 @@ Q_DECLARE_METATYPE(QAbstractAxis *)
 
 DataSource::DataSource(QObject *parent) : QObject(parent)
 {
+    m_minValue = -50;
+    m_maxValue = 50;
+
     qRegisterMetaType<QAbstractSeries*>();
     qRegisterMetaType<QAbstractAxis*>();
 
-    generateData(0, 10, 1024);
+    //generateData(0, 10, 1024);
+}
+
+qreal DataSource::minValue() const
+{
+    return m_minValue;
+}
+
+qreal DataSource::maxValue() const
+{
+    return m_maxValue;
 }
 
 void DataSource::update(QAbstractSeries *series)
 {
-    if (series) {
-        QXYSeries *xySeries = static_cast<QXYSeries *>(series);
-        m_index++;
-        if (m_index > m_data.count() - 1)
-            m_index = 0;
+    if(m_data.size()>0){
+        if (series) {
+            QXYSeries *xySeries = static_cast<QXYSeries *>(series);
+            m_index++;
+            if (m_index > m_data.count() - 1)
+                m_index = 0;
 
-        QVector<QPointF> points = m_data.at(m_index);
-        // Use replace instead of clear + append, it's optimized for performance
-        xySeries->replace(points);
+            QVector<QPointF> points = m_data.at(m_index);
+            // Use replace instead of clear + append, it's optimized for performance
+            xySeries->replace(points);
+        }
     }
 }
 
@@ -56,12 +71,44 @@ void DataSource::generateData(int type, int rowCount, int colCount)
             case 1:
                 // linear data
                 x = j;
-                y = (qreal) i / 10;
+                y = static_cast<qreal>(i/10);
                 break;
             default:
                 // unknown, do nothing
                 break;
             }
+            points.append(QPointF(x, y));
+        }
+        m_data.append(points);
+    }
+}
+
+void DataSource::updateDate(const quint64 &f_min, const quint64 &f_max, const QVector<PowerSpectr> &spectr)
+{
+    if(spectr.size()>0)
+    {
+        m_data.clear();
+
+        QVector<qreal> tmpPower;
+
+        for(qint32 i=0; i<spectr.size(); ++i)
+            tmpPower.append(spectr.at(i).m_power);
+
+        QVector<QPointF> points;
+        points.reserve(tmpPower.size());
+
+        qreal freq = static_cast<qreal>(f_min);
+        qreal step = 0.5;
+
+        for (qint32 j(0); j < tmpPower.size(); ++j) {
+            qreal x(0);
+            qreal y(0);
+
+            x = freq;
+            y = tmpPower.at(j);
+
+            freq = freq + step;
+
             points.append(QPointF(x, y));
         }
         m_data.append(points);

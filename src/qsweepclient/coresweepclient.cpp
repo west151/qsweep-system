@@ -54,15 +54,15 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     // Настройка осей графика
     ptrAxisX = new QValueAxis(this);
     ptrAxisX->setTitleText("Freq");
-    ptrAxisX->setMin(0);
-    ptrAxisX->setMax(1024);
+    ptrAxisX->setMin(2400);
+    ptrAxisX->setMax(2500);
 //    axisX->setLabelFormat("%i");
 //    axisX->setTickCount(1);
 
     ptrAxisY = new QValueAxis(this);
     ptrAxisY->setTitleText("Level");
-    ptrAxisY->setMin(-90);
-    ptrAxisY->setMax(90);
+    ptrAxisY->setMin(ptrDataSource->minValue());
+    ptrAxisY->setMax(ptrDataSource->maxValue());
 //    axisY->setLabelFormat("%g");
 //    axisY->setTickCount(5);
 
@@ -209,14 +209,16 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         QSweepAnswer answer(message);
         QSweepSpectr powers(answer.dataAnswer());
 
-        // test
-        emit sendStartSpectr();
-
         QVector<PowerSpectr> tmpPowerSpectr(powers.powerSpectr());
 
         std::sort(tmpPowerSpectr.begin(), tmpPowerSpectr.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
             return a.m_frequency_min < b.m_frequency_min;
         });
+
+        // for test
+        ptrDataSource->updateDate(2400, 2500, tmpPowerSpectr);
+        // test
+        emit sendStartSpectr();
 
 #ifdef QT_DEBUG
         qDebug() << "---------------------------------------------------";

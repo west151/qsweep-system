@@ -93,7 +93,7 @@ Item {
                 x: 111
                 width: 57
                 height: 40
-                text: qsTr("0")
+                text: qsTr("8")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.top: parent.top
@@ -112,7 +112,7 @@ Item {
                 x: 111
                 width: 57
                 height: 40
-                text: qsTr("0")
+                text: qsTr("12")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.top: parent.top
