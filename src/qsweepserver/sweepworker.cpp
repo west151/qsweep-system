@@ -118,26 +118,26 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
                     | ((uint64_t)(ubuf[6]) << 32) | ((uint64_t)(ubuf[5]) << 24) | ((uint64_t)(ubuf[4]) << 16)
                     | ((uint64_t)(ubuf[3]) << 8) | ubuf[2];
         } else {
-            buf += SAMPLES_PER_BLOCK;
+            buf += BYTES_PER_BLOCK;
             continue;
         }
 
         if(!sweep_started) {
-            if (frequency == (uint64_t)(FREQ_ONE_MHZ*frequencies[0])) {
+            if (frequency == static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[0])) {
                 sweep_started = true;
             } else {
-                buf += SAMPLES_PER_BLOCK;
+                buf += BYTES_PER_BLOCK;
                 continue;
             }
         }
 
         if((FREQ_MAX_MHZ * FREQ_ONE_MHZ) < frequency) {
-            buf += SAMPLES_PER_BLOCK;
+            buf += BYTES_PER_BLOCK;
             continue;
         }
 
         /* copy to fftwIn as floats */
-        buf += SAMPLES_PER_BLOCK - (fftSize * 2);
+        buf += BYTES_PER_BLOCK - (fftSize * 2);
         for(int i=0; i < fftSize; i++) {
             fftwIn[i][0] = buf[i*2] * window[i] * 1.0f / 128.0f;
             fftwIn[i][1] = buf[i*2+1] * window[i] * 1.0f / 128.0f;
@@ -149,6 +149,8 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         for(int i=0; i < fftSize; i++)
             pwr[i] = logPower(fftwOut[i], 1.0f / fftSize);
 
+
+        //************************************************************************************
         // PowerSpectr for sending
         PowerSpectr dataPowerSpectr;
         bool isSending = false;
@@ -158,64 +160,66 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
-        dataPowerSpectr.m_frequency_min = (uint64_t)(frequency);
-        dataPowerSpectr.m_frequency_max = (uint64_t)(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
+        dataPowerSpectr.m_frequency_min = static_cast<uint64_t>(frequency);
+        dataPowerSpectr.m_frequency_max = static_cast<uint64_t>(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
         dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
         dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
-        for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++)
-            dataPowerSpectr.m_power.append(pwr[i]);
+        for(int i = 0; (fftSize / 4) > i; i++)
+            dataPowerSpectr.m_power.append(static_cast<qreal>(pwr[i + 1 + (fftSize*5)/8]));
+
         // segment 1
         getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr);
 
-        //---------------------------------------------------------------------
+
+#ifdef QT_DEBUG
         printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
                time_str,
-               (uint64_t)(frequency),
-               (uint64_t)(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
+               static_cast<uint64_t>(frequency),
+               static_cast<uint64_t>(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
                fftSize);
-
-        for(int i=1+(fftSize*5)/8; (1+(fftSize*7)/8) > i; i++) {
-            printf(", %.2f", pwr[i]);
-        }
-        printf(" ups1 (%u) \n", (uint32_t)((1+(fftSize*7)/8)-(1+(fftSize*5)/8)));
-        //---------------------------------------------------------------------
+        for(int i = 0; (fftSize / 4) > i; i++)
+            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize*5)/8]));
+        printf("\n");
+#endif
 
         //---------------------------------------------------------------------
         dataPowerSpectr.m_power.clear();
-        dataPowerSpectr.m_frequency_min = (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
-        dataPowerSpectr.m_frequency_max = (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
+        dataPowerSpectr.m_frequency_min = static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
+        dataPowerSpectr.m_frequency_max = static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
         dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
         dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
-        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++)
-            dataPowerSpectr.m_power.append(pwr[i]);
+        for(int i = 0; (fftSize / 4) > i; i++)
+            dataPowerSpectr.m_power.append(static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
 
-        if(one_shot && ((uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
-                        >= (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))){
+        if(one_shot && (static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+                        >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))){
             isSending = true;
             do_exit = true;
-
+#ifdef QT_DEBUG
             qDebug() << "======================================";
-            qDebug() << (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+            qDebug() << static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
                      << " >= "
-                     << (uint64_t)(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]);
+                     << static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]);
             qDebug() << "======================================";
+#endif
         }
 
         // segment 2
         getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr, isSending);
 
+#ifdef QT_DEBUG
         printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
                time_str,
-               (uint64_t)(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
-               (uint64_t)(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
+               static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
+               static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
                fftSize);
+        for(int i = 0; (fftSize / 4) > i; i++)
+            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
+        printf("\n");
+#endif
 
-        for(int i=1+fftSize/8; (1+(fftSize*3)/8) > i; i++) {
-            printf(", %.2f", pwr[i]);
-        }
-        printf(" ups2 (%u) \n", (uint32_t)((1+(fftSize*3)/8) - (1+fftSize/8) ));
     } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
 
     return 0;
@@ -272,8 +276,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     vga_gain = params.vgaGain();            // RX VGA (baseband) gain, 0-62dB, 2dB steps
 
     if (0 == num_ranges) {
-        frequencies[0] = (uint16_t)params.frequencyMin();
-        frequencies[1] = (uint16_t)params.frequencyMax();
+        frequencies[0] = static_cast<uint16_t>(params.frequencyMin());
+        frequencies[1] = static_cast<uint16_t>(params.frequencyMax());
         num_ranges++;
     }
 
@@ -288,8 +292,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         exit(0);
     }
 
-    if(16368 < fftSize) {
-        fprintf(stderr,	"argument error: FFT bin width too small, resulted in more than 16368 FFT bins\n");
+    if(8184 < fftSize) {
+        fprintf(stderr,	"argument error: FFT bin width too small, resulted in more than 8184 FFT bins\n");
         sweepWorkerMessagelog(tr("argument error: FFT bin width too small, resulted in more than 16368 FFT bins"));
         exit(0);
     }
@@ -310,7 +314,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     window = (float*)fftwf_malloc(sizeof(float) * fftSize);
 
     for (i = 0; i < fftSize; i++) {
-        window[i] = 0.5f * (1.0f - cos(2 * M_PI * i / (fftSize - 1)));
+        window[i] = (float) (0.5f * (1.0f - cos(2 * M_PI * i / (fftSize - 1))));
+        //window[i] = 0.5f * (1.0f - cos(2 * M_PI * i / (fftSize - 1)));
     }
 
     result = hackrf_init();
@@ -376,7 +381,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     for(i = 0; i < num_ranges; i++) {
         step_count = 1 + (frequencies[2*i+1] - frequencies[2*i] - 1)
                 / TUNE_STEP;
-        frequencies[2*i+1] = frequencies[2*i] + step_count * TUNE_STEP;
+        frequencies[2*i+1] = (uint16_t) (frequencies[2*i] + step_count * TUNE_STEP);
         fprintf(stderr, "Sweeping from %u MHz to %u MHz\n", frequencies[2*i], frequencies[2*i+1]);
         sweepWorkerMessagelog(tr("Sweeping from %1 MHz to %2 MHz").arg(frequencies[2*i]).arg(frequencies[2*i+1]));
     }

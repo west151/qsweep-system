@@ -209,28 +209,26 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         QSweepAnswer answer(message);
         QSweepSpectr powers(answer.dataAnswer());
 
+        // test
         emit sendStartSpectr();
+
+        QVector<PowerSpectr> tmpPowerSpectr(powers.powerSpectr());
+
+        std::sort(tmpPowerSpectr.begin(), tmpPowerSpectr.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
+            return a.m_frequency_min < b.m_frequency_min;
+        });
 
 #ifdef QT_DEBUG
         qDebug() << "---------------------------------------------------";
-        qDebug() << powers.powerSpectr().count() << powers.powerSpectr().count()/4;
+        qDebug() << tmpPowerSpectr.count() << tmpPowerSpectr.count()/4;
 
-        QVector<quint64> tmp;
-
-        for(int i=0; i<powers.powerSpectr().count(); ++i){
-
-            tmp.append(powers.powerSpectr().at(i).m_frequency_min);
-
-            qDebug() << powers.powerSpectr().at(i).m_frequency_min
-                     << powers.powerSpectr().at(i).m_frequency_max
-                     << powers.powerSpectr().at(i).m_fft_bin_width
-                     << powers.powerSpectr().at(i).m_fft_size
-                     << powers.powerSpectr().at(i).m_power;
+        for(int i=0; i<tmpPowerSpectr.count(); ++i){
+            qDebug() << tmpPowerSpectr.at(i).m_frequency_min
+                     << tmpPowerSpectr.at(i).m_frequency_max
+                     << tmpPowerSpectr.at(i).m_fft_bin_width
+                     << tmpPowerSpectr.at(i).m_fft_size
+                     << tmpPowerSpectr.at(i).m_power;
         }
-
-//        qDebug() << tmp;
-//        std::sort(tmp.begin(), tmp.end());
-//        qDebug() << tmp;
 #endif
     }
         break;

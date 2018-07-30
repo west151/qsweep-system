@@ -54,7 +54,7 @@ Item {
                 x: 111
                 width: 57
                 height: 40
-                text: qsTr("2700")
+                text: qsTr("2500")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.top: parent.top
