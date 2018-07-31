@@ -70,6 +70,9 @@ void CoreSweep::initialization()
     // Power spectr
     connect(SweepWorker::getInstance(), &SweepWorker::sendPowerSpectr,
             this, &CoreSweep::onSendingMessageRequest);
+    // stop spectr
+    connect(this, &CoreSweep::sendStopSweepWorker,
+            SweepWorker::getInstance(), &SweepWorker::onStopSweepWorker);
 
     // TEST
 //    connect(SweepWorker::getInstance(), &SweepWorker::sendData,
@@ -103,39 +106,113 @@ void CoreSweep::initialization()
 
 void CoreSweep::launching()
 {
-    //QTimer::singleShot(5000, ptrCtrlSweepWorker, SLOT(startSweepWorkerTest()));
-
-    // RX LNA (IF) gain, 0-40dB, 8dB steps
-    // RX VGA (baseband) gain, 0-62dB, 2dB steps
-    // ptrSweepWorker->runSweepWorker(2400, 2700, 500000, 40, 62);
-
     // connect to MQTT broker
     onConnectToHost("127.0.0.1", 1883);
 }
 
 void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
-//    QString ctrl(message);
+    switch (ptrSweepTopic->sweepTopic(topic.name())) {
+    case QSweepTopic::TOPIC_CTRL:
+    {
+        QSweepRequest request(message, false);
 
-    QSweepRequest request(message, false);
-
-    if(request.isValid()){
-        switch (request.typeRequest()) {
-        case TypeRequest::INFO:
-            emit sendRunSweepInfo(message);
-            break;
-        case TypeRequest::SWEEP_SPECTR:
-            emit sendRunSweepWorker(message);
-            break;
-        default:
-            break;
+        if(request.isValid()){
+            switch (request.typeRequest()) {
+            case TypeRequest::INFO:
+                emit sendRunSweepInfo(message);
+                break;
+            case TypeRequest::SWEEP_SPECTR:
+                emit sendRunSweepWorker(message);
+                break;
+            case TypeRequest::STOP_SWEEP_SPECTR:
+                emit sendStopSweepWorker();
+                break;
+            default:
+                break;
+            }
         }
-
-//#ifdef QT_DEBUG
-//        qDebug() << "Server: TOPIC" << topic.name();
-//        qDebug() << "Server: JSON" << ctrl;
-//#endif
     }
+        break;
+    default:
+        break;
+    }
+
+
+
+//    switch (ptrSweepTopic->sweepTopic(topic.name())) {
+//    case QSweepTopic::TOPIC_INFO:
+//    {
+//        QSweepAnswer answer(message);
+//        const QHackrfInfo info(answer.dataAnswer(), false);
+
+//        if(info.isValid()){
+//            ptrHackrfInfoModel->addResult(info);
+
+////#ifdef QT_DEBUG
+////            qDebug() << "---------------------------------------------------";
+////            qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
+////            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
+////            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
+////            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
+////            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
+////            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
+////            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
+////            qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
+////#endif
+//        }
+//    }
+//        break;
+//    case QSweepTopic::TOPIC_MESSAGE_LOG:
+//    {
+//        QSweepAnswer answer(message);
+//        QSweepMessageLog log(answer.dataAnswer());
+//        ptrMessageLogModel->addResult(log);
+
+////#ifdef QT_DEBUG
+////        qDebug() << "---------------------------------------------------";
+////        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
+////        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
+////#endif
+//    }
+//        break;
+//    case QSweepTopic::TOPIC_POWER_SPECTR:
+//    {
+//        QSweepAnswer answer(message);
+//        QSweepSpectr powers(answer.dataAnswer());
+
+//        QVector<PowerSpectr> tmpPowerSpectr(powers.powerSpectr());
+
+//        std::sort(tmpPowerSpectr.begin(), tmpPowerSpectr.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
+//            return a.m_frequency_min < b.m_frequency_min;
+//        });
+
+//        // for test
+//        ptrDataSource->updateDate(2400, 2500, tmpPowerSpectr);
+//        // update axis max & min
+//        ptrAxisY->setMin(ptrDataSource->minValue());
+//        ptrAxisY->setMax(ptrDataSource->maxValue());
+//        // test
+//        emit sendStartSpectr();
+
+////#ifdef QT_DEBUG
+////        qDebug() << "---------------------------------------------------";
+////        qDebug() << tmpPowerSpectr.count() << tmpPowerSpectr.count()/4;
+
+////        for(int i=0; i<tmpPowerSpectr.count(); ++i){
+////            qDebug() << tmpPowerSpectr.at(i).m_frequency_min
+////                     << tmpPowerSpectr.at(i).m_frequency_max
+////                     << tmpPowerSpectr.at(i).m_fft_bin_width
+////                     << tmpPowerSpectr.at(i).m_fft_size
+////                     << tmpPowerSpectr.at(i).m_power;
+////        }
+////#endif
+//    }
+//        break;
+//    default:
+//        break;
+//    }
+
 }
 
 void CoreSweep::updateLogStateChange()

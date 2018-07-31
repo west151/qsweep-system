@@ -50,7 +50,7 @@ public:
     quint32 fftBinWidth()const;
 
     Q_INVOKABLE void onRequestSweepInfo();
-    Q_INVOKABLE void onRequestSweepSpectr();
+    Q_INVOKABLE void onRequestSweepSpectr(const bool &start = true);
 
 signals:
     void sendMessageToHost();

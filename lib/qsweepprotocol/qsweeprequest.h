@@ -9,7 +9,8 @@
 enum class TypeRequest: qint32 {
     UNKNOWN = 0,
     INFO,
-    SWEEP_SPECTR
+    SWEEP_SPECTR,
+    STOP_SWEEP_SPECTR
 };
 
 class QSWEEPPROTOCOLSHARED_EXPORT QSweepRequest : public QObject

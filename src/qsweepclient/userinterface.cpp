@@ -141,7 +141,7 @@ void UserInterface::onRequestSweepInfo()
     emit sendRequestSweepServer(info);
 }
 
-void UserInterface::onRequestSweepSpectr()
+void UserInterface::onRequestSweepSpectr(const bool &start)
 {
     QSweepRequest info(this);
     QSweepParams params(this);
@@ -153,7 +153,10 @@ void UserInterface::onRequestSweepSpectr()
     params.setOneShot(m_oneShot);
 
     info.setDataRequest(params.exportToJson());
-    info.setTypeRequest(TypeRequest::SWEEP_SPECTR);
+    if(start)
+        info.setTypeRequest(TypeRequest::SWEEP_SPECTR);
+    else
+        info.setTypeRequest(TypeRequest::STOP_SWEEP_SPECTR);
 
     emit sendRequestSweepServer(info);
 }

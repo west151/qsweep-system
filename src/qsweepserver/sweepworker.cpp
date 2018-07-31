@@ -26,7 +26,7 @@ uint32_t amp_enable;
 //bool antenna = false;
 //uint32_t antenna_enable;
 
-bool one_shot = true;
+volatile bool one_shot = true;
 volatile bool sweep_started = false;
 volatile bool do_exit = false;
 
@@ -45,7 +45,7 @@ char time_str[50];
 #include <sys/time.h>
 #endif
 
-SweepWorker* SweepWorker::m_instance = 0;
+SweepWorker* SweepWorker::m_instance = nullptr;
 
 SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 {
@@ -54,7 +54,7 @@ SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
 
 SweepWorker *SweepWorker::getInstance()
 {
-    if (m_instance == 0)
+    if (m_instance == nullptr)
         m_instance = new SweepWorker();
     return m_instance;
 }
@@ -172,16 +172,16 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr);
 
 
-#ifdef QT_DEBUG
-        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-               time_str,
-               static_cast<uint64_t>(frequency),
-               static_cast<uint64_t>(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
-               fftSize);
-        for(int i = 0; (fftSize / 4) > i; i++)
-            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize*5)/8]));
-        printf("\n");
-#endif
+//#ifdef QT_DEBUG
+//        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+//               time_str,
+//               static_cast<uint64_t>(frequency),
+//               static_cast<uint64_t>(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
+//               fftSize);
+//        for(int i = 0; (fftSize / 4) > i; i++)
+//            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize*5)/8]));
+//        printf("\n");
+//#endif
 
         //---------------------------------------------------------------------
         dataPowerSpectr.m_power.clear();
@@ -206,6 +206,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
                 do_exit = true;
             }
 
+
             qDebug() << "one_shot" << one_shot;
             qDebug() << "do_exit" << do_exit;
 
@@ -221,16 +222,16 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         // segment 2
         getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr, isSending);
 
-#ifdef QT_DEBUG
-        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-               time_str,
-               static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
-               static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
-               fftSize);
-        for(int i = 0; (fftSize / 4) > i; i++)
-            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
-        printf("\n");
-#endif
+//#ifdef QT_DEBUG
+//        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
+//               time_str,
+//               static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
+//               static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
+//               fftSize);
+//        for(int i = 0; (fftSize / 4) > i; i++)
+//            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
+//        printf("\n");
+//#endif
 
     } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
 
@@ -427,7 +428,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     if (amp) {
         fprintf(stderr, "call hackrf_set_amp_enable(%u)\n", amp_enable);
         sweepWorkerMessagelog(tr("call hackrf_set_amp_enable(%1)").arg(amp_enable) );
-        result = hackrf_set_amp_enable(device, (uint8_t)amp_enable);
+        result = hackrf_set_amp_enable(device, static_cast<uint8_t>(amp_enable));
         if (result != HACKRF_SUCCESS) {
             errorHackrf("hackrf_set_amp_enable() failed:", result);
             exit(0);
@@ -437,7 +438,8 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     gettimeofday(&t_start, nullptr);
     gettimeofday(&time_start, nullptr);
 
-    while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false)) {
+    while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false))
+    {
         uint32_t byte_count_now;
         struct timeval time_now;
         float time_difference, rate;
@@ -449,12 +451,15 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         byte_count = 0;
 
         time_difference = TimevalDiff(&time_now, &time_start);
-        rate = (float)byte_count_now / time_difference;
+        rate = static_cast<float>(byte_count_now / time_difference);
 
         fprintf(stderr, "%4.1f MiB / %5.3f sec = %4.1f MiB/second\n",
                 (byte_count_now / 1e6f), time_difference, (rate / 1e6f) );
 
-        sweepWorkerMessagelog(tr("%1 MiB / %2 sec = %3 MiB/second").arg((byte_count_now/1e6f)).arg(time_difference).arg((rate/1e6f)) );
+        sweepWorkerMessagelog(tr("%1 MiB / %2 sec = %3 MiB/second")
+                              .arg(static_cast<qreal>(byte_count_now/1e6f))
+                              .arg(static_cast<qreal>(time_difference))
+                              .arg(static_cast<qreal>(rate/1e6f)) );
 
         time_start = time_now;
 
@@ -477,7 +482,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     gettimeofday(&t_end, nullptr);
     time_diff = TimevalDiff(&t_end, &t_start);
-    fprintf(stderr, "Total time: %5.5f s\n", time_diff);
+    fprintf(stderr, "Total time: %5.5f s\n", static_cast<qreal>(time_diff));
 
     if(device != nullptr) {
         result = hackrf_stop_rx(device);
@@ -514,18 +519,11 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     fftwf_free(pwr);
     fftwf_free(window);
 
-//#ifdef QT_DEBUG
-//    qDebug() << "--------------------------";
-//    qDebug() << "FFT Size:" << fftSize;
-//    qDebug() << "RING_BUFFER Available Read:" << m_ringBuffer->availableRead();
-//    qDebug() << "--------------------------";
-//#endif
-
     do_exit = false;
     num_ranges = 0;
 }
 
 void SweepWorker::onStopSweepWorker()
 {
-    do_exit = true;
+    one_shot = true;
 }

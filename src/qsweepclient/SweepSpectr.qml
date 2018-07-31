@@ -70,6 +70,7 @@ SweepSpectrForm {
         enabled: false
     }
 
+    // start spectr
     btnStart.onClicked: {
         userInterface.frequencyMin = textInputFreqMin.text
         userInterface.frequencyMax = textInputFreqMax.text
@@ -77,7 +78,11 @@ SweepSpectrForm {
         userInterface.vgaGain = cbxVGAGain.currentText
         userInterface.fftBinWidth = textInputFFTBinWidth.text
         userInterface.oneShot = switchOneShot.checked
-        userInterface.onRequestSweepSpectr()
+        userInterface.onRequestSweepSpectr(true)
+    }
+    // stop spectr (stream)
+    btnStop.onClicked: {
+        userInterface.onRequestSweepSpectr(false)
     }
 
     cbxVGAGain {
