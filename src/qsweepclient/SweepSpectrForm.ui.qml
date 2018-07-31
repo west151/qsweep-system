@@ -4,11 +4,11 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias cbxLNAGain: cbxLNAGain
+    property alias cbxVGAGain: cbxVGAGain
     property alias frameChart: frameChart
     property alias textInputFFTBinWidth: textInputFFTBinWidth
     property alias switchOneShot: switchOneShot
-    property alias textInputVGAGain: textInputVGAGain
-    property alias textInputLNAGain: textInputLNAGain
     property alias btnStart: btnStart
     property alias textInputFreqMax: textInputFreqMax
     property alias textInputFreqMin: textInputFreqMin
@@ -88,41 +88,17 @@ Item {
                 anchors.bottomMargin: 0
             }
 
-            TextField {
-                id: textInputLNAGain
-                x: 111
-                width: 57
-                height: 40
-                text: qsTr("8")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.top: parent.top
-                anchors.topMargin: 106
-            }
-
             Label {
                 id: label
-                x: 44
+                x: 32
                 y: 118
                 text: qsTr("LNA gain")
             }
 
-            TextField {
-                id: textInputVGAGain
-                x: 111
-                width: 57
-                height: 40
-                text: qsTr("12")
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.top: parent.top
-                anchors.topMargin: 157
-            }
-
             Label {
                 id: label1
-                x: 43
-                y: 169
+                x: 31
+                y: 170
                 text: qsTr("VGA gain")
             }
 
@@ -152,12 +128,32 @@ Item {
                 anchors.topMargin: 215
             }
 
+            ComboBox {
+                id: cbxVGAGain
+                x: 99
+                width: 70
+                height: 40
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 158
+                currentIndex: -1
+            }
+
             Label {
                 id: label4
                 x: 1
                 y: 226
                 text: qsTr("FFT bin width")
             }
+
+            ComboBox {
+                id: cbxLNAGain
+                x: 99
+                y: 106
+                width: 70
+            }
+
         }
     }
 }

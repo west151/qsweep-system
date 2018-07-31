@@ -38,17 +38,6 @@ SweepSpectrForm {
                 //dataSource.update(chartView.series(1));
             }
         }
-
-//        LineSeries {
-//            name: "LineSeries"
-//            XYPoint { x: 0; y: 0 }
-//            XYPoint { x: 1; y: 2.1 }
-//            XYPoint { x: 2; y: 3.3 }
-//            XYPoint { x: 3; y: 2.1 }
-//            XYPoint { x: 4; y: 4.9 }
-//            XYPoint { x: 5; y: 3.0 }
-//            XYPoint { x: 6; y: 3.3 }
-//        }
     }
 
     Connections {
@@ -61,7 +50,6 @@ SweepSpectrForm {
         }
     }
 
-
     textInputFreqMin{
         //validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
         validator : IntValidator{bottom: 30; top: 6000;}
@@ -69,16 +57,6 @@ SweepSpectrForm {
 
     textInputFreqMax{
         validator : IntValidator{bottom: 30; top: 6000;}
-    }
-
-    textInputLNAGain {
-        // RX LNA (IF) gain, 0-40dB, 8dB steps
-        validator : IntValidator{bottom: 0; top: 40;}
-    }
-
-    textInputVGAGain {
-        // RX VGA (baseband) gain, 0-62dB, 2dB steps
-        validator : IntValidator{bottom: 0; top: 62;}
     }
 
     switchOneShot {
@@ -97,21 +75,46 @@ SweepSpectrForm {
         enabled: false
     }
 
-    textInputLNAGain {
-        enabled: false
-    }
-
-    textInputVGAGain {
-        enabled: false
-    }
-
     btnStart.onClicked: {
         userInterface.frequencyMin = textInputFreqMin.text
         userInterface.frequencyMax = textInputFreqMax.text
-        userInterface.lnaGain = textInputLNAGain.text
-        userInterface.vgaGain = textInputVGAGain.text
+        userInterface.lnaGain = cbxLNAGain.currentText
+        userInterface.vgaGain = cbxVGAGain.currentText
         userInterface.fftBinWidth = textInputFFTBinWidth.text
         userInterface.oneShot = switchOneShot.checkable
         userInterface.onRequestSweepSpectr()
     }
+
+    cbxVGAGain {
+        model: vgaGainModel
+        currentIndex: 0
+    }
+
+    // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    ListModel {
+        id: vgaGainModel
+        Component.onCompleted:
+        {
+            for (var i = 0; i <= 62; i=i+2) {
+                vgaGainModel.append({"text":i})
+            }
+        }
+    }
+
+    cbxLNAGain {
+        model: lnaGainModel
+        currentIndex: 0
+    }
+
+    // RX LNA (IF) gain, 0-40dB, 8dB steps
+    ListModel {
+        id: lnaGainModel
+        ListElement { text: "0" }
+        ListElement { text: "8" }
+        ListElement { text: "16" }
+        ListElement { text: "24" }
+        ListElement { text: "32" }
+        ListElement { text: "40" }
+    }
+
 }

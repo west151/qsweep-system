@@ -286,6 +286,19 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     amp = true;
 
+    QString msgTask;
+    msgTask.append(QString::number(fft_bin_width));
+    msgTask.append(tr(" "));
+    msgTask.append(QString::number(lna_gain));
+    msgTask.append(tr(" "));
+    msgTask.append(QString::number(vga_gain));
+    msgTask.append(tr(" "));
+    msgTask.append(QString::number(frequencies[0]));
+    msgTask.append(tr(" "));
+    msgTask.append(QString::number(frequencies[1]));
+
+    sweepWorkerMessagelog(msgTask);
+
     if(4 > fftSize) {
         fprintf(stderr,"argument error: FFT bin width must be no more than one quarter the sample rate\n");
         sweepWorkerMessagelog(tr("argument error: FFT bin width must be no more than one quarter the sample rate"));
