@@ -27,6 +27,7 @@ public:
 signals:
     void sendRunSweepInfo(const QByteArray &);
     void sendRunSweepWorker(const QByteArray &);
+    void sendStopSweepWorker();
 
 private:
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};

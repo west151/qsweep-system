@@ -223,18 +223,18 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         // test
         emit sendStartSpectr();
 
-#ifdef QT_DEBUG
-        qDebug() << "---------------------------------------------------";
-        qDebug() << tmpPowerSpectr.count() << tmpPowerSpectr.count()/4;
+//#ifdef QT_DEBUG
+//        qDebug() << "---------------------------------------------------";
+//        qDebug() << tmpPowerSpectr.count() << tmpPowerSpectr.count()/4;
 
-        for(int i=0; i<tmpPowerSpectr.count(); ++i){
-            qDebug() << tmpPowerSpectr.at(i).m_frequency_min
-                     << tmpPowerSpectr.at(i).m_frequency_max
-                     << tmpPowerSpectr.at(i).m_fft_bin_width
-                     << tmpPowerSpectr.at(i).m_fft_size
-                     << tmpPowerSpectr.at(i).m_power;
-        }
-#endif
+//        for(int i=0; i<tmpPowerSpectr.count(); ++i){
+//            qDebug() << tmpPowerSpectr.at(i).m_frequency_min
+//                     << tmpPowerSpectr.at(i).m_frequency_max
+//                     << tmpPowerSpectr.at(i).m_fft_bin_width
+//                     << tmpPowerSpectr.at(i).m_fft_size
+//                     << tmpPowerSpectr.at(i).m_power;
+//        }
+//#endif
     }
         break;
     default:

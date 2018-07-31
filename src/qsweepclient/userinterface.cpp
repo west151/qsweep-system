@@ -150,6 +150,7 @@ void UserInterface::onRequestSweepSpectr()
     params.setFFTBinWidth(m_fftBinWidth);
     params.setLnaGain(m_lnaGain);
     params.setVgaGain(m_vgaGain);
+    params.setOneShot(m_oneShot);
 
     info.setDataRequest(params.exportToJson());
     info.setTypeRequest(TypeRequest::SWEEP_SPECTR);

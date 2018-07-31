@@ -26,7 +26,6 @@ SweepSpectrForm {
             useOpenGL: chartViewSpectr.openGL
         }
 
-
         Timer {
             id: refreshTimer
             interval: 1 / 60 * 1000 // 60 Hz
@@ -44,7 +43,7 @@ SweepSpectrForm {
         target: userInterface
 
         onSendStartSpectr: {
-            console.log(qsTr("start Spectr"))
+            //console.log(qsTr("start Spectr"))
             //refreshTimer.running = true
             dataSource.update(chartViewSpectr.series(0));
         }
@@ -57,10 +56,6 @@ SweepSpectrForm {
 
     textInputFreqMax{
         validator : IntValidator{bottom: 30; top: 6000;}
-    }
-
-    switchOneShot {
-        enabled: false
     }
 
     textInputFFTBinWidth {
@@ -81,7 +76,7 @@ SweepSpectrForm {
         userInterface.lnaGain = cbxLNAGain.currentText
         userInterface.vgaGain = cbxVGAGain.currentText
         userInterface.fftBinWidth = textInputFFTBinWidth.text
-        userInterface.oneShot = switchOneShot.checkable
+        userInterface.oneShot = switchOneShot.checked
         userInterface.onRequestSweepSpectr()
     }
 

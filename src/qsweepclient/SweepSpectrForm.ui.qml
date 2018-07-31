@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias btnStop: btnStop
     property alias cbxLNAGain: cbxLNAGain
     property alias cbxVGAGain: cbxVGAGain
     property alias frameChart: frameChart
@@ -77,13 +78,13 @@ Item {
 
             Button {
                 id: btnStart
-                x: 99
+                x: 20
                 y: 392
                 width: 69
                 height: 40
                 text: qsTr("Run")
                 anchors.right: parent.right
-                anchors.rightMargin: 0
+                anchors.rightMargin: 79
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
             }
@@ -152,6 +153,19 @@ Item {
                 x: 99
                 y: 106
                 width: 70
+            }
+
+            Button {
+                id: btnStop
+                x: 100
+                y: 392
+                width: 69
+                height: 40
+                text: qsTr("Stop")
+                anchors.bottom: parent.bottom
+                anchors.rightMargin: -1
+                anchors.bottomMargin: 0
+                anchors.right: parent.right
             }
 
         }

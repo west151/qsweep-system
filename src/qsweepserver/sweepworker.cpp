@@ -193,10 +193,22 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         for(int i = 0; (fftSize / 4) > i; i++)
             dataPowerSpectr.m_power.append(static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
 
-        if(one_shot && (static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
-                        >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))){
+//        if(one_shot && (static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+//                        >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))){
+
+            if(static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+                            >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))
+            {
+
             isSending = true;
-            do_exit = true;
+
+            if(one_shot){
+                do_exit = true;
+            }
+
+            qDebug() << "one_shot" << one_shot;
+            qDebug() << "do_exit" << do_exit;
+
 #ifdef QT_DEBUG
             qDebug() << "======================================";
             qDebug() << static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
@@ -287,15 +299,21 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     amp = true;
 
     QString msgTask;
+    msgTask.append(tr("fft bin:"));
     msgTask.append(QString::number(fft_bin_width));
-    msgTask.append(tr(" "));
+    msgTask.append(tr(" lna:"));
     msgTask.append(QString::number(lna_gain));
-    msgTask.append(tr(" "));
+    msgTask.append(tr(" vga:"));
     msgTask.append(QString::number(vga_gain));
-    msgTask.append(tr(" "));
+    msgTask.append(tr(" freq min:"));
     msgTask.append(QString::number(frequencies[0]));
-    msgTask.append(tr(" "));
+    msgTask.append(tr(" freq max:"));
     msgTask.append(QString::number(frequencies[1]));
+    msgTask.append(tr(" one shot:"));
+    if(one_shot)
+        msgTask.append("true");
+    else
+        msgTask.append("false");
 
     sweepWorkerMessagelog(msgTask);
 
@@ -319,7 +337,7 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
         fftSize++;
     }
 
-    fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
+    fft_bin_width = static_cast<uint32_t>(DEFAULT_SAMPLE_RATE_HZ / fftSize);
     fftwIn = (fftwf_complex*)fftwf_malloc(sizeof(fftwf_complex) * fftSize);
     fftwOut = (fftwf_complex*)fftwf_malloc(sizeof(fftwf_complex) * fftSize);
     fftwPlan = fftwf_plan_dft_1d(fftSize, fftwIn, fftwOut, FFTW_FORWARD, FFTW_MEASURE);
@@ -328,7 +346,6 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     for (i = 0; i < fftSize; i++) {
         window[i] = (float) (0.5f * (1.0f - cos(2 * M_PI * i / (fftSize - 1))));
-        //window[i] = 0.5f * (1.0f - cos(2 * M_PI * i / (fftSize - 1)));
     }
 
     result = hackrf_init();
