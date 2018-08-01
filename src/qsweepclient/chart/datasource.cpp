@@ -15,21 +15,21 @@ Q_DECLARE_METATYPE(QAbstractAxis *)
 
 DataSource::DataSource(QObject *parent) : QObject(parent)
 {
-    m_minValue = -100;
-    m_maxValue = 0;
+    m_minValueY = -100;
+    m_maxValueY = 0;
 
     qRegisterMetaType<QAbstractSeries*>();
     qRegisterMetaType<QAbstractAxis*>();
 }
 
-qreal DataSource::minValue() const
+qreal DataSource::minValueY() const
 {
-    return m_minValue;
+    return m_minValueY;
 }
 
-qreal DataSource::maxValue() const
+qreal DataSource::maxValueY() const
 {
-    return m_maxValue;
+    return m_maxValueY;
 }
 
 void DataSource::update(QAbstractSeries *series)
@@ -48,41 +48,10 @@ void DataSource::update(QAbstractSeries *series)
     }
 }
 
-void DataSource::generateData(int type, int rowCount, int colCount)
+void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QVector<PowerSpectr> &spectr)
 {
-    // Remove previous data
-    m_data.clear();
+    Q_UNUSED(f_max)
 
-    // Append the new data depending on the type
-    for (int i(0); i < rowCount; i++) {
-        QVector<QPointF> points;
-        points.reserve(colCount);
-        for (int j(0); j < colCount; j++) {
-            qreal x(0);
-            qreal y(0);
-            switch (type) {
-            case 0:
-                // data with sin + random component
-                y = qSin(M_PI / 50 * j) + 0.5 + QRandomGenerator::global()->generateDouble();
-                x = j;
-                break;
-            case 1:
-                // linear data
-                x = j;
-                y = static_cast<qreal>(i/10);
-                break;
-            default:
-                // unknown, do nothing
-                break;
-            }
-            points.append(QPointF(x, y));
-        }
-        m_data.append(points);
-    }
-}
-
-void DataSource::updateDate(const quint64 &f_min, const quint64 &f_max, const QVector<PowerSpectr> &spectr)
-{
     if(spectr.size()>0)
     {
         m_data.clear();

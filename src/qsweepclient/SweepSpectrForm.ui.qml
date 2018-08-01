@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias rangeSliderLevel: rangeSliderLevel
     property alias btnStop: btnStop
     property alias cbxLNAGain: cbxLNAGain
     property alias cbxVGAGain: cbxVGAGain
@@ -20,6 +21,7 @@ Item {
 
         Frame {
             id: frameChart
+            anchors.leftMargin: 49
             anchors.right: parent.right
             anchors.rightMargin: 198
             anchors.bottom: parent.bottom
@@ -168,6 +170,17 @@ Item {
                 anchors.right: parent.right
             }
 
+        }
+
+        RangeSlider {
+            id: rangeSliderLevel
+            y: 117
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+            anchors.verticalCenter: parent.verticalCenter
+            orientation: Qt.Vertical
+            second.value: 0.75
+            first.value: 0.25
         }
     }
 }

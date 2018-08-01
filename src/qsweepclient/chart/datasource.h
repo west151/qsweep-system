@@ -13,19 +13,18 @@ class DataSource : public QObject
 public:
     explicit DataSource(QObject *parent = nullptr);
 
-    qreal minValue()const;
-    qreal maxValue()const;
+    qreal minValueY()const;
+    qreal maxValueY()const;
 
 public slots:
-    void generateData(int type, int rowCount, int colCount);
-    void updateDate(const quint64 &, const quint64 &, const QVector<PowerSpectr> &);
+    void updateDate(const quint32 &, const quint32 &, const QVector<PowerSpectr> &);
     void update(QAbstractSeries *series);
 
 private:
     QList<QVector<QPointF> > m_data;
     int m_index;
-    qreal m_minValue;
-    qreal m_maxValue;
+    qreal m_minValueY;
+    qreal m_maxValueY;
 };
 
 #endif // DATASOURCE_H

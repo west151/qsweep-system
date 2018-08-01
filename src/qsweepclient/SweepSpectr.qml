@@ -4,6 +4,16 @@ import QtCharts 2.2
 
 SweepSpectrForm {
 
+    rangeSliderLevel {
+        from: -100
+        to: 100
+        first.value: -100
+        second.value: 0
+    }
+
+    rangeSliderLevel.first.onValueChanged: valueAxisY.min = rangeSliderLevel.first.value
+    rangeSliderLevel.second.onValueChanged: valueAxisY.max = rangeSliderLevel.second.value
+
     ChartView {
         id: chartViewSpectr
         objectName: "chartViewSpectr"
@@ -24,6 +34,8 @@ SweepSpectrForm {
             axisX: valueAxisX
             axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
+            color: "green"
+            width: 0.9
         }
 
         Timer {
@@ -62,13 +74,13 @@ SweepSpectrForm {
         enabled: false
     }
 
-    textInputFreqMin {
-        enabled: false
-    }
+//    textInputFreqMin {
+//        enabled: false
+//    }
 
-    textInputFreqMax {
-        enabled: false
-    }
+//    textInputFreqMax {
+//        enabled: false
+//    }
 
     // start spectr
     btnStart.onClicked: {

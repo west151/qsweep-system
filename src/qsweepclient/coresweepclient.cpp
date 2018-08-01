@@ -54,15 +54,15 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     // Настройка осей графика
     ptrAxisX = new QValueAxis(this);
     ptrAxisX->setTitleText("Freq");
-    ptrAxisX->setMin(2400);
-    ptrAxisX->setMax(2500);
+    ptrAxisX->setMin(ptrUserInterface->frequencyMin());
+    ptrAxisX->setMax(ptrUserInterface->frequencyMax());
 //    axisX->setLabelFormat("%i");
 //    axisX->setTickCount(1);
 
     ptrAxisY = new QValueAxis(this);
     ptrAxisY->setTitleText("Level");
-    ptrAxisY->setMin(ptrDataSource->minValue());
-    ptrAxisY->setMax(ptrDataSource->maxValue());
+    ptrAxisY->setMin(ptrDataSource->minValueY());
+    ptrAxisY->setMax(ptrDataSource->maxValueY());
 //    axisY->setLabelFormat("%g");
 //    axisY->setTickCount(5);
 
@@ -210,25 +210,15 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         });
 
         // for test
-        ptrDataSource->updateDate(2400, 2500, tmpPowerSpectr);
-        // update axis max & min
-        ptrAxisY->setMin(ptrDataSource->minValue());
-        ptrAxisY->setMax(ptrDataSource->maxValue());
+        ptrDataSource->updateDate(ptrUserInterface->frequencyMin(),
+                                  ptrUserInterface->frequencyMax(),
+                                  tmpPowerSpectr);
+
+        // X update axis max & min freq
+        ptrAxisX->setMin(ptrUserInterface->frequencyMin());
+        ptrAxisX->setMax(ptrUserInterface->frequencyMax());
         // test
         emit sendStartSpectr();
-
-//#ifdef QT_DEBUG
-//        qDebug() << "---------------------------------------------------";
-//        qDebug() << tmpPowerSpectr.count() << tmpPowerSpectr.count()/4;
-
-//        for(int i=0; i<tmpPowerSpectr.count(); ++i){
-//            qDebug() << tmpPowerSpectr.at(i).m_frequency_min
-//                     << tmpPowerSpectr.at(i).m_frequency_max
-//                     << tmpPowerSpectr.at(i).m_fft_bin_width
-//                     << tmpPowerSpectr.at(i).m_fft_size
-//                     << tmpPowerSpectr.at(i).m_power;
-//        }
-//#endif
     }
         break;
     default:
