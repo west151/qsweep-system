@@ -29,9 +29,6 @@ ApplicationWindow {
 
         currentIndex: tabBar.currentIndex
 
-        Client {
-        }
-
         SweepSpectr {
         }
 
@@ -46,9 +43,6 @@ ApplicationWindow {
         id: tabBar
         currentIndex: swipeView.currentIndex
 
-        TabButton {
-            text: qsTr("Connect")
-        }
         TabButton {
             text: qsTr("Spectr")
         }

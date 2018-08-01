@@ -196,12 +196,6 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         QSweepAnswer answer(message);
         QSweepMessageLog log(answer.dataAnswer());
         ptrMessageLogModel->addResult(log);
-
-//#ifdef QT_DEBUG
-//        qDebug() << "---------------------------------------------------";
-//        qDebug() << Q_FUNC_INFO << tr("DateTime:") << log.dateTime();
-//        qDebug() << Q_FUNC_INFO << tr("Message Log:") << log.textMessage();
-//#endif
     }
         break;
     case QSweepTopic::TOPIC_POWER_SPECTR:
