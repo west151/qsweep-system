@@ -18,6 +18,10 @@ DataSource::DataSource(QObject *parent) : QObject(parent)
     m_minValueY = -100;
     m_maxValueY = 0;
 
+    isMaxPowerSpectr = true;
+    m_countAvg = 0;
+    isClearPowerSpectr = false;
+
     qRegisterMetaType<QAbstractSeries*>();
     qRegisterMetaType<QAbstractAxis*>();
 }
@@ -30,6 +34,21 @@ qreal DataSource::minValueY() const
 qreal DataSource::maxValueY() const
 {
     return m_maxValueY;
+}
+
+void DataSource::setCountAvg(const qint32 &value)
+{
+    m_countAvg = value;
+}
+
+void DataSource::setMaxPowerSpectr(const bool &on)
+{
+    isMaxPowerSpectr = on;
+}
+
+void DataSource::clearMaxPowerSpectr()
+{
+    isClearPowerSpectr = true;
 }
 
 void DataSource::update(QAbstractSeries *series)
@@ -54,18 +73,26 @@ void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QV
 
     if(spectr.size()>0)
     {
-        m_data.clear();
-
         QVector<qreal> tmpPower;
 
         for(qint32 i=0; i<spectr.size(); ++i)
             tmpPower.append(spectr.at(i).m_power);
 
-        QVector<QPointF> points;
-        points.reserve(tmpPower.size());
+        // real time
+        QVector<QPointF> pointsRT;
+        pointsRT.reserve(tmpPower.size());
+        // max
+        QVector<QPointF> pointsMAX;
+        pointsMAX.reserve(tmpPower.size());
 
         qreal freq = static_cast<qreal>(f_min);
         qreal step = 0.5;
+
+        bool isLastPower;
+        if(m_lastPower.size() == tmpPower.size())
+            isLastPower = true;
+        else
+            isLastPower = false;
 
         for (qint32 j=0; j < tmpPower.size(); ++j) {
             qreal x(0);
@@ -76,8 +103,26 @@ void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QV
 
             freq = freq + step;
 
-            points.append(QPointF(x, y));
+            pointsRT.append(QPointF(x, y));
+
+            if(isLastPower){
+                qreal y1 = m_lastPower.at(j);
+                if(y > y1){
+                    y1 = y;
+                    m_lastPower[j] = y;
+                }
+                pointsMAX.append(QPointF(x, y1));
+            }
         }
-        m_data.append(points);
+        m_data.clear();
+        m_data.append(pointsRT);
+        m_data.append(pointsMAX);
+
+        // last power
+        if((m_lastPower.size() != tmpPower.size())||isClearPowerSpectr){
+            m_lastPower.clear();
+            m_lastPower.append(tmpPower);
+            isClearPowerSpectr = false;
+        }
     }
 }

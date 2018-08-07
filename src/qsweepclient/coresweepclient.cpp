@@ -124,10 +124,13 @@ void CoreSweepClient::initialization()
             this, &CoreSweepClient::pingReceived);
     connect(ptrMqttClient, &QMqttClient::pingResponseReceived,
             this , &CoreSweepClient::pingReceived);
+    // user interface
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
     connect(this, &CoreSweepClient::sendStartSpectr,
             ptrUserInterface, &UserInterface::sendStartSpectr);
+    connect(ptrUserInterface, &UserInterface::sendClearMaxPowerSpectr,
+            ptrDataSource, &DataSource::clearMaxPowerSpectr);
 }
 
 bool CoreSweepClient::readSettings(const QString &file) const

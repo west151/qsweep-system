@@ -160,3 +160,8 @@ void UserInterface::onRequestSweepSpectr(const bool &start)
 
     emit sendRequestSweepServer(info);
 }
+
+void UserInterface::onClearMaxPowerSpectr()
+{
+    emit sendClearMaxPowerSpectr();
+}

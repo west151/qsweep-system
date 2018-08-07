@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 640
     height: 480
+    property alias btnClearMaxSpectr: btnClearMaxSpectr
     property alias rangeSliderLevel: rangeSliderLevel
     property alias btnStop: btnStop
     property alias cbxLNAGain: cbxLNAGain
@@ -168,6 +169,15 @@ Item {
                 anchors.rightMargin: -1
                 anchors.bottomMargin: 0
                 anchors.right: parent.right
+            }
+
+            Button {
+                id: btnClearMaxSpectr
+                x: 26
+                y: 312
+                width: 148
+                height: 40
+                text: qsTr("clear max")
             }
 
         }

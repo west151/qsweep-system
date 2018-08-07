@@ -16,15 +16,24 @@ public:
     qreal minValueY()const;
     qreal maxValueY()const;
 
+    void setCountAvg(const qint32 &);
+    void setMaxPowerSpectr(const bool &);
+
 public slots:
     void updateDate(const quint32 &, const quint32 &, const QVector<PowerSpectr> &);
-    void update(QAbstractSeries *series);
+    void update(QAbstractSeries *series);       // realtime
+    void clearMaxPowerSpectr();
 
 private:
+    // realtime
     QList<QVector<QPointF> > m_data;
+    QVector<qreal> m_lastPower;
     int m_index;
     qreal m_minValueY;
     qreal m_maxValueY;
+    qint32 m_countAvg;
+    bool isMaxPowerSpectr;
+    bool isClearPowerSpectr;
 };
 
 #endif // DATASOURCE_H

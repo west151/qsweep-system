@@ -51,6 +51,7 @@ public:
 
     Q_INVOKABLE void onRequestSweepInfo();
     Q_INVOKABLE void onRequestSweepSpectr(const bool &start = true);
+    Q_INVOKABLE void onClearMaxPowerSpectr();
 
 signals:
     void sendMessageToHost();
@@ -68,6 +69,7 @@ signals:
     void pingReceivedCountChanged();
     // start update spectr
     void sendStartSpectr();
+    void sendClearMaxPowerSpectr();
 
 private:
     // spectr params

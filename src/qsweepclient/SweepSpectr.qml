@@ -4,6 +4,10 @@ import QtCharts 2.2
 
 SweepSpectrForm {
 
+    btnClearMaxSpectr.onClicked: {
+        userInterface.onClearMaxPowerSpectr()
+    }
+
     rangeSliderLevel {
         from: -100
         to: 100
@@ -30,11 +34,22 @@ SweepSpectrForm {
         LineSeries {
             id: lineSeriesPower
             objectName: "lineSeriesPower"
-//            name: "signal 1"
+            name: "real time signal"
             axisX: valueAxisX
             axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
             color: "green"
+            width: 0.9
+        }
+
+        LineSeries {
+            id: lineSeriesPowerMax
+            objectName: "lineSeriesPowerMax"
+            name: "max signal"
+            axisX: valueAxisX
+            axisY: valueAxisY
+            useOpenGL: chartViewSpectr.openGL
+            color: "red"
             width: 0.9
         }
 
@@ -58,6 +73,7 @@ SweepSpectrForm {
             //console.log(qsTr("start Spectr"))
             //refreshTimer.running = true
             dataSource.update(chartViewSpectr.series(0));
+            dataSource.update(chartViewSpectr.series(1));
         }
     }
 
@@ -73,14 +89,6 @@ SweepSpectrForm {
     textInputFFTBinWidth {
         enabled: false
     }
-
-//    textInputFreqMin {
-//        enabled: false
-//    }
-
-//    textInputFreqMax {
-//        enabled: false
-//    }
 
     // start spectr
     btnStart.onClicked: {
