@@ -105,12 +105,10 @@ void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QV
 
             pointsRT.append(QPointF(x, y));
 
-            if(isLastPower){
-                qreal y1 = m_lastPower.at(j);
-                if(y > y1){
-                    y1 = y;
-                    m_lastPower[j] = y;
-                }
+            if(isLastPower)
+            {
+                qreal y1 = qMax(m_lastPower.at(j), y);
+                m_lastPower[j] = y1;
                 pointsMAX.append(QPointF(x, y1));
             }
         }
