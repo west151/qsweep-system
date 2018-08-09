@@ -6,8 +6,8 @@ ApplicationWindow {
     id: window
     objectName: "mainWindow"
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     title: qsTr("Spectr")
 
     Top{

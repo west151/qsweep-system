@@ -19,6 +19,9 @@ public:
     void setCountAvg(const qint32 &);
     void setMaxPowerSpectr(const bool &);
 
+signals:
+    void sendPowerSpectr(const QVector<qreal> &);
+
 public slots:
     void updateDate(const quint32 &, const quint32 &, const QVector<PowerSpectr> &);
     void update(QAbstractSeries *series);       // realtime

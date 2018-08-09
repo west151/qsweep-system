@@ -2,8 +2,9 @@ import QtQuick 2.4
 import QtQuick.Controls 2.3
 
 Item {
-    width: 640
-    height: 480
+    width: 800
+    height: 600
+    property alias frameWaterfall: frameWaterfall
     property alias btnClearMaxSpectr: btnClearMaxSpectr
     property alias rangeSliderLevel: rangeSliderLevel
     property alias btnStop: btnStop
@@ -22,6 +23,7 @@ Item {
 
         Frame {
             id: frameChart
+            anchors.bottomMargin: 276
             anchors.leftMargin: 49
             anchors.right: parent.right
             anchors.rightMargin: 198
@@ -184,13 +186,27 @@ Item {
 
         RangeSlider {
             id: rangeSliderLevel
-            y: 117
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            anchors.verticalCenterOffset: -138
             anchors.left: parent.left
-            anchors.leftMargin: 0
+            anchors.leftMargin: 3
             anchors.verticalCenter: parent.verticalCenter
             orientation: Qt.Vertical
             second.value: 0.75
             first.value: 0.25
+        }
+
+        Frame {
+            id: frameWaterfall
+            y: 306
+            height: 270
+            anchors.right: parent.right
+            anchors.rightMargin: 198
+            anchors.left: parent.left
+            anchors.leftMargin: 49
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
         }
     }
 }

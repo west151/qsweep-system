@@ -16,6 +16,7 @@
 #include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
 #include "chart/datasource.h"
+#include "chart/waterfallitem.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -66,6 +67,9 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 //    axisY->setLabelFormat("%g");
 //    axisY->setTickCount(5);
 
+    qmlRegisterType<WaterfallItem>("waterfall", 1, 0, "Waterfall");
+
+
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
@@ -79,7 +83,11 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QObject *qmlChartView = rootObject->findChild<QObject*>("chartViewSpectr");
     qmlChartView->setProperty("title", tr("Signals"));
 
-    //QObject *qmlLineSeriesPower = rootObject->findChild<QObject*>("lineSeriesPower");
+    QObject *qmlPlotWaterfall = rootObject->findChild<QObject*>("plotWaterfall");
+    WaterfallItem *plotWaterfall = static_cast<WaterfallItem *>(qmlPlotWaterfall);
+
+    connect(ptrDataSource, &DataSource::sendPowerSpectr,
+            plotWaterfall, &WaterfallItem::onPowerSpectr);
 
     if (ptrEngine->rootObjects().isEmpty())
         return -1;

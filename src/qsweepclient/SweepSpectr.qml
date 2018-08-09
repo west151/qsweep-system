@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.3
 import QtCharts 2.2
+import waterfall 1.0
 
 SweepSpectrForm {
 
@@ -17,6 +18,53 @@ SweepSpectrForm {
 
     rangeSliderLevel.first.onValueChanged: valueAxisY.min = rangeSliderLevel.first.value
     rangeSliderLevel.second.onValueChanged: valueAxisY.max = rangeSliderLevel.second.value
+
+    Waterfall {
+        id: idPlot
+        objectName: "plotWaterfall"
+        parent: idFrameWaterfall
+        anchors.fill: parent
+        anchors.margins: 10
+
+        Rectangle {
+            color: "#88222222"
+            radius: 5
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.margins: 10
+            width: minFreq.width + 10
+            height: minFreq.height + 10
+
+            Text {
+                id: minFreq
+                anchors.centerIn: parent
+                color: "#fff"
+                text: "← " + userInterface.frequencyMin + " MHz"
+            }
+        }
+
+        Rectangle {
+            color: "#88222222"
+            radius: 5
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 10
+            width: maxFreq.width + 10
+            height: maxFreq.height + 10
+
+            Text {
+                id: maxFreq
+                anchors.centerIn: parent
+                color: "#fff"
+                text: userInterface.frequencyMax + " MHz →"
+            }
+        }
+    }
+
+    frameWaterfall {
+        id: idFrameWaterfall
+        objectName: "frameWaterfall"
+    }
 
     ChartView {
         id: chartViewSpectr

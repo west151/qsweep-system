@@ -78,6 +78,8 @@ void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QV
         for(qint32 i=0; i<spectr.size(); ++i)
             tmpPower.append(spectr.at(i).m_power);
 
+        emit sendPowerSpectr(tmpPower);
+
         // real time
         QVector<QPointF> pointsRT;
         pointsRT.reserve(tmpPower.size());
