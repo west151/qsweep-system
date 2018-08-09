@@ -18,7 +18,9 @@ public:
 public slots:
     void onPowerSpectr(const QVector<qreal> &);
 //    void samplesCollected(std::vector<float> *samples);
-    //void sizeChanged();
+
+private slots:
+    void sizeChanged();
 
 private:
     QImage _image;
