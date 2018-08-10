@@ -1,8 +1,6 @@
 #include "waterfallitem.h"
 
 #include <QtGui/QPainter>
-#include <QtCore/QRandomGenerator>
-#include <QtCore/QtMath>
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -18,8 +16,9 @@ WaterfallItem::WaterfallItem(QQuickItem *parent) : QQuickPaintedItem(parent)
     this->setVisible(true);
     this->setFlag(QQuickItem::ItemHasContents);
 
-    _image = QImage((int)this->width(), (int)this->height(), QImage::Format_ARGB32);
+    _image = QImage(static_cast<int>(this->width()), static_cast<int>(this->height()), QImage::Format_ARGB32);
     _image.fill(QColor(255, 255, 255));
+    _sensitivity =0.05;
 
     // Generate displayable colors
     QImage img(500, 1, QImage::Format_ARGB32);
@@ -62,25 +61,18 @@ void WaterfallItem::paint(QPainter *painter)
 
 void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
 {
-//#ifdef QT_DEBUG
-//    qDebug() << Q_FUNC_INFO << spectr.size();
-//#endif
-
     // Create new image
-    QImage img((int)this->width(), (int)this->height(), QImage::Format_ARGB32);
+    QImage img(static_cast<int>(this->width()), static_cast<int>(this->height()), QImage::Format_ARGB32);
     QPainter painter;
     painter.begin(&img);
 
-
     // Draw 1st pixel row: new values
-    for (int x = 0; x < img.width(); x++) {
-        unsigned i1 = x * spectr.size() / 10 / img.width();
-        //float amplitude = std::abs(spectr[i1]);
-        float amplitude = qSin(M_PI / 50 * x) + 0.5 + QRandomGenerator::global()->generateDouble();
+    for (int x = 0; x < img.width(); x++)
+    {
+        unsigned i1 = x * spectr.size() / img.width();
+        qreal amplitude = std::log10(std::abs(spectr[i1]));
+        int value = static_cast<int>(amplitude * static_cast<qreal>(_sensitivity) * static_cast<qreal>(_colors.length()));
 
-        //float amplitude = std::log10(std::abs(result[i1]));
-        //int value = (int)(amplitude * (float)_sensitivity * (float)_colors.length());
-        int value = (int)(amplitude * (float)_colors.length());
         if (value < 0)
             value = 0;
         if (value >= _colors.length())
@@ -89,10 +81,6 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
         painter.setPen(_colors[value]);
         painter.drawRect(x, 0, 1, 5);
     }
-
-#ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << img.width() << spectr.size();
-#endif
 
     // Draw old values
     if (!_image.isNull()) {
@@ -106,8 +94,19 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
     update();
 }
 
+void WaterfallItem::setSensitivity(const qreal &value)
+{
+    _sensitivity = value;
+    emit this->sensitivityChanged();
+}
+
+qreal WaterfallItem::sensitivity() const
+{
+    return  _sensitivity;
+}
+
 void WaterfallItem::clear() {
-    _image = QImage((int)this->width(), (int)this->height(), QImage::Format_ARGB32);
+    _image = QImage(static_cast<int>(this->width()), static_cast<int>(this->height()), QImage::Format_ARGB32);
     _image.fill(QColor(255, 255, 255));
 }
 

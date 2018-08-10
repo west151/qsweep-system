@@ -5,6 +5,15 @@ import waterfall 1.0
 
 SweepSpectrForm {
 
+    sliderSensitivity
+    {
+        id: idSliderSensitivity
+        from: 0.005
+        value: 0.05
+        to: 0.1
+        stepSize: 0.0001
+    }
+
     btnClearMaxSpectr.onClicked: {
         userInterface.onClearMaxPowerSpectr()
     }
@@ -25,6 +34,7 @@ SweepSpectrForm {
         parent: idFrameWaterfall
         anchors.fill: parent
         anchors.margins: 10
+        sensitivity: idSliderSensitivity.value
 
         Rectangle {
             color: "#88222222"

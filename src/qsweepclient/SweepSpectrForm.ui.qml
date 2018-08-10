@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 Item {
     width: 800
     height: 600
+    property alias sliderSensitivity: sliderSensitivity
     property alias frameWaterfall: frameWaterfall
     property alias btnClearMaxSpectr: btnClearMaxSpectr
     property alias rangeSliderLevel: rangeSliderLevel
@@ -207,6 +208,19 @@ Item {
             anchors.leftMargin: 49
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
+        }
+
+        Slider {
+            id: sliderSensitivity
+            y: 341
+            to: 0.1
+            from: 0
+            anchors.left: parent.left
+            anchors.leftMargin: 3
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 35
+            orientation: Qt.Vertical
+            value: 0.1
         }
     }
 }
