@@ -92,7 +92,7 @@ SweepSpectrForm {
         LineSeries {
             id: lineSeriesPower
             objectName: "lineSeriesPower"
-            name: "real time signal"
+            name: "spectr"
             axisX: valueAxisX
             axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
@@ -103,7 +103,7 @@ SweepSpectrForm {
         LineSeries {
             id: lineSeriesPowerMax
             objectName: "lineSeriesPowerMax"
-            name: "max signal"
+            name: "max spectr"
             axisX: valueAxisX
             axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
@@ -111,17 +111,17 @@ SweepSpectrForm {
             width: 0.9
         }
 
-        Timer {
-            id: refreshTimer
-            interval: 1 / 60 * 1000 // 60 Hz
-            running: false
-            repeat: true
-            onTriggered: {
-                //dataSource.update(series)
-                //dataSource.update(chartViewSpectr.series(0));
-                //dataSource.update(chartView.series(1));
-            }
-        }
+//        Timer {
+//            id: refreshTimer
+//            interval: 1 / 60 * 1000 // 60 Hz
+//            running: false
+//            repeat: true
+//            onTriggered: {
+//                //dataSource.update(series)
+//                //dataSource.update(chartViewSpectr.series(0));
+//                //dataSource.update(chartView.series(1));
+//            }
+//        }
     }
 
     Connections {
@@ -138,10 +138,12 @@ SweepSpectrForm {
     textInputFreqMin{
         //validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
         validator : IntValidator{bottom: 30; top: 6000;}
+        inputMethodHints: Qt.ImhDigitsOnly
     }
 
     textInputFreqMax{
         validator : IntValidator{bottom: 30; top: 6000;}
+        inputMethodHints: Qt.ImhDigitsOnly
     }
 
     textInputFFTBinWidth {

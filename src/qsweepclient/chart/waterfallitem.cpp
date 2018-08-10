@@ -47,7 +47,7 @@ WaterfallItem::WaterfallItem(QQuickItem *parent) : QQuickPaintedItem(parent)
 
 void WaterfallItem::paint(QPainter *painter)
 {
-    painter->drawImage(QRect(0, 0, width(), height()), _image, QRect(0, 0, _image.width(), _image.height()));
+    painter->drawImage(QRect(0, 0, static_cast<int>(width()), static_cast<int>(height())), _image, QRect(0, 0, _image.width(), _image.height()));
 
 //    // test
 //    const auto rect = contentsBoundingRect();
@@ -69,7 +69,7 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
     // Draw 1st pixel row: new values
     for (int x = 0; x < img.width(); x++)
     {
-        unsigned i1 = x * spectr.size() / img.width();
+        int i1 = static_cast<int>(x * spectr.size() / img.width());
         qreal amplitude = std::log10(std::abs(spectr[i1]));
         int value = static_cast<int>(amplitude * static_cast<qreal>(_sensitivity) * static_cast<qreal>(_colors.length()));
 
@@ -84,7 +84,7 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
 
     // Draw old values
     if (!_image.isNull()) {
-        painter.drawImage(QRect(0, 6, width(), height()), _image, QRect(0, 0, _image.width(), _image.height()));
+        painter.drawImage(QRect(0, 6, static_cast<int>(width()), static_cast<int>(height())), _image, QRect(0, 0, _image.width(), _image.height()));
     }
 
     painter.end();

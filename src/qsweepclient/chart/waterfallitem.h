@@ -23,7 +23,6 @@ public slots:
 signals:
     void sensitivityChanged();
 
-
 private slots:
     void sizeChanged();
 

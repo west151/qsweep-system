@@ -80,8 +80,8 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     QObject *rootObject = ptrEngine->rootObjects().first();
-    QObject *qmlChartView = rootObject->findChild<QObject*>("chartViewSpectr");
-    qmlChartView->setProperty("title", tr("Signals"));
+//    QObject *qmlChartView = rootObject->findChild<QObject*>("chartViewSpectr");
+//    qmlChartView->setProperty("title", tr("Spectr"));
 
     QObject *qmlPlotWaterfall = rootObject->findChild<QObject*>("plotWaterfall");
     WaterfallItem *plotWaterfall = static_cast<WaterfallItem *>(qmlPlotWaterfall);
