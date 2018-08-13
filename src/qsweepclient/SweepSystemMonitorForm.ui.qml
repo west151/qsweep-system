@@ -1,6 +1,7 @@
 import QtQuick 2.4
 
 Item {
+    id: item1
     width: 800
     height: 600
     property alias textBufferMemory: textBufferMemory
@@ -10,8 +11,10 @@ Item {
     property alias textHostName: textHostName
 
     Column {
-        x: 8
-        y: 8
+        x: 375
+        y: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
         spacing: 15
 
         Text {
