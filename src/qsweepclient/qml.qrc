@@ -10,5 +10,7 @@
         <file>SweepSpectrForm.ui.qml</file>
         <file>Top.qml</file>
         <file>TopForm.ui.qml</file>
+        <file>SweepSystemMonitor.qml</file>
+        <file>SweepSystemMonitorForm.ui.qml</file>
     </qresource>
 </RCC>

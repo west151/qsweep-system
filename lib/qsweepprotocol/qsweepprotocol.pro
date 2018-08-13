@@ -31,7 +31,8 @@ SOURCES += \
     qsweepanswer.cpp \
     qhackrfinfo.cpp \
     qsweepparams.cpp \
-    qsweepspectr.cpp
+    qsweepspectr.cpp \
+    qsweepsystemmonitor.cpp
 
 HEADERS += \
         qsweepprotocol_global.h \  
@@ -41,7 +42,8 @@ HEADERS += \
     qsweepanswer.h \
     qhackrfinfo.h \
     qsweepparams.h \
-    qsweepspectr.h
+    qsweepspectr.h \
+    qsweepsystemmonitor.h
 
 #unix {
 #    target.path = /usr/lib

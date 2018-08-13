@@ -5,6 +5,7 @@ static const QString topic_ctrl = QLatin1String("sdr/ctrl");
 static const QString topic_info = QLatin1String("sdr/info");
 static const QString topic_data = QLatin1String("sdr/data");
 static const QString topic_spectr = QLatin1String("sdr/spectr");
+static const QString topic_system_monitor = QLatin1String("sdr/system/monitor");
 
 QSweepTopic::QSweepTopic(QObject *parent) : QObject(parent)
 {
@@ -29,6 +30,9 @@ QString QSweepTopic::sweepTopic(const Topic value) const
     case TOPIC_POWER_SPECTR:
         return topic_spectr;
         break;
+    case TOPIC_SYSTEM_MONITOR:
+        return  topic_system_monitor;
+        break;
     default:
         break;
     }
@@ -52,6 +56,9 @@ QSweepTopic::Topic QSweepTopic::sweepTopic(const QString &value)
 
     if(value == topic_spectr)
         return TOPIC_POWER_SPECTR;
+
+    if(value == topic_system_monitor)
+        return TOPIC_SYSTEM_MONITOR;
 
     return TOPIC_UNKNOWN;
 }

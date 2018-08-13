@@ -15,8 +15,10 @@
 #include "qsweepspectr.h"
 #include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
+#include "qsweepsystemmonitor.h"
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
+#include "systemmonitorinterface.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -32,7 +34,8 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrMessageLogModel(new MessageLogModel(this)),
     ptrDataSource(new DataSource(this)),
     ptrAxisX(new QValueAxis(this)),
-    ptrAxisY(new QValueAxis(this))
+    ptrAxisY(new QValueAxis(this)),
+    ptrSystemMonitorInterface(new SystemMonitorInterface(this))
 {
 }
 
@@ -77,6 +80,8 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     context->setContextProperty("dataSource", ptrDataSource);
     context->setContextProperty("valueAxisY", ptrAxisY);
     context->setContextProperty("valueAxisX", ptrAxisX);
+    context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
+
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     QObject *rootObject = ptrEngine->rootObjects().first();
@@ -206,7 +211,8 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     {
         QSweepAnswer answer(message);
         QSweepMessageLog log(answer.dataAnswer());
-        ptrMessageLogModel->addResult(log);
+        if(ptrMessageLogModel)
+            ptrMessageLogModel->addResult(log);
     }
         break;
     case QSweepTopic::TOPIC_POWER_SPECTR:
@@ -232,6 +238,16 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         emit sendStartSpectr();
     }
         break;
+
+    case QSweepTopic::TOPIC_SYSTEM_MONITOR:
+    {
+        QSweepAnswer answer(message);
+        QSweepSystemMonitor sysmon(answer.dataAnswer());
+        if(ptrSystemMonitorInterface)
+            ptrSystemMonitorInterface->setSystemMonitor(sysmon);
+    }
+        break;
+
     default:
         break;
     }
@@ -276,6 +292,16 @@ void CoreSweepClient::updateLogStateChange()
         auto subscription2 = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR));
 
         if (!subscription2)
+        {
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";
+#endif
+            return;
+        }
+
+        auto subscription3 = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_SYSTEM_MONITOR));
+
+        if (!subscription3)
         {
 #ifdef QT_DEBUG
             qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";

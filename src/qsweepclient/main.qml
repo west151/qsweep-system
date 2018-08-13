@@ -37,6 +37,9 @@ ApplicationWindow {
 
         SweepMessageLog {
         }
+
+        SweepSystemMonitor {
+        }
     }
 
     footer: TabBar {
@@ -51,6 +54,10 @@ ApplicationWindow {
         }
         TabButton {
             text: qsTr("Message log")
+        }
+
+        TabButton {
+            text: qsTr("System monitor (remote host)")
         }
     }
 

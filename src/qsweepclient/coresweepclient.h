@@ -17,6 +17,7 @@ class QSweepTopic;
 class QSweepRequest;
 class QHackrfInfo;
 class DataSource;
+class SystemMonitorInterface;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -45,6 +46,8 @@ private:
     DataSource* ptrDataSource {Q_NULLPTR};
     QValueAxis* ptrAxisX {Q_NULLPTR};
     QValueAxis* ptrAxisY {Q_NULLPTR};
+
+    SystemMonitorInterface* ptrSystemMonitorInterface {Q_NULLPTR};
 
     void initialization();
     bool readSettings(const QString &) const;

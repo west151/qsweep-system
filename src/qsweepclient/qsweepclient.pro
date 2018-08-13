@@ -10,7 +10,8 @@ HEADERS += \
     model/hackrfinfomodel.h \
     settings/sweepclientsettings.h \
     chart/datasource.h \
-    chart/waterfallitem.h
+    chart/waterfallitem.h \
+    systemmonitorinterface.h
 
 SOURCES += \
     coresweepclient.cpp \
@@ -20,7 +21,8 @@ SOURCES += \
     model/hackrfinfomodel.cpp \
     settings/sweepclientsettings.cpp \
     chart/datasource.cpp \
-    chart/waterfallitem.cpp
+    chart/waterfallitem.cpp \
+    systemmonitorinterface.cpp
 
 RESOURCES += qml.qrc
 

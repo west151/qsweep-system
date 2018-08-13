@@ -13,10 +13,14 @@ SOURCES += \
     qsweepserver.cpp \
     coresweep.cpp \
     sweepworker.cpp \
-    hackrfinfo.cpp
+    hackrfinfo.cpp \
+    settings/sweepserversettings.cpp \
+    systemmonitorworker.cpp
 
 HEADERS += \
     coresweep.h \
     sweepworker.h \
     hackrfinfo.h \
-    constant.h
+    constant.h \
+    settings/sweepserversettings.h \
+    systemmonitorworker.h

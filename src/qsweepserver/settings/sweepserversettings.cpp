@@ -1,4 +1,4 @@
-#include "sweepclientsettings.h"
+#include "sweepserversettings.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -6,37 +6,37 @@
 static const QString HOST_BROKER_KEY = QStringLiteral("host_broker");
 static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
 
-class SweepClientSettingsData : public QSharedData {
+class SweepServerSettingsData : public QSharedData {
 public:
-    SweepClientSettingsData(): QSharedData()
+    SweepServerSettingsData(): QSharedData()
     {
         m_valid = false;
         m_hostBroker = "127.0.0.1";
         m_portBroker = 1883;
     }
-    SweepClientSettingsData(const SweepClientSettingsData &other) : QSharedData(other)
+    SweepServerSettingsData(const SweepServerSettingsData &other) : QSharedData(other)
     {
         m_valid = other.m_valid;
         m_hostBroker = other.m_hostBroker;
         m_portBroker = other.m_portBroker;
     }
 
-    ~SweepClientSettingsData() {}
+    ~SweepServerSettingsData() {}
 
     bool m_valid;
     QString m_hostBroker;
     quint16 m_portBroker;
 };
 
-SweepClientSettings::SweepClientSettings() : data(new SweepClientSettingsData)
+SweepServerSettings::SweepServerSettings() : data(new SweepServerSettingsData)
 {
 }
 
-SweepClientSettings::SweepClientSettings(const SweepClientSettings &rhs) : data(rhs.data)
+SweepServerSettings::SweepServerSettings(const SweepServerSettings &rhs) : data(rhs.data)
 {
 }
 
-SweepClientSettings::SweepClientSettings(const QByteArray &json, const bool binary) : data(new SweepClientSettingsData)
+SweepServerSettings::SweepServerSettings(const QByteArray &json, const bool binary) : data(new SweepServerSettingsData)
 {
     QJsonDocument doc;
     if (binary)
@@ -54,7 +54,7 @@ SweepClientSettings::SweepClientSettings(const QByteArray &json, const bool bina
         data->m_valid = false;
 }
 
-SweepClientSettings &SweepClientSettings::operator=(const SweepClientSettings &rhs)
+SweepServerSettings &SweepServerSettings::operator=(const SweepServerSettings &rhs)
 {
     if (this != &rhs) {
         data.operator=(rhs.data);
@@ -62,36 +62,36 @@ SweepClientSettings &SweepClientSettings::operator=(const SweepClientSettings &r
     return *this;
 }
 
-SweepClientSettings::~SweepClientSettings()
+SweepServerSettings::~SweepServerSettings()
 {
 }
 
-bool SweepClientSettings::isValid() const
+bool SweepServerSettings::isValid() const
 {
     return data->m_valid;
 }
 
-void SweepClientSettings::setHostBroker(const QString &value)
+void SweepServerSettings::setHostBroker(const QString &value)
 {
     data->m_hostBroker = value;
 }
 
-QString SweepClientSettings::hostBroker() const
+QString SweepServerSettings::hostBroker() const
 {
     return data->m_hostBroker;
 }
 
-void SweepClientSettings::setPortBroker(const quint16 &value)
+void SweepServerSettings::setPortBroker(const quint16 &value)
 {
     data->m_portBroker = value;
 }
 
-quint16 SweepClientSettings::portBroker() const
+quint16 SweepServerSettings::portBroker() const
 {
     return data->m_portBroker;
 }
 
-QByteArray SweepClientSettings::exportToJson(const bool binary) const
+QByteArray SweepServerSettings::exportToJson(const bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject.insert(HOST_BROKER_KEY, data->m_hostBroker);
