@@ -34,6 +34,7 @@ Item {
 
             ListView {
                 id: listViewMessageLog
+                anchors.bottomMargin: 15
                 anchors.fill: parent
                 delegate: Item {
                     x: 5

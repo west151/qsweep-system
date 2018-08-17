@@ -24,6 +24,11 @@ DataSource::DataSource(QObject *parent) : QObject(parent)
 
     qRegisterMetaType<QAbstractSeries*>();
     qRegisterMetaType<QAbstractAxis*>();
+
+    m_minFreq = 0;
+    m_maxFreq = 0;
+    m_spectSize = 0;
+    m_step = 0;
 }
 
 qreal DataSource::minValueY() const
@@ -69,8 +74,6 @@ void DataSource::update(QAbstractSeries *series)
 
 void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QVector<PowerSpectr> &spectr)
 {
-    Q_UNUSED(f_max)
-
     if(spectr.size()>0)
     {
         QVector<qreal> tmpPower;
@@ -87,23 +90,22 @@ void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QV
         QVector<QPointF> pointsMAX;
         pointsMAX.reserve(tmpPower.size());
 
-        qreal freq = static_cast<qreal>(f_min);
-        qreal step = 0.5;
+        qreal minFreq = static_cast<qreal>(f_min);
+        qreal maxFreq = static_cast<qreal>(f_max);
+        qreal step = (maxFreq - minFreq)/tmpPower.count();
 
-        bool isLastPower;
+        bool isLastPower(false);
         if(m_lastPower.size() == tmpPower.size())
             isLastPower = true;
-        else
-            isLastPower = false;
 
         for (qint32 j=0; j < tmpPower.size(); ++j) {
             qreal x(0);
             qreal y(0);
 
-            x = freq;
+            x = minFreq;
             y = tmpPower.at(j);
 
-            freq = freq + step;
+            minFreq = minFreq + step;
 
             pointsRT.append(QPointF(x, y));
 

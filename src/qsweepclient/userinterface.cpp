@@ -154,7 +154,7 @@ void UserInterface::onRequestSweepSpectr(const bool &start)
 
     info.setDataRequest(params.exportToJson());
     if(start)
-        info.setTypeRequest(TypeRequest::SWEEP_SPECTR);
+        info.setTypeRequest(TypeRequest::START_SWEEP_SPECTR);
     else
         info.setTypeRequest(TypeRequest::STOP_SWEEP_SPECTR);
 

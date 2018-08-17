@@ -9,7 +9,7 @@
 enum class TypeRequest: qint32 {
     UNKNOWN = 0,
     INFO,
-    SWEEP_SPECTR,
+    START_SWEEP_SPECTR,
     STOP_SWEEP_SPECTR
 };
 

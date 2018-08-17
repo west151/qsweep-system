@@ -40,6 +40,10 @@ ApplicationWindow {
 
         SweepSystemMonitor {
         }
+
+        onCurrentIndexChanged: {
+            console.log("SwipeView: currentIndex = ", currentIndex);
+        }
     }
 
     footer: TabBar {
@@ -55,7 +59,6 @@ ApplicationWindow {
         TabButton {
             text: qsTr("Message log")
         }
-
         TabButton {
             text: qsTr("System monitor (remote host)")
         }

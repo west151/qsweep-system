@@ -128,7 +128,7 @@ Item {
                 x: 99
                 width: 69
                 height: 40
-                text: qsTr("500000")
+                text: "500000"
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 anchors.top: parent.top

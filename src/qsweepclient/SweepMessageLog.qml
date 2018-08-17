@@ -5,6 +5,12 @@ SweepMessageLogForm {
     listViewMessageLog.model: messageLogModel
     listViewMessageLog.delegate: viewLogDelegate
 
+    listViewMessageLog {
+        onCountChanged: {
+            listViewMessageLog.positionViewAtEnd()
+        }
+    }
+
     Component {
         id: viewLogDelegate
         Item {

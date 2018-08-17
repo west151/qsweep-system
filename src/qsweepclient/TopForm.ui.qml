@@ -1,8 +1,9 @@
 import QtQuick 2.4
 
 Item {
-    width: 600
+    width: 800
     height: 40
+    property alias textFrame: textFrame
     property alias labelBroker: labelBroker
     property alias textTime: textTime
 
@@ -33,6 +34,17 @@ Item {
             height: 23
             color: "#ffffff"
             text: qsTr("127.0.0.1:1883[0]")
+            font.pixelSize: 20
+        }
+
+        Text {
+            id: textFrame
+            x: 388
+            y: 13
+            color: "#ffffff"
+            text: qsTr("")
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 20
         }
     }

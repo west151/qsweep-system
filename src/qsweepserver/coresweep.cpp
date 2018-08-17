@@ -154,7 +154,7 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
             case TypeRequest::INFO:
                 emit sendRunSweepInfo(message);
                 break;
-            case TypeRequest::SWEEP_SPECTR:
+            case TypeRequest::START_SWEEP_SPECTR:
                 emit sendRunSweepWorker(message);
                 break;
             case TypeRequest::STOP_SWEEP_SPECTR:

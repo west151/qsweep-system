@@ -20,6 +20,7 @@ public:
     void setMaxPowerSpectr(const bool &);
 
 signals:
+    // send spectr to Waterfall
     void sendPowerSpectr(const QVector<qreal> &);
 
 public slots:
@@ -37,6 +38,11 @@ private:
     qint32 m_countAvg;
     bool isMaxPowerSpectr;
     bool isClearPowerSpectr;
+
+    quint32 m_minFreq;
+    quint32 m_maxFreq;
+    qint32 m_spectSize;
+    qreal m_step;
 };
 
 #endif // DATASOURCE_H

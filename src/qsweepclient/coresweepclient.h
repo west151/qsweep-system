@@ -18,6 +18,7 @@ class QSweepRequest;
 class QHackrfInfo;
 class DataSource;
 class SystemMonitorInterface;
+class StateSweepClient;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -34,6 +35,8 @@ public slots:
 
 signals:
     void sendStartSpectr();
+    void sendStateConnected();
+    void sendStateDisconnected();
 
 private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
@@ -47,7 +50,8 @@ private:
     QValueAxis* ptrAxisX {Q_NULLPTR};
     QValueAxis* ptrAxisY {Q_NULLPTR};
 
-    SystemMonitorInterface* ptrSystemMonitorInterface {Q_NULLPTR};
+    SystemMonitorInterface *ptrSystemMonitorInterface {Q_NULLPTR};
+    StateSweepClient *ptrStateSweepClient {Q_NULLPTR};
 
     void initialization();
     bool readSettings(const QString &) const;

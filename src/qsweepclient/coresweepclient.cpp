@@ -19,6 +19,7 @@
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
 #include "systemmonitorinterface.h"
+#include "statesweepclient.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -35,7 +36,8 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrDataSource(new DataSource(this)),
     ptrAxisX(new QValueAxis(this)),
     ptrAxisY(new QValueAxis(this)),
-    ptrSystemMonitorInterface(new SystemMonitorInterface(this))
+    ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
+    ptrStateSweepClient(new StateSweepClient(this))
 {
 }
 
@@ -81,6 +83,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     context->setContextProperty("valueAxisY", ptrAxisY);
     context->setContextProperty("valueAxisX", ptrAxisX);
     context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
+    context->setContextProperty("stateSweepClient", ptrStateSweepClient);
 
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
@@ -144,6 +147,11 @@ void CoreSweepClient::initialization()
             ptrUserInterface, &UserInterface::sendStartSpectr);
     connect(ptrUserInterface, &UserInterface::sendClearMaxPowerSpectr,
             ptrDataSource, &DataSource::clearMaxPowerSpectr);
+    // StateSweepClient
+    connect(this, &CoreSweepClient::sendStateConnected,
+            ptrStateSweepClient, &StateSweepClient::onConnect);
+    connect(this, &CoreSweepClient::sendStateDisconnected,
+            ptrStateSweepClient, &StateSweepClient::onDisconnect);
 }
 
 bool CoreSweepClient::readSettings(const QString &file) const
@@ -266,9 +274,10 @@ void CoreSweepClient::updateLogStateChange()
             + QString::number(ptrMqttClient->state());
 
     // Subscribers topic
-
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
+        emit sendStateConnected();
+
         auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO));
 
         if (!subscription)
@@ -310,6 +319,11 @@ void CoreSweepClient::updateLogStateChange()
         }
     }
 
+    if (ptrMqttClient->state() == QMqttClient::Disconnected)
+    {
+        emit sendStateDisconnected();
+    }
+
 #ifdef QT_DEBUG
     qDebug() << Q_FUNC_INFO << content;
 #endif
@@ -325,6 +339,10 @@ void CoreSweepClient::brokerDisconnected()
 void CoreSweepClient::pingReceived()
 {
     ptrUserInterface->onPingReceived();
+
+#ifdef QT_DEBUG
+    qDebug() << Q_FUNC_INFO;
+#endif
 }
 
 void CoreSweepClient::connecting()

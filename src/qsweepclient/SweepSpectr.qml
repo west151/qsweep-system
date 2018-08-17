@@ -81,7 +81,6 @@ SweepSpectrForm {
         objectName: "chartViewSpectr"
         parent: frameChart
         anchors.fill: parent
-        //title: "Line"
         antialiasing: true
 
         animationOptions: ChartView.NoAnimation
@@ -92,7 +91,6 @@ SweepSpectrForm {
         LineSeries {
             id: lineSeriesPower
             objectName: "lineSeriesPower"
-            name: "spectr"
             axisX: valueAxisX
             axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
@@ -103,35 +101,49 @@ SweepSpectrForm {
         LineSeries {
             id: lineSeriesPowerMax
             objectName: "lineSeriesPowerMax"
-            name: "max spectr"
             axisX: valueAxisX
             axisY: valueAxisY
             useOpenGL: chartViewSpectr.openGL
             color: "red"
             width: 0.9
         }
-
-//        Timer {
-//            id: refreshTimer
-//            interval: 1 / 60 * 1000 // 60 Hz
-//            running: false
-//            repeat: true
-//            onTriggered: {
-//                //dataSource.update(series)
-//                //dataSource.update(chartViewSpectr.series(0));
-//                //dataSource.update(chartView.series(1));
-//            }
-//        }
     }
 
     Connections {
         target: userInterface
 
-        onSendStartSpectr: {
-            //console.log(qsTr("start Spectr"))
-            //refreshTimer.running = true
+        onSendStartSpectr: {            
             dataSource.update(chartViewSpectr.series(0));
             dataSource.update(chartViewSpectr.series(1));
+        }
+    }
+
+    Connections {
+        target: stateSweepClient
+
+        onSendStateConnectToBroker: {
+
+            if(stateSweepClient.stateConnectToBroker){
+                textInputFreqMin.enabled = true
+                textInputFreqMax.enabled = true
+                cbxLNAGain.enabled = true
+                cbxVGAGain.enabled = true
+                textInputFFTBinWidth.enabled = true
+                switchOneShot.enabled = true
+                btnStart.enabled = true
+                btnStop.enabled = false
+                btnClearMaxSpectr.enabled = true
+            }else{
+                textInputFreqMin.enabled = false
+                textInputFreqMax.enabled = false
+                cbxLNAGain.enabled = false
+                cbxVGAGain.enabled = false
+                textInputFFTBinWidth.enabled = false
+                switchOneShot.enabled = false
+                btnStart.enabled = false
+                btnStop.enabled = false
+                btnClearMaxSpectr.enabled = false
+            }
         }
     }
 
@@ -147,7 +159,7 @@ SweepSpectrForm {
     }
 
     textInputFFTBinWidth {
-        enabled: false
+        inputMethodHints: Qt.ImhDigitsOnly
     }
 
     // start spectr
@@ -159,10 +171,16 @@ SweepSpectrForm {
         userInterface.fftBinWidth = textInputFFTBinWidth.text
         userInterface.oneShot = switchOneShot.checked
         userInterface.onRequestSweepSpectr(true)
+
+        btnStart.enabled = false
+        btnStop.enabled = true
     }
     // stop spectr (stream)
     btnStop.onClicked: {
         userInterface.onRequestSweepSpectr(false)
+
+        btnStart.enabled = true
+        btnStop.enabled = false
     }
 
     cbxVGAGain {
@@ -196,5 +214,4 @@ SweepSpectrForm {
         ListElement { text: "32" }
         ListElement { text: "40" }
     }
-
 }

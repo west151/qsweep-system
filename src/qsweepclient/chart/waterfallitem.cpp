@@ -23,6 +23,7 @@ WaterfallItem::WaterfallItem(QQuickItem *parent) : QQuickPaintedItem(parent)
     // Generate displayable colors
     QImage img(500, 1, QImage::Format_ARGB32);
     _colors.reserve(img.height());
+
     QPainter painter;
     painter.begin(&img);
     QLinearGradient gradient;
@@ -36,6 +37,7 @@ WaterfallItem::WaterfallItem(QQuickItem *parent) : QQuickPaintedItem(parent)
     gradient.setSpread(QGradient::PadSpread);
     painter.fillRect(QRect(0, 0, img.width(), 1), QBrush(gradient));
     painter.end();
+
     for (int i = 0; i < img.width(); i++) {
         QRgb rgb = img.pixel(i, 0);
         _colors.append(rgb);
