@@ -74,7 +74,6 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     qmlRegisterType<WaterfallItem>("waterfall", 1, 0, "Waterfall");
 
-
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
@@ -150,6 +149,8 @@ void CoreSweepClient::initialization()
     // StateSweepClient
     connect(this, &CoreSweepClient::sendStateConnected,
             ptrStateSweepClient, &StateSweepClient::onConnect);
+    connect(this, &CoreSweepClient::sendStateConnected,
+            ptrUserInterface, &UserInterface::onRequestSweepInfo);
     connect(this, &CoreSweepClient::sendStateDisconnected,
             ptrStateSweepClient, &StateSweepClient::onDisconnect);
 }

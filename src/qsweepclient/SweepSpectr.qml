@@ -174,6 +174,14 @@ SweepSpectrForm {
 
         btnStart.enabled = false
         btnStop.enabled = true
+
+        textInputFreqMin.enabled = false
+        textInputFreqMax.enabled = false
+        cbxLNAGain.enabled = false
+        cbxVGAGain.enabled = false
+        textInputFFTBinWidth.enabled = false
+        switchOneShot.enabled = false
+        btnClearMaxSpectr.enabled = false
     }
     // stop spectr (stream)
     btnStop.onClicked: {
@@ -181,6 +189,14 @@ SweepSpectrForm {
 
         btnStart.enabled = true
         btnStop.enabled = false
+
+        textInputFreqMin.enabled = true
+        textInputFreqMax.enabled = true
+        cbxLNAGain.enabled = true
+        cbxVGAGain.enabled = true
+        textInputFFTBinWidth.enabled = true
+        switchOneShot.enabled = true
+        btnClearMaxSpectr.enabled = true
     }
 
     cbxVGAGain {

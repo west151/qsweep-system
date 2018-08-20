@@ -114,6 +114,7 @@ Item {
                 x: 31
                 y: 266
                 text: qsTr("One Shot")
+                autoExclusive: false
                 wheelEnabled: false
                 checked: true
             }
