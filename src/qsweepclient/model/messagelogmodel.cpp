@@ -4,6 +4,7 @@
 MessageLogModel::MessageLogModel(QObject *parent): QAbstractListModel(parent)
 {
      m_data.clear();
+     m_maxSize = 20;
 }
 
 QHash<int, QByteArray> MessageLogModel::roleNames() const
@@ -36,9 +37,17 @@ void MessageLogModel::clearResult()
 
 void MessageLogModel::addResult(const QSweepMessageLog &data)
 {
+    if(m_data.size() >= m_maxSize)
+        clearResult();
+
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     m_data << data;
     endInsertRows();
+}
+
+void MessageLogModel::setMaxSize(const qint32 &value)
+{
+    m_maxSize = value;
 }
 
 QVariant MessageLogModel::data(const QModelIndex &index, int role) const

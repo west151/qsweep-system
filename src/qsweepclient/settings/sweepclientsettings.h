@@ -23,6 +23,9 @@ public:
     void setPortBroker(const quint16 &);
     quint16 portBroker()const;
 
+    void setMaxSizeMessageLog(const qint32 &);
+    qint32 maxSizeMessageLog()const;
+
     QByteArray exportToJson(const bool binary = false) const;
 
 private:

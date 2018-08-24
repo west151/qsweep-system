@@ -25,6 +25,9 @@ private:
     QState *ptrStateConnect;
     QState *ptrStateDisconnect;
 
+    QState *ptrStateRun;
+    QState *ptrStateStop;
+
     bool isConnect;
 };
 

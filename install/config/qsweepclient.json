@@ -1,4 +1,5 @@
 {
     "host_broker": "127.0.0.1",
-    "port_broker": "1883"
+    "port_broker": "1883",
+    "max_size_message_log": 15
 }

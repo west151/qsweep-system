@@ -22,9 +22,11 @@ public:
 
     void clearResult();
     void addResult(const QSweepMessageLog &data);
+    void setMaxSize(const qint32 &);
 
 private:
     QList<QSweepMessageLog> m_data;
+    qint32 m_maxSize;
 };
 
 #endif // MESSAGELOGMODEL_H

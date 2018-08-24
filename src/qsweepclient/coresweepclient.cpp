@@ -51,7 +51,8 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     initialization();
 
-    if(readSettings(app.applicationFilePath())){
+    if(readSettings(app.applicationFilePath()))
+    {
         launching();
     }
 
@@ -168,6 +169,9 @@ bool CoreSweepClient::readSettings(const QString &file) const
         if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
             const SweepClientSettings settings(file.readAll(), false);
             ptrUserInterface->onSweepClientSettings(settings);
+            // MessageLogModel
+            ptrMessageLogModel->setMaxSize(settings.maxSizeMessageLog());
+
             file.close();
 
             return true;
