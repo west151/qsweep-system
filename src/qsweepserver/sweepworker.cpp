@@ -171,18 +171,6 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         // segment 1
         getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr);
 
-
-//#ifdef QT_DEBUG
-//        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-//               time_str,
-//               static_cast<uint64_t>(frequency),
-//               static_cast<uint64_t>(frequency+DEFAULT_SAMPLE_RATE_HZ/4),
-//               fftSize);
-//        for(int i = 0; (fftSize / 4) > i; i++)
-//            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize*5)/8]));
-//        printf("\n");
-//#endif
-
         //---------------------------------------------------------------------
         dataPowerSpectr.m_power.clear();
         dataPowerSpectr.m_frequency_min = static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
@@ -193,45 +181,19 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         for(int i = 0; (fftSize / 4) > i; i++)
             dataPowerSpectr.m_power.append(static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
 
-//        if(one_shot && (static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
-//                        >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))){
-
-            if(static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
-                            >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))
-            {
+        if(static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
+                >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))
+        {
 
             isSending = true;
 
             if(one_shot){
                 do_exit = true;
             }
-
-
-            qDebug() << "one_shot" << one_shot;
-            qDebug() << "do_exit" << do_exit;
-
-#ifdef QT_DEBUG
-            qDebug() << "======================================";
-            qDebug() << static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
-                     << " >= "
-                     << static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]);
-            qDebug() << "======================================";
-#endif
         }
 
         // segment 2
         getInstance()->onDataPowerSpectrCallbacks(dataPowerSpectr, isSending);
-
-//#ifdef QT_DEBUG
-//        printf("%s, %" PRIu64 ", %" PRIu64 ", %u",
-//               time_str,
-//               static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2)),
-//               static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4)),
-//               fftSize);
-//        for(int i = 0; (fftSize / 4) > i; i++)
-//            printf(", %.2f", static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
-//        printf("\n");
-//#endif
 
     } // for(j=0; j<BLOCKS_PER_TRANSFER; j++)
 
