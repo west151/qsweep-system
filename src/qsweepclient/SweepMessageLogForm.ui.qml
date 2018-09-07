@@ -11,17 +11,6 @@ Item {
         anchors.fill: parent
 
         Frame {
-            id: frameControl
-            height: 54
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 0
-            anchors.top: parent.top
-            anchors.topMargin: 0
-        }
-
-        Frame {
             id: frameMessageLog
             anchors.right: parent.right
             anchors.rightMargin: 0
@@ -30,7 +19,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 0
             anchors.top: parent.top
-            anchors.topMargin: 60
+            anchors.topMargin: 0
 
             ListView {
                 id: listViewMessageLog

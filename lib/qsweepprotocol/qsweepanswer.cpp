@@ -27,14 +27,14 @@ QSweepAnswer::QSweepAnswer(const QByteArray &json, bool binary)
         doc = QJsonDocument::fromJson(json);
 
     QJsonObject jsonObject = doc.object();
-    m_id = jsonObject[ID_KEY].toString();
-    m_typeAnswer = static_cast<TypeAnswer>(jsonObject[TYPE_ANSWER_KEY].toInt(0));
-    auto dt = QDateTime::fromString(jsonObject[DT_ANSWER_KEY].toString(), DT_FORMAT);
+    m_id = jsonObject.value(ID_KEY).toString();
+    m_typeAnswer = static_cast<TypeAnswer>(jsonObject.value(TYPE_ANSWER_KEY).toInt(0));
+    auto dt = QDateTime::fromString(jsonObject.value(DT_ANSWER_KEY).toString(), DT_FORMAT);
     dt.setTimeSpec(Qt::UTC);
     m_dateTimeAnswer = dt;
 
     QByteArray ba;
-    ba.append(jsonObject[DATA_KEY].toString());
+    ba.append(jsonObject.value(DATA_KEY).toString());
     m_data = QByteArray::fromBase64(ba);
 
     if(!doc.isEmpty())
@@ -86,10 +86,10 @@ QByteArray QSweepAnswer::dataAnswer() const
 QByteArray QSweepAnswer::exportToJson(bool binary) const
 {
     QJsonObject jsonObject;
-    jsonObject[ID_KEY] = m_id;
-    jsonObject[TYPE_ANSWER_KEY] = static_cast<qint32>(m_typeAnswer);
-    jsonObject[DT_ANSWER_KEY] = m_dateTimeAnswer.toUTC().toString(DT_FORMAT);
-    jsonObject[DATA_KEY] = QString(m_data.toBase64());
+    jsonObject.insert(ID_KEY, m_id);
+    jsonObject.insert(TYPE_ANSWER_KEY, static_cast<qint32>(m_typeAnswer));
+    jsonObject.insert(DT_ANSWER_KEY, m_dateTimeAnswer.toUTC().toString(DT_FORMAT));
+    jsonObject.insert(DATA_KEY, QString(m_data.toBase64()));
 
     QJsonDocument doc(jsonObject);
 

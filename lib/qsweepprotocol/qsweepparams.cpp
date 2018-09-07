@@ -31,12 +31,12 @@ QSweepParams::QSweepParams(const QByteArray &json, bool binary)
 
     QJsonObject jsonObject = doc.object();
     bool ok;
-    m_frequency_min = jsonObject[FREQUENCY_MIN_KEY].toString().toUInt(&ok, 10);
-    m_frequency_max = jsonObject[FREQUENCY_MAX_KEY].toString().toUInt();
-    m_fft_bin_width = jsonObject[FFT_BIN_WIDTH_KEY].toString().toUInt();
-    m_lna_gain = jsonObject[LNA_GAIN_KEY].toString().toUInt();
-    m_vga_gain = jsonObject[VGA_GAIN_KEY].toString().toUInt();
-    m_one_shot = jsonObject[ONE_SHOT_KEY].toBool();
+    m_frequency_min = jsonObject.value(FREQUENCY_MIN_KEY).toString().toUInt(&ok, 10);
+    m_frequency_max = jsonObject.value(FREQUENCY_MAX_KEY).toString().toUInt();
+    m_fft_bin_width = jsonObject.value(FFT_BIN_WIDTH_KEY).toString().toUInt();
+    m_lna_gain = jsonObject.value(LNA_GAIN_KEY).toString().toUInt();
+    m_vga_gain = jsonObject.value(VGA_GAIN_KEY).toString().toUInt();
+    m_one_shot = jsonObject.value(ONE_SHOT_KEY).toBool();
 
     if(!doc.isEmpty())
         m_valid = true;
@@ -107,12 +107,12 @@ quint32 QSweepParams::frequencyMax() const
 QByteArray QSweepParams::exportToJson(bool binary) const
 {
     QJsonObject jsonObject;
-    jsonObject[FREQUENCY_MIN_KEY] = QString::number(m_frequency_min);
-    jsonObject[FREQUENCY_MAX_KEY] = QString::number(m_frequency_max);
-    jsonObject[FFT_BIN_WIDTH_KEY] = QString::number(m_fft_bin_width);
-    jsonObject[LNA_GAIN_KEY] = QString::number(m_lna_gain);
-    jsonObject[VGA_GAIN_KEY] = QString::number(m_vga_gain);
-    jsonObject[ONE_SHOT_KEY] = m_one_shot;
+    jsonObject.insert(FREQUENCY_MIN_KEY, QString::number(m_frequency_min));
+    jsonObject.insert(FREQUENCY_MAX_KEY, QString::number(m_frequency_max));
+    jsonObject.insert(FFT_BIN_WIDTH_KEY, QString::number(m_fft_bin_width));
+    jsonObject.insert(LNA_GAIN_KEY, QString::number(m_lna_gain));
+    jsonObject.insert(VGA_GAIN_KEY, QString::number(m_vga_gain));
+    jsonObject.insert(ONE_SHOT_KEY, m_one_shot);
 
     QJsonDocument doc(jsonObject);
 

@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QLineSeries>
 #include <QChartView>
+#include <QTime>
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
@@ -39,6 +40,7 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
     ptrStateSweepClient(new StateSweepClient(this))
 {
+    m_timerReceive = new QTime;
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -193,6 +195,10 @@ void CoreSweepClient::launching()
         if (ptrMqttClient->state() == QMqttClient::Disconnected)
             ptrMqttClient->connectToHost();
     }
+
+    // start timer
+    m_timerReceive->start();
+    m_sizeDatacReceive = 0;
 }
 
 void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -265,11 +271,39 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         break;
     }
 
-//#ifdef QT_DEBUG
+    m_sizeDatacReceive = m_sizeDatacReceive + message.size();
+
+    if(m_timerReceive->elapsed()>=5000)
+    {
+        //qreal
+#ifdef QT_DEBUG
+        qDebug() << Q_FUNC_INFO
+                 << "Data size:" << QString::number(m_sizeDatacReceive/1024.0, 'f', 2) << "Kbyte"
+                 << "Data size:" << QString::number((m_sizeDatacReceive/1024)/1024.0, 'f', 2) << "Mbyte"
+                 << QString("Time elapsed: %1 ms").arg(m_timerReceive->elapsed());
+#endif
+        m_timerReceive->restart();
+        m_sizeDatacReceive = 0;
+    }
+//QString::number(12.625, 'f', 2);.
+//    if(m_timerReceive->elapsed()>=5000)
+//    {
+//        qDebug("Time elapsed: %d ms", m_timerReceive->elapsed());
+//        qDebug() << Q_FUNC_INFO
+//                 << m_sizeDatacReceive
+//                 << "(" << m_sizeDatacReceive/1024 << ")"
+//                 << m_timerReceive->elapsed()/1000;
+
+//        m_timerReceive->restart();
+//        m_sizeDatacReceive = 0;
+//    }
+
+#ifdef QT_DEBUG
 //    qDebug() << "---------------------------------------------------";
-//    qDebug() << Q_FUNC_INFO << topic.name() << ":" << message;
+//    qDebug() << Q_FUNC_INFO << topic.name() << ":" << "message size:" << message.size() << "byte";
 //    qDebug() << "---------------------------------------------------";
-//#endif
+#endif
+
 }
 
 void CoreSweepClient::updateLogStateChange()

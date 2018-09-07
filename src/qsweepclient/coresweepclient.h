@@ -7,6 +7,7 @@
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
 #include <QValueAxis>
+#include <QTime>
 
 #include "model/hackrfinfomodel.h"
 #include "model/messagelogmodel.h"
@@ -52,6 +53,8 @@ private:
 
     SystemMonitorInterface *ptrSystemMonitorInterface {Q_NULLPTR};
     StateSweepClient *ptrStateSweepClient {Q_NULLPTR};
+    QTime *m_timerReceive {Q_NULLPTR};
+    qint32 m_sizeDatacReceive;
 
     void initialization();
     bool readSettings(const QString &) const;
