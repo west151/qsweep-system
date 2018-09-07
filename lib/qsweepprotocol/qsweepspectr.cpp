@@ -41,12 +41,12 @@ QSweepSpectr::QSweepSpectr(const QByteArray &json, const bool binary) : data(new
     else
         doc = QJsonDocument::fromJson(json);
 
-    QJsonObject jsonObject = doc.object();
+    const QJsonObject jsonObject(doc.object());
 
     for(const QJsonValue &value: jsonObject.value(POWERS_KEY).toArray())
     {
         PowerSpectr powerSpectr;
-        QJsonObject objectPowerSpectr = value.toObject();
+        const QJsonObject objectPowerSpectr(value.toObject());
 
         // DateTime
         auto dt = QDateTime::fromString(objectPowerSpectr.value(DT_KEY).toString(), DT_FORMAT);
@@ -130,7 +130,7 @@ QByteArray QSweepSpectr::exportToJson(const bool binary) const
         jsonObject.insert(POWERS_KEY, array);
     }
 
-    QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(jsonObject);
 
     if(binary)
         return doc.toBinaryData();

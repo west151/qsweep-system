@@ -22,7 +22,7 @@ QSweepRequest::QSweepRequest(const QByteArray &json, bool binary)
     else
         doc = QJsonDocument::fromJson(json);
 
-    QJsonObject jsonObject = doc.object();
+    const QJsonObject jsonObject(doc.object());
     m_id = jsonObject.value(ID_KEY).toString();
     m_typeRequest = static_cast<TypeRequest>(jsonObject.value(TYPE_REQUEST_KEY).toInt(0));
     auto dt = QDateTime::fromString(jsonObject.value(DT_REQUEST_KEY).toString(), DT_FORMAT);
@@ -87,7 +87,7 @@ QByteArray QSweepRequest::exportToJson(bool binary) const
     jsonObject.insert(DT_REQUEST_KEY, m_dateTimeRequest.toUTC().toString(DT_FORMAT));
     jsonObject.insert(DATA_KEY, QString(m_data.toBase64()));
 
-    QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(jsonObject);
 
     if(binary)
         return doc.toBinaryData();

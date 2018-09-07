@@ -55,7 +55,7 @@ QHackrfInfo::QHackrfInfo(const QByteArray &json, const bool binary) : data(new Q
     else
         doc = QJsonDocument::fromJson(json);
 
-    QJsonObject jsonObject = doc.object();
+    const QJsonObject jsonObject(doc.object());
     data->m_index = jsonObject.value(INDEX_KEY).toInt();
     data->m_serialNumbers = jsonObject.value(SERIAL_NUMBERS_KEY).toString();
     data->m_boardID = jsonObject.value(BOARD_ID_KEY).toString();
@@ -156,7 +156,7 @@ QByteArray QHackrfInfo::exportToJson(const bool binary) const
     jsonObject.insert(PART_ID_NUMBER_KEY, data->m_partIDNumber);
     jsonObject.insert(LIB_HACKRF_VERSION_KEY, data->m_libHackrfVersion);
 
-    QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(jsonObject);
 
     if(binary)
         return doc.toBinaryData();

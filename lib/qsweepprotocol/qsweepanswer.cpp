@@ -22,7 +22,7 @@ QSweepAnswer::QSweepAnswer(const QByteArray &json, bool binary)
     else
         doc = QJsonDocument::fromJson(json);
 
-    QJsonObject jsonObject = doc.object();
+    const QJsonObject jsonObject(doc.object());
     m_id = jsonObject.value(ID_KEY).toString();
     m_typeAnswer = static_cast<TypeAnswer>(jsonObject.value(TYPE_ANSWER_KEY).toInt(0));
     auto dt = QDateTime::fromString(jsonObject.value(DT_ANSWER_KEY).toString(), DT_FORMAT);
@@ -87,7 +87,7 @@ QByteArray QSweepAnswer::exportToJson(bool binary) const
     jsonObject.insert(DT_ANSWER_KEY, m_dateTimeAnswer.toUTC().toString(DT_FORMAT));
     jsonObject.insert(DATA_KEY, QString(m_data.toBase64()));
 
-    QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(jsonObject);
 
     if(binary)
         return doc.toBinaryData();

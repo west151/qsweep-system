@@ -44,7 +44,7 @@ QSweepMessageLog::QSweepMessageLog(const QByteArray &json, const bool binary) : 
     else
         doc = QJsonDocument::fromJson(json);
 
-    QJsonObject jsonObject = doc.object();
+    const QJsonObject jsonObject(doc.object());
     data->m_textMessage = jsonObject.value(TEXT_MESSAGE_KEY).toString();
     auto dt = QDateTime::fromString(jsonObject.value(DT_KEY).toString(), DT_FORMAT);
     dt.setTimeSpec(Qt::UTC);
@@ -94,7 +94,7 @@ QByteArray QSweepMessageLog::exportToJson(const bool binary) const
     jsonObject.insert(TEXT_MESSAGE_KEY, data->m_textMessage);
     jsonObject.insert(DT_KEY, data->m_dateTime.toUTC().toString(DT_FORMAT));
 
-    QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(jsonObject);
 
     if(binary)
         return doc.toBinaryData();

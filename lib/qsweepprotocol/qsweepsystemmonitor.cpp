@@ -59,7 +59,7 @@ QSweepSystemMonitor::QSweepSystemMonitor(const QByteArray &json, const bool bina
     else
         doc = QJsonDocument::fromJson(json);
 
-    QJsonObject jsonObject = doc.object();
+    const QJsonObject jsonObject(doc.object());
     data->m_hostName = jsonObject.value(HOST_NAME_KEY).toString();
     data->m_uptime = jsonObject.value(UPTIME_KEY).toString();
     data->m_currentCpuArchitecture = jsonObject.value(CPU_ARCHITECTURE_KEY).toString();
@@ -169,7 +169,7 @@ QByteArray QSweepSystemMonitor::exportToJson(const bool binary) const
     jsonObject.insert(FREE_MEMORY_KEY, data->m_freeMemory);
     jsonObject.insert(BUFFER_MEMORY_KEY, data->m_bufferMemory);
 
-    QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(jsonObject);
 
     if(binary)
         return doc.toBinaryData();
