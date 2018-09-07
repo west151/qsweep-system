@@ -43,7 +43,8 @@ HEADERS += \
     qhackrfinfo.h \
     qsweepparams.h \
     qsweepspectr.h \
-    qsweepsystemmonitor.h
+    qsweepsystemmonitor.h \
+    constkeys.h
 
 #unix {
 #    target.path = /usr/lib

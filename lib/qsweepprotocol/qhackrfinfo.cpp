@@ -3,12 +3,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 
-static const QString INDEX_KEY = QStringLiteral("index");
-static const QString SERIAL_NUMBERS_KEY = QStringLiteral("serial");
-static const QString BOARD_ID_KEY = QStringLiteral("board_id");
-static const QString FIRMWARE_VERSION_KEY = QStringLiteral("firmware_version");
-static const QString PART_ID_NUMBER_KEY = QStringLiteral("part_id_number");
-static const QString LIB_HACKRF_VERSION_KEY = QStringLiteral("lib_hackrf_version");
+#include "constkeys.h"
 
 class QHackrfInfoData : public QSharedData {
 public:

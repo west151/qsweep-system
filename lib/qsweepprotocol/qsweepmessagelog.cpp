@@ -4,9 +4,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QDateTime>
 
-static const QString DT_FORMAT = QStringLiteral("hh:mm:ss.zzz dd.MM.yyyy");
-static const QString TEXT_MESSAGE_KEY = QStringLiteral("text_msg");
-static const QString DT_KEY = QStringLiteral("dt");
+#include "constkeys.h"
 
 class QSweepMessageLogData : public QSharedData {
 public:

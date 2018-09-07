@@ -4,14 +4,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QDateTime>
 
-static const QString DT_FORMAT = QStringLiteral("hh:mm:ss.zzz dd.MM.yyyy");
-static const QString HOST_NAME_KEY = QStringLiteral("hostname");
-static const QString UPTIME_KEY = QStringLiteral("uptime");
-static const QString CPU_ARCHITECTURE_KEY = QStringLiteral("cpu_arch");
-static const QString DT_KEY = QStringLiteral("dt");
-static const QString TOTAL_MEMORY_KEY = QStringLiteral("totalmem");
-static const QString FREE_MEMORY_KEY = QStringLiteral("freememory");
-static const QString BUFFER_MEMORY_KEY = QStringLiteral("buffermem");
+#include "constkeys.h"
 
 class QSweepSystemMonitorData : public QSharedData {
 public:

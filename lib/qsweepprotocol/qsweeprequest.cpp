@@ -4,11 +4,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QUuid>
 
-static const QString DT_FORMAT = QStringLiteral("hh:mm dd.MM.yyyy");
-static const QString ID_KEY = QStringLiteral("id");
-static const QString TYPE_REQUEST_KEY = QStringLiteral("TypeRequest");
-static const QString DT_REQUEST_KEY = QStringLiteral("DateTimeRequest");
-static const QString DATA_KEY = QStringLiteral("data");
+#include "constkeys.h"
 
 QSweepRequest::QSweepRequest(QObject *parent) : QObject(parent)
 {

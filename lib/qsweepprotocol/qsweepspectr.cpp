@@ -4,15 +4,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QJsonArray>
 
-static const QString DT_FORMAT = QStringLiteral("hh:mm:ss.zzz dd.MM.yyyy");
-
-static const QString POWERS_KEY = QStringLiteral("powers");
-static const QString FREQUENCY_MIN_KEY = QStringLiteral("frequency_min");
-static const QString FREQUENCY_MAX_KEY = QStringLiteral("frequency_max");
-static const QString FFT_BIN_WIDTH_KEY = QStringLiteral("fft_bin_width");
-static const QString FFT_SIZE_KEY = QStringLiteral("fft_size");
-static const QString DT_KEY = QStringLiteral("dt");
-static const QString DATA_KEY = QStringLiteral("data");
+#include "constkeys.h"
 
 class QSweepSpectrData : public QSharedData {
 public:

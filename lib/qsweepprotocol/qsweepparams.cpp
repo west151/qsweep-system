@@ -3,12 +3,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 
-static const QString FREQUENCY_MIN_KEY = QStringLiteral("frequency_min");
-static const QString FREQUENCY_MAX_KEY = QStringLiteral("frequency_max");
-static const QString FFT_BIN_WIDTH_KEY = QStringLiteral("fft_bin_width");
-static const QString LNA_GAIN_KEY = QStringLiteral("lna_gain");
-static const QString VGA_GAIN_KEY = QStringLiteral("vga_gain");
-static const QString ONE_SHOT_KEY = QStringLiteral("one_shot");
+#include "constkeys.h"
 
 QSweepParams::QSweepParams(QObject *parent) : QObject(parent)
 {
