@@ -71,8 +71,8 @@ void SweepWorker::onDataPowerSpectrCallbacks(const PowerSpectr &power, const boo
 
     if(isSending)
     {
-        qDebug() << "-------------------------------";
-        qDebug() << "Sending data" << m_powerSpectrBuffer.count();
+//        qDebug() << "-------------------------------";
+//        qDebug() << "Sending data" << m_powerSpectrBuffer.count();
 
         QSweepAnswer answer;
         answer.setTypeAnswer(TypeAnswer::SWEEP_POWER_SPECTR);

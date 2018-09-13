@@ -2,10 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>SweepMessageLog.qml</file>
-        <file>SweepMessageLogForm.ui.qml</file>
-        <file>SweepInfo.qml</file>
-        <file>SweepInfoForm.ui.qml</file>
         <file>SweepSpectr.qml</file>
         <file>SweepSpectrForm.ui.qml</file>
         <file>Top.qml</file>

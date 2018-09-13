@@ -32,12 +32,6 @@ ApplicationWindow {
         SweepSpectr {
         }
 
-        SweepInfo {
-        }
-
-        SweepMessageLog {
-        }
-
         SweepSystemMonitor {
         }
 
@@ -53,12 +47,7 @@ ApplicationWindow {
         TabButton {
             text: qsTr("Spectr")
         }
-        TabButton {
-            text: qsTr("Info")
-        }
-        TabButton {
-            text: qsTr("Message log")
-        }
+
         TabButton {
             text: qsTr("System monitor (remote host)")
         }
