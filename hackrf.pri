@@ -1,5 +1,5 @@
 # HACKRF
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lhackrf
+unix:!macx: LIBS += -L/usr/local/lib/ -lhackrf
 
-INCLUDEPATH += $$PWD/../../../../usr/local/include/libhackrf
-DEPENDPATH += $$PWD/../../../../usr/local/include/libhackrf
+INCLUDEPATH += /usr/local/include/libhackrf
+DEPENDPATH += /usr/local/include/libhackrf

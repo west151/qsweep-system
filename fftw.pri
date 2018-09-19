@@ -1,6 +1,6 @@
 # FFT
-unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lfftw3f
+unix:!macx: LIBS += -L/usr/local/lib/ -lfftw3f
 
-INCLUDEPATH += $$PWD/../../../../usr/local/include
-DEPENDPATH += $$PWD/../../../../usr/local/include
+INCLUDEPATH += /usr/local/include
+DEPENDPATH += /usr/local/include
 
