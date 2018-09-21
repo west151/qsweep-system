@@ -37,10 +37,14 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent),
         {
             ptrSweepServerSettings = new SweepServerSettings(file.readAll(), false);
             file.close();
-        }
-    }
 
-    QTimer::singleShot(1000, this, &CoreSweep::launching);
+            QTimer::singleShot(1000, this, &CoreSweep::launching);
+        }else{
+
+        }
+    }else{
+        qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
+    }
 }
 
 void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
