@@ -12,7 +12,7 @@
 #include "qsweepanswer.h"
 #include "qsweepparams.h"
 
-static const QString config_suffix(QString(".json"));
+static const QString config_suffix(QString(".config"));
 
 CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent),
     ptrHackrfInfo(new HackrfInfo(this)),
@@ -35,7 +35,7 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent),
             ptrSweepServerSettings = new SweepServerSettings(file.readAll(), false);
             file.close();
 
-            QTimer::singleShot(1000, this, &CoreSweep::launching);
+            QTimer::singleShot(ptrSweepServerSettings->delayedLaunch(), this, &CoreSweep::launching);
         }else{
             qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
             qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
@@ -123,6 +123,7 @@ void CoreSweep::launching()
         qDebug() << tr("host broker:") << ptrSweepServerSettings->hostBroker();
         qDebug() << tr("port broker:") << ptrSweepServerSettings->portBroker();
         qDebug() << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
+        qDebug() << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
 #endif
 
         // connect to MQTT broker

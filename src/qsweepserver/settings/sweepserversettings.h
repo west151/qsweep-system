@@ -26,6 +26,9 @@ public:
     void setSystemMonitorInterval(const int &);
     int systemMonitorInterval()const;
 
+    void setDelayedLaunch(const int &);
+    int delayedLaunch()const;
+
     QByteArray exportToJson(const bool binary = false) const;
 
 private:

@@ -6,6 +6,7 @@
 static const QString HOST_BROKER_KEY = QStringLiteral("host_broker");
 static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
 static const QString SYSTEM_MONITOR_INTERVAL_KEY = QStringLiteral("system_monitor_interval");
+static const QString DELAYED_LAUNCH_KEY = QStringLiteral("delayed_launch");
 
 class SweepServerSettingsData : public QSharedData {
 public:
@@ -14,7 +15,8 @@ public:
         m_valid = false;
         m_hostBroker = "127.0.0.1";
         m_portBroker = 1883;
-        m_systemMonitorInterval  =1000;
+        m_systemMonitorInterval = 1000;
+        m_delayedLaunch = 1000;
     }
     SweepServerSettingsData(const SweepServerSettingsData &other) : QSharedData(other)
     {
@@ -22,6 +24,7 @@ public:
         m_hostBroker = other.m_hostBroker;
         m_portBroker = other.m_portBroker;
         m_systemMonitorInterval = other.m_systemMonitorInterval;
+        m_delayedLaunch = other.m_delayedLaunch;
     }
 
     ~SweepServerSettingsData() {}
@@ -30,6 +33,7 @@ public:
     QString m_hostBroker;
     quint16 m_portBroker;
     int m_systemMonitorInterval;
+    int m_delayedLaunch;
 };
 
 SweepServerSettings::SweepServerSettings() : data(new SweepServerSettingsData)
@@ -52,6 +56,7 @@ SweepServerSettings::SweepServerSettings(const QByteArray &json, const bool bina
     data->m_hostBroker = jsonObject.value(HOST_BROKER_KEY).toString();
     data->m_portBroker = jsonObject.value(PORT_BROKER_KEY).toString().toUShort();
     data->m_systemMonitorInterval = jsonObject.value(SYSTEM_MONITOR_INTERVAL_KEY).toInt(1000);
+    data->m_delayedLaunch = jsonObject.value(DELAYED_LAUNCH_KEY).toInt(1000);
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -106,12 +111,23 @@ int SweepServerSettings::systemMonitorInterval() const
     return data->m_systemMonitorInterval;
 }
 
+void SweepServerSettings::setDelayedLaunch(const int &value)
+{
+    data->m_delayedLaunch = value;
+}
+
+int SweepServerSettings::delayedLaunch() const
+{
+    return  data->m_delayedLaunch;
+}
+
 QByteArray SweepServerSettings::exportToJson(const bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject.insert(HOST_BROKER_KEY, data->m_hostBroker);
     jsonObject.insert(PORT_BROKER_KEY, QString::number(data->m_portBroker));
     jsonObject.insert(SYSTEM_MONITOR_INTERVAL_KEY, data->m_systemMonitorInterval);
+    jsonObject.insert(DELAYED_LAUNCH_KEY, data->m_delayedLaunch);
 
     QJsonDocument doc(jsonObject);
 

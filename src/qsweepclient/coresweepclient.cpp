@@ -8,6 +8,7 @@
 #include <QLineSeries>
 #include <QChartView>
 #include <QTime>
+#include <QtCore/qdebug.h>
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
@@ -22,11 +23,7 @@
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
 
-#ifdef QT_DEBUG
-#include <QtCore/qdebug.h>
-#endif
-
-static const QString config_suffix(QString(".json"));
+static const QString config_suffix(QString(".config"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
