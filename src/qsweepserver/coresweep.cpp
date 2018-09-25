@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QDir>
+#include <QDebug>
 
 #include "hackrfinfo.h"
 #include "sweepworker.h"
@@ -10,10 +11,6 @@
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 #include "qsweepparams.h"
-
-#ifdef QT_DEBUG
-#include <QtCore/qdebug.h>
-#endif
 
 static const QString config_suffix(QString(".json"));
 
@@ -40,22 +37,11 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent),
 
             QTimer::singleShot(1000, this, &CoreSweep::launching);
         }else{
-
+            qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
+            qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
         }
     }else{
         qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
-    }
-}
-
-void CoreSweep::onConnectToHost(const QString &host, const quint16 &port)
-{
-    if(ptrMqttClient)
-    {
-        ptrMqttClient->setHostname(host);
-        ptrMqttClient->setPort(port);
-
-        if (ptrMqttClient->state() == QMqttClient::Disconnected)
-            ptrMqttClient->connectToHost();
     }
 }
 
@@ -133,17 +119,25 @@ void CoreSweep::launching()
     if(ptrSweepServerSettings&&ptrSweepServerSettings->isValid())
     {
 #ifdef QT_DEBUG
-        qDebug() << Q_FUNC_INFO << tr("launching:") << ptrSweepServerSettings->isValid();
-        qDebug() << Q_FUNC_INFO << tr("host broker:") << ptrSweepServerSettings->hostBroker();
-        qDebug() << Q_FUNC_INFO << tr("port broker:") << ptrSweepServerSettings->portBroker();
+        qDebug() << tr("launching:") << ptrSweepServerSettings->isValid();
+        qDebug() << tr("host broker:") << ptrSweepServerSettings->hostBroker();
+        qDebug() << tr("port broker:") << ptrSweepServerSettings->portBroker();
+        qDebug() << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
 #endif
 
         // connect to MQTT broker
-        onConnectToHost(ptrSweepServerSettings->hostBroker(), ptrSweepServerSettings->portBroker());
+        if(ptrMqttClient)
+        {
+            ptrMqttClient->setHostname(ptrSweepServerSettings->hostBroker());
+            ptrMqttClient->setPort(ptrSweepServerSettings->portBroker());
+
+            if (ptrMqttClient->state() == QMqttClient::Disconnected)
+                ptrMqttClient->connectToHost();
+        }
     }
 
     // start system monitor
-    ptrTimer->start(1000);
+    ptrTimer->start(ptrSweepServerSettings->systemMonitorInterval());
 }
 
 void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -188,14 +182,14 @@ void CoreSweep::updateLogStateChange()
         if (!subscription)
         {
 #ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << "Could not subscribe. Is there a valid connection?";
+            qDebug() << "Could not subscribe. Is there a valid connection?";
 #endif
             return;
         }
     }
 
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << content;
+    qDebug() << content;
 #endif
 }
 

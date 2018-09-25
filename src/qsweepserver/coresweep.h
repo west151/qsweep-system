@@ -22,7 +22,6 @@ class CoreSweep : public QObject
 public:
     explicit CoreSweep(const QString &, QObject *parent = nullptr);
 
-    void onConnectToHost(const QString &host, const quint16 &port);
     void onDataFromWorker(const QByteArray &value);
 
 signals:

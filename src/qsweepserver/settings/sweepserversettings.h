@@ -23,6 +23,9 @@ public:
     void setPortBroker(const quint16 &);
     quint16 portBroker()const;
 
+    void setSystemMonitorInterval(const int &);
+    int systemMonitorInterval()const;
+
     QByteArray exportToJson(const bool binary = false) const;
 
 private:
