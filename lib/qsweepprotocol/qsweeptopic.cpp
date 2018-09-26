@@ -17,22 +17,16 @@ QString QSweepTopic::sweepTopic(const Topic value) const
     switch (value) {
     case TOPIC_MESSAGE_LOG:
         return topic_message_log;
-        break;
     case TOPIC_CTRL:
         return topic_ctrl;
-        break;
     case TOPIC_INFO:
         return topic_info;
-        break;
     case TOPIC_DATA:
         return topic_data;
-        break;
     case TOPIC_POWER_SPECTR:
         return topic_spectr;
-        break;
     case TOPIC_SYSTEM_MONITOR:
         return  topic_system_monitor;
-        break;
     default:
         break;
     }

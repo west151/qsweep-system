@@ -52,6 +52,7 @@ private:
     void connecting();
     void sendingMessage(const QSweepAnswer &);
     void onSendingMessageRequest(const QByteArray &);
+    void errorChanged(QMqttClient::ClientError error);
 };
 
 #endif // CORESWEEP_H

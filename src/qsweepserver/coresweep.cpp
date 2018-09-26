@@ -87,6 +87,8 @@ void CoreSweep::initialization()
             this, &CoreSweep::pingReceived);
     connect(ptrMqttClient, &QMqttClient::pingResponseReceived,
             this , &CoreSweep::pingReceived);
+    connect(ptrMqttClient, &QMqttClient::errorChanged,
+            this, &CoreSweep::errorChanged);
 
     // HackRF Info
     connect(this, &CoreSweep::sendRunSweepInfo,
@@ -119,11 +121,13 @@ void CoreSweep::launching()
     if(ptrSweepServerSettings&&ptrSweepServerSettings->isValid())
     {
 #ifdef QT_DEBUG
+        qDebug() << tr("--------------- settings ---------------");
         qDebug() << tr("launching:") << ptrSweepServerSettings->isValid();
         qDebug() << tr("host broker:") << ptrSweepServerSettings->hostBroker();
         qDebug() << tr("port broker:") << ptrSweepServerSettings->portBroker();
         qDebug() << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
         qDebug() << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
+        qDebug() << tr("----------------------------------------");
 #endif
 
         // connect to MQTT broker
@@ -197,21 +201,21 @@ void CoreSweep::updateLogStateChange()
 void CoreSweep::brokerDisconnected()
 {
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "brokerDisconnected";
 #endif
 }
 
 void CoreSweep::pingReceived()
 {
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "pingReceived";
 #endif
 }
 
 void CoreSweep::connecting()
 {
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << "connecting";
 #endif
 }
 
@@ -265,4 +269,23 @@ void CoreSweep::onSendingMessageRequest(const QByteArray &value)
 //            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
 //#endif
     }
+}
+
+void CoreSweep::errorChanged(QMqttClient::ClientError error)
+{
+    qCritical("Client error code: '%d'", error);
+
+//    enum ClientError {
+//        // Protocol states
+//        NoError                = 0,
+//        InvalidProtocolVersion = 1,
+//        IdRejected             = 2,
+//        ServerUnavailable      = 3,
+//        BadUsernameOrPassword  = 4,
+//        NotAuthorized          = 5,
+//        // Qt states
+//        TransportInvalid       = 256,
+//        ProtocolViolation,
+//        UnknownError
+//    };
 }
