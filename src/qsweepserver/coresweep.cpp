@@ -14,34 +14,16 @@
 
 static const QString config_suffix(QString(".config"));
 
-CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent),
-    ptrHackrfInfo(new HackrfInfo(this)),
-    ptrMqttClient(new QMqttClient(this)),
-    ptrSweepTopic(new QSweepTopic(this)),
-    ptrTimer(new QTimer(this))
+CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
 {
-    initialization();
+    // read file settings
+    const auto isSettings = readSettings(file);
 
-    QFileInfo info(file);
-    QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
-    QFileInfo config(fileConfig);
-
-    if(config.exists())
+    if(isSettings)
     {
-        QFile file(fileConfig);
-
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            ptrSweepServerSettings = new SweepServerSettings(file.readAll(), false);
-            file.close();
-
-            QTimer::singleShot(ptrSweepServerSettings->delayedLaunch(), this, &CoreSweep::launching);
-        }else{
-            qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
-            qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
-        }
-    }else{
-        qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
+        initialization();
+    } else {
+        qCritical("Error: Read settings.");
     }
 }
 
@@ -53,8 +35,43 @@ void CoreSweep::onDataFromWorker(const QByteArray &value)
 //#endif
 }
 
-void CoreSweep::initialization()
+bool CoreSweep::readSettings(const QString &file)
 {
+    bool isRead(false);
+
+    if(!file.isEmpty())
+    {
+        QFileInfo info(file);
+        QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+        QFileInfo config(fileConfig);
+
+        if(config.exists())
+        {
+            QFile file(fileConfig);
+
+            if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                ptrSweepServerSettings = new SweepServerSettings(file.readAll(), false);
+                file.close();
+
+                isRead = ptrSweepServerSettings->isValid();
+
+            }else{
+                qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
+                qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
+            }
+        }else{
+            qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
+        }
+    }
+
+    return isRead;
+}
+
+void CoreSweep::initialization()
+{    
+    ptrSweepTopic = new QSweepTopic(this);
+
     ptrSweepWorker = new SweepWorker;
     ptrSweepThread = new QThread;
     ptrSweepWorker->moveToThread(ptrSweepThread);
@@ -77,6 +94,7 @@ void CoreSweep::initialization()
     ptrSweepThread->start();
 
     // MQTT
+    ptrMqttClient = new QMqttClient(this);
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweep::messageReceived);
     connect(ptrMqttClient, &QMqttClient::stateChanged,
@@ -91,6 +109,7 @@ void CoreSweep::initialization()
             this, &CoreSweep::errorChanged);
 
     // HackRF Info
+    ptrHackrfInfo = new HackrfInfo(this);
     connect(this, &CoreSweep::sendRunSweepInfo,
             ptrHackrfInfo, &HackrfInfo::onRunHackrfInfo);
     connect(ptrHackrfInfo, &HackrfInfo::sendHackrfInfo,
@@ -100,7 +119,9 @@ void CoreSweep::initialization()
     ptrSystemMonitorWorker = new SystemMonitorWorker;
     ptrSystemMonitorThread = new QThread;
     ptrSystemMonitorWorker->moveToThread(ptrSystemMonitorThread);
+
     // start system monitor
+    ptrTimer = new QTimer(this);
     connect(ptrTimer, &QTimer::timeout,
             ptrSystemMonitorWorker, &SystemMonitorWorker::runSystemMonitorWorker);
     // send result
@@ -109,10 +130,7 @@ void CoreSweep::initialization()
 
     ptrSystemMonitorThread->start();
 
-//#ifdef QT_DEBUG
-//    qDebug() << QThread::currentThreadId();
-//    qDebug() << ptrSweepThread->currentThread();
-//#endif
+    QTimer::singleShot(ptrSweepServerSettings->delayedLaunch(), this, &CoreSweep::launching);
 }
 
 void CoreSweep::launching()
@@ -121,13 +139,12 @@ void CoreSweep::launching()
     if(ptrSweepServerSettings&&ptrSweepServerSettings->isValid())
     {
 #ifdef QT_DEBUG
-        qDebug() << tr("--------------- settings ---------------");
-        qDebug() << tr("launching:") << ptrSweepServerSettings->isValid();
-        qDebug() << tr("host broker:") << ptrSweepServerSettings->hostBroker();
-        qDebug() << tr("port broker:") << ptrSweepServerSettings->portBroker();
-        qDebug() << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
-        qDebug() << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
-        qDebug() << tr("----------------------------------------");
+        qDebug().noquote() << tr("settings_") << tr("id:") << ptrSweepServerSettings->id();
+        qDebug().noquote() << tr("settings_") << tr("launching:") << ptrSweepServerSettings->isValid();
+        qDebug().noquote() << tr("settings_") << tr("host broker:") << ptrSweepServerSettings->hostBroker();
+        qDebug().noquote() << tr("settings_") << tr("port broker:") << ptrSweepServerSettings->portBroker();
+        qDebug().noquote() << tr("settings_") << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
+        qDebug().noquote() << tr("settings_") << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
 #endif
 
         // connect to MQTT broker
@@ -139,10 +156,10 @@ void CoreSweep::launching()
             if (ptrMqttClient->state() == QMqttClient::Disconnected)
                 ptrMqttClient->connectToHost();
         }
-    }
 
-    // start system monitor
-    ptrTimer->start(ptrSweepServerSettings->systemMonitorInterval());
+        // start system monitor
+        ptrTimer->start(ptrSweepServerSettings->systemMonitorInterval());
+    }
 }
 
 void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
@@ -176,10 +193,6 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
 
 void CoreSweep::updateLogStateChange()
 {
-    const QString content = QDateTime::currentDateTime().toString()
-            + QLatin1String(": State Change")
-            + QString::number(ptrMqttClient->state());
-
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
         auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), 0);
@@ -194,7 +207,9 @@ void CoreSweep::updateLogStateChange()
     }
 
 #ifdef QT_DEBUG
-    qDebug() << content;
+    qDebug() << QDateTime::currentDateTime().toString()
+             << QLatin1String(": State Change")
+             << ptrMqttClient->state();
 #endif
 }
 
@@ -273,19 +288,35 @@ void CoreSweep::onSendingMessageRequest(const QByteArray &value)
 
 void CoreSweep::errorChanged(QMqttClient::ClientError error)
 {
-    qCritical("Client error code: '%d'", error);
+    qCritical("Mqtt client error code: '%d'", error);
 
-//    enum ClientError {
-//        // Protocol states
-//        NoError                = 0,
-//        InvalidProtocolVersion = 1,
-//        IdRejected             = 2,
-//        ServerUnavailable      = 3,
-//        BadUsernameOrPassword  = 4,
-//        NotAuthorized          = 5,
-//        // Qt states
-//        TransportInvalid       = 256,
-//        ProtocolViolation,
-//        UnknownError
-//    };
+    switch (error) {
+    case QMqttClient::NoError:
+        qCritical("No error occurred");
+        break;
+    case QMqttClient::InvalidProtocolVersion:
+        qCritical("The broker does not accept a connection using the specified protocol version.");
+        break;
+    case QMqttClient::IdRejected:
+        qCritical("The client ID is malformed. This might be related to its length.");
+        break;
+    case QMqttClient::ServerUnavailable:
+        qCritical("The network connection has been established, but the service is unavailable on the broker side.");
+        break;
+    case QMqttClient::BadUsernameOrPassword:
+        qCritical("The data in the username or password is malformed.");
+        break;
+    case QMqttClient::NotAuthorized:
+        qCritical("The client is not authorized to connect.");
+        break;
+    case QMqttClient::TransportInvalid:
+        qCritical("The underlying transport caused an error. For example, the connection might have been interrupted unexpectedly.");
+        break;
+    case QMqttClient::ProtocolViolation:
+        qCritical("The client encountered a protocol violation, and therefore closed the connection.");
+        break;
+    case QMqttClient::UnknownError:
+        qCritical("An unknown error occurred.");
+        break;
+    }
 }

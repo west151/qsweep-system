@@ -29,6 +29,9 @@ public:
     void setDelayedLaunch(const int &);
     int delayedLaunch()const;
 
+    void setId(const QString &);
+    QString id()const;
+
     QByteArray exportToJson(const bool binary = false) const;
 
 private:

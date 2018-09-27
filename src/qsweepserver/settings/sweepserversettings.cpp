@@ -7,6 +7,7 @@ static const QString HOST_BROKER_KEY = QStringLiteral("host_broker");
 static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
 static const QString SYSTEM_MONITOR_INTERVAL_KEY = QStringLiteral("system_monitor_interval");
 static const QString DELAYED_LAUNCH_KEY = QStringLiteral("delayed_launch");
+static const QString ID_KEY = QStringLiteral("id");
 
 class SweepServerSettingsData : public QSharedData {
 public:
@@ -17,6 +18,7 @@ public:
         m_portBroker = 1883;
         m_systemMonitorInterval = 1000;
         m_delayedLaunch = 1000;
+        m_id = "unknow";
     }
     SweepServerSettingsData(const SweepServerSettingsData &other) : QSharedData(other)
     {
@@ -25,6 +27,7 @@ public:
         m_portBroker = other.m_portBroker;
         m_systemMonitorInterval = other.m_systemMonitorInterval;
         m_delayedLaunch = other.m_delayedLaunch;
+        m_id = other.m_id;
     }
 
     ~SweepServerSettingsData() {}
@@ -34,6 +37,7 @@ public:
     quint16 m_portBroker;
     int m_systemMonitorInterval;
     int m_delayedLaunch;
+    QString m_id;
 };
 
 SweepServerSettings::SweepServerSettings() : data(new SweepServerSettingsData)
@@ -57,6 +61,7 @@ SweepServerSettings::SweepServerSettings(const QByteArray &json, const bool bina
     data->m_portBroker = jsonObject.value(PORT_BROKER_KEY).toString().toUShort();
     data->m_systemMonitorInterval = jsonObject.value(SYSTEM_MONITOR_INTERVAL_KEY).toInt(1000);
     data->m_delayedLaunch = jsonObject.value(DELAYED_LAUNCH_KEY).toInt(1000);
+    data->m_id = jsonObject.value(ID_KEY).toString();
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -121,6 +126,16 @@ int SweepServerSettings::delayedLaunch() const
     return  data->m_delayedLaunch;
 }
 
+void SweepServerSettings::setId(const QString &value)
+{
+    data->m_id = value;
+}
+
+QString SweepServerSettings::id() const
+{
+    return  data->m_id;
+}
+
 QByteArray SweepServerSettings::exportToJson(const bool binary) const
 {
     QJsonObject jsonObject;
@@ -128,6 +143,7 @@ QByteArray SweepServerSettings::exportToJson(const bool binary) const
     jsonObject.insert(PORT_BROKER_KEY, QString::number(data->m_portBroker));
     jsonObject.insert(SYSTEM_MONITOR_INTERVAL_KEY, data->m_systemMonitorInterval);
     jsonObject.insert(DELAYED_LAUNCH_KEY, data->m_delayedLaunch);
+    jsonObject.insert(ID_KEY, data->m_id);
 
     QJsonDocument doc(jsonObject);
 

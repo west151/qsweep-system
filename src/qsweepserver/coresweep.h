@@ -42,6 +42,7 @@ private:
     SystemMonitorWorker* ptrSystemMonitorWorker {Q_NULLPTR};
     QPointer<QThread> ptrSystemMonitorThread;
 
+    bool readSettings(const QString &);
     void initialization();
     void launching();
 
