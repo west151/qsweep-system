@@ -1,3 +1,5 @@
+CONFIG += c++11
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -8,10 +10,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-PROJECT_ROOT_PATH = $${PWD}
-
-CONFIG += c++11
 
 # windows
 win32: OS_SUFFIX = win32
@@ -24,6 +22,8 @@ CONFIG(debug, debug|release) {
 } else {
     BUILD_FLAG = release
 }
+
+PROJECT_ROOT_PATH = $${PWD}
 
 BUILD_PATH = $${PROJECT_ROOT_PATH}/build/$${OS_SUFFIX}/$${BUILD_FLAG}
 BUILD_PATH_TARGET = $${BUILD_PATH}/$${TARGET}/
