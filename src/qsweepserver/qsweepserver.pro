@@ -5,7 +5,6 @@ CONFIG += console
 CONFIG -= app_bundle
 
 include(../../common.pri)
-include(../../hackrf.pri)
 include(../../protocol.pri)
 
 SOURCES += \
@@ -26,6 +25,11 @@ HEADERS += \
 
 # FFT
 unix:!macx: LIBS += -lfftw3f
+
+# HACKRF
+unix:!macx: LIBS += -lhackrf
+INCLUDEPATH += /usr/local/include/libhackrf
+DEPENDPATH += /usr/local/include/libhackrf
 
 ## Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin

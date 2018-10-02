@@ -19,21 +19,19 @@ linux: OS_SUFFIX = linux
 CONFIG(debug, debug|release) {
     BUILD_FLAG = debug
     LIB_SUFFIX = d
+
+    PROJECT_ROOT_PATH = $${PWD}
+
+    BUILD_PATH = $${PROJECT_ROOT_PATH}/build/$${OS_SUFFIX}/$${BUILD_FLAG}
+    BUILD_PATH_TARGET = $${BUILD_PATH}/$${TARGET}/
+    BUILD_BIN_PATH = $${BUILD_PATH}/bin
+
+    DESTDIR = $${BUILD_BIN_PATH}
+
+    RCC_DIR = $${BUILD_PATH_TARGET}/rcc/
+    UI_DIR = $${BUILD_PATH_TARGET}/ui/
+    MOC_DIR = $${BUILD_PATH_TARGET}/moc/
+    OBJECTS_DIR = $${BUILD_PATH_TARGET}/obj/
 } else {
     BUILD_FLAG = release
 }
-
-PROJECT_ROOT_PATH = $${PWD}
-
-BUILD_PATH = $${PROJECT_ROOT_PATH}/build/$${OS_SUFFIX}/$${BUILD_FLAG}
-BUILD_PATH_TARGET = $${BUILD_PATH}/$${TARGET}/
-BUILD_BIN_PATH = $${BUILD_PATH}/bin
-
-DESTDIR = $${BUILD_BIN_PATH}
-
-RCC_DIR = $${BUILD_PATH_TARGET}/rcc/
-UI_DIR = $${BUILD_PATH_TARGET}/ui/
-MOC_DIR = $${BUILD_PATH_TARGET}/moc/
-OBJECTS_DIR = $${BUILD_PATH_TARGET}/obj/
-
-inux-g++: QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/../../lib.$${OS_SUFFIX}/
