@@ -35,7 +35,7 @@ SOURCES += \
     qsweepsystemmonitor.cpp
 
 HEADERS += \
-        qsweepprotocol_global.h \  
+    qsweepprotocol_global.h \
     qsweepmessagelog.h \
     qsweeprequest.h \
     qsweeptopic.h \
@@ -45,8 +45,3 @@ HEADERS += \
     qsweepspectr.h \
     qsweepsystemmonitor.h \
     constkeys.h
-
-#unix {
-#    target.path = /usr/lib
-#    INSTALLS += target
-#}

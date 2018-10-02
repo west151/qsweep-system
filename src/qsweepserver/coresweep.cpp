@@ -139,12 +139,12 @@ void CoreSweep::launching()
     if(ptrSweepServerSettings&&ptrSweepServerSettings->isValid())
     {
 #ifdef QT_DEBUG
-        qDebug().noquote() << tr("settings_") << tr("id:") << ptrSweepServerSettings->id();
-        qDebug().noquote() << tr("settings_") << tr("launching:") << ptrSweepServerSettings->isValid();
-        qDebug().noquote() << tr("settings_") << tr("host broker:") << ptrSweepServerSettings->hostBroker();
-        qDebug().noquote() << tr("settings_") << tr("port broker:") << ptrSweepServerSettings->portBroker();
-        qDebug().noquote() << tr("settings_") << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
-        qDebug().noquote() << tr("settings_") << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
+        qDebug().noquote() << tr("settings->") << tr("id:") << ptrSweepServerSettings->id();
+        qDebug().noquote() << tr("settings->") << tr("launching:") << ptrSweepServerSettings->isValid();
+        qDebug().noquote() << tr("settings->") << tr("host broker:") << ptrSweepServerSettings->hostBroker();
+        qDebug().noquote() << tr("settings->") << tr("port broker:") << ptrSweepServerSettings->portBroker();
+        qDebug().noquote() << tr("settings->") << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
+        qDebug().noquote() << tr("settings->") << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
 #endif
 
         // connect to MQTT broker
