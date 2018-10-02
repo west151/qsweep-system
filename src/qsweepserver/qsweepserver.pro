@@ -6,7 +6,6 @@ CONFIG -= app_bundle
 
 include(../../common.pri)
 include(../../hackrf.pri)
-include(../../fftw.pri)
 include(../../protocol.pri)
 
 SOURCES += \
@@ -24,6 +23,9 @@ HEADERS += \
     constant.h \
     settings/sweepserversettings.h \
     systemmonitorworker.h
+
+# FFT
+unix:!macx: LIBS += -lfftw3f
 
 ## Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin
