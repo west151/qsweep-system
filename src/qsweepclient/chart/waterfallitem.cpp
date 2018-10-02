@@ -1,6 +1,7 @@
 #include "waterfallitem.h"
 
 #include <QtGui/QPainter>
+#include <cmath>
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
