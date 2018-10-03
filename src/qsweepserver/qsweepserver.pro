@@ -24,14 +24,11 @@ HEADERS += \
     systemmonitorworker.h
 
 # FFT
-unix:!macx: LIBS += -lfftw3f
+unix: LIBS += -lfftw3f
 
 # HACKRF
-unix:!macx: LIBS += -lhackrf
-#INCLUDEPATH += /usr/local/include/libhackrf
-#DEPENDPATH += /usr/local/include/libhackrf
+unix: LIBS += -lhackrf
 
-## Default rules for deployment.
-#qnx: target.path = /tmp/$${TARGET}/bin
-#else: unix:!android: target.path = /opt/$${TARGET}/bin
-#!isEmpty(target.path): INSTALLS += target
+# Default rules for deployment.
+unix: target.path = /opt/qsweep/bin
+!isEmpty(target.path): INSTALLS += target

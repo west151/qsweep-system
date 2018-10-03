@@ -35,7 +35,12 @@ HEADERS += \
     qsweepsystemmonitor.h \
     constkeys.h
 
-## Default rules for deployment.
-#qnx: target.path = /tmp/$${TARGET}/bin
-#else: unix:!android: target.path = /opt/$${TARGET}/bin
-#!isEmpty(target.path): INSTALLS += target
+CONFIG(debug, debug|release) {
+    message("debug mode")
+}else {
+    message("release mode")
+}
+
+# Default rules for deployment.
+unix: target.path = /usr/local/lib
+!isEmpty(target.path): INSTALLS += target

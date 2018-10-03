@@ -123,13 +123,11 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
         info.setLibHackrfVersion(libStr);
 
 #ifdef QT_DEBUG
-        qDebug() << tr("---------------------------- %1 -------------------------------").arg(i);
         qDebug() << tr("Serial number:") << info.serialNumbers();
         qDebug() << tr("Board ID Number:") << info.boardID();
         qDebug() << tr("Firmware Version:") << info.firmwareVersion();
         qDebug() << tr("Part ID Number:") << info.partIDNumber();
         qDebug() << tr("Libhackrf Version:") << info.libHackrfVersion();
-        qDebug() << tr("--------------------------------------------------------------");
 #endif
 
         answerData.setDataAnswer(info.exportToJson());
