@@ -35,11 +35,11 @@ HEADERS += \
     qsweepsystemmonitor.h \
     constkeys.h
 
-CONFIG(debug, debug|release) {
-    message("debug mode")
-}else {
-    message("release mode")
-}
+#CONFIG(debug, debug|release) {
+#    message("debug mode")
+#}else {
+#    message("release mode")
+#}
 
 # Default rules for deployment.
 unix: target.path = /usr/local/lib

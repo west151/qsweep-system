@@ -26,7 +26,7 @@ CONFIG(debug, debug|release) {
     BUILD_PATH_TARGET = $${BUILD_PATH}/$${TARGET}/
     BUILD_BIN_PATH = $${BUILD_PATH}/bin
 
-    DESTDIR = $${BUILD_BIN_PATH}
+    #DESTDIR = $${BUILD_BIN_PATH}
 
     RCC_DIR = $${BUILD_PATH_TARGET}/rcc/
     UI_DIR = $${BUILD_PATH_TARGET}/ui/
@@ -35,3 +35,5 @@ CONFIG(debug, debug|release) {
 } else {
     BUILD_FLAG = release
 }
+
+DESTDIR = $${PWD}/bin

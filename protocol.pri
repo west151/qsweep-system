@@ -1,7 +1,8 @@
-# windows
-win32: OS_SUFFIX = win32
-# linux
-linux: OS_SUFFIX = linux
+INCLUDEPATH += \
+    $$PWD/lib/qsweepprotocol
+
+DEPENDPATH
+    $$PWD/lib/qsweepprotocol
 
 CONFIG(debug, debug|release) {
     BUILD_FLAG = debug
@@ -10,11 +11,5 @@ CONFIG(debug, debug|release) {
     BUILD_FLAG = release
 }
 
-INCLUDEPATH += \
-    $$PWD/lib/qsweepprotocol
-
-DEPENDPATH
-    $$PWD/lib/qsweepprotocol
-
 LIBS += \
-    -L$${PWD}/build/$${OS_SUFFIX}/$${BUILD_FLAG}/bin -lqsweepprotocol
+    -L$${PWD}/bin -lqsweepprotocol
