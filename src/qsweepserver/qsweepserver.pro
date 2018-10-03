@@ -28,8 +28,8 @@ unix:!macx: LIBS += -lfftw3f
 
 # HACKRF
 unix:!macx: LIBS += -lhackrf
-INCLUDEPATH += /usr/local/include/libhackrf
-DEPENDPATH += /usr/local/include/libhackrf
+#INCLUDEPATH += /usr/local/include/libhackrf
+#DEPENDPATH += /usr/local/include/libhackrf
 
 ## Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin
