@@ -29,7 +29,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("CoreSweepServer");
     QCoreApplication::setApplicationVersion("1.0");
 
+#ifdef QT_DEBUG
     qInstallMessageHandler(sweepMessageOutput);
+#endif
+
     QCoreApplication app(argc, argv);
     CoreSweep coreSweepServer(app.applicationFilePath());
 
