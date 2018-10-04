@@ -6,8 +6,6 @@
 #include <QDateTime>
 #include <QVector>
 
-#include "qsweepprotocol_global.h"
-
 struct PowerSpectr
 {
     QDateTime dateTime;
@@ -21,7 +19,7 @@ struct PowerSpectr
 
 class QSweepSpectrData;
 
-class QSWEEPPROTOCOLSHARED_EXPORT QSweepSpectr
+class QSweepSpectr
 {
 public:
     QSweepSpectr();

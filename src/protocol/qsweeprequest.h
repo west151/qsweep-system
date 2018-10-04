@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QDateTime>
 
-#include "qsweepprotocol_global.h"
-
 enum class TypeRequest: qint32 {
     UNKNOWN = 0,
     INFO,
@@ -13,7 +11,7 @@ enum class TypeRequest: qint32 {
     STOP_SWEEP_SPECTR
 };
 
-class QSWEEPPROTOCOLSHARED_EXPORT QSweepRequest : public QObject
+class QSweepRequest : public QObject
 {
     Q_OBJECT
 public:

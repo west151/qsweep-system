@@ -3,9 +3,7 @@
 
 #include <QObject>
 
-#include "qsweepprotocol_global.h"
-
-class QSWEEPPROTOCOLSHARED_EXPORT QSweepTopic : public QObject
+class QSweepTopic : public QObject
 {
     Q_OBJECT
 public:

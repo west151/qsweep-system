@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QDateTime>
 
-#include "qsweepprotocol_global.h"
-
 enum class TypeAnswer: qint32 {
     UNKNOWN = 0,
     INFO,
@@ -14,7 +12,7 @@ enum class TypeAnswer: qint32 {
     SWEEP_SYSTEM_MONITOR
 };
 
-class QSWEEPPROTOCOLSHARED_EXPORT QSweepAnswer : public QObject
+class QSweepAnswer : public QObject
 {
     Q_OBJECT
 public:

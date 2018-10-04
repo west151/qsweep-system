@@ -4,11 +4,9 @@
 #include <QtCore/qshareddata.h>
 #include <QtCore/qmetatype.h>
 
-#include "qsweepprotocol_global.h"
-
 class QSweepMessageLogData;
 
-class QSWEEPPROTOCOLSHARED_EXPORT QSweepMessageLog
+class QSweepMessageLog
 {
 public:
     QSweepMessageLog();

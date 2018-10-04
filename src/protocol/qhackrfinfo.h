@@ -4,11 +4,9 @@
 #include <QtCore/qshareddata.h>
 #include <QtCore/qmetatype.h>
 
-#include "qsweepprotocol_global.h"
-
 class QHackrfInfoData;
 
-class QSWEEPPROTOCOLSHARED_EXPORT QHackrfInfo
+class QHackrfInfo
 {
 public:
     QHackrfInfo();
