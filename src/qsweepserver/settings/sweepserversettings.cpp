@@ -1,7 +1,7 @@
 #include "sweepserversettings.h"
 
-#include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
+#include <QtCore/QJsonDocument>
 
 static const QString HOST_BROKER_KEY = QStringLiteral("host_broker");
 static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
@@ -136,7 +136,7 @@ QString SweepServerSettings::id() const
     return  data->m_id;
 }
 
-QByteArray SweepServerSettings::exportToJson(const bool binary) const
+QByteArray SweepServerSettings::exportToJson(const bool binary, const bool isCompact) const
 {
     QJsonObject jsonObject;
     jsonObject.insert(HOST_BROKER_KEY, data->m_hostBroker);
@@ -149,6 +149,10 @@ QByteArray SweepServerSettings::exportToJson(const bool binary) const
 
     if(binary)
         return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    else{
+        if(isCompact)
+            return doc.toJson(QJsonDocument::Compact);
+        else
+            return doc.toJson();
+    }
 }

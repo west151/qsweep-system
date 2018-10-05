@@ -32,7 +32,7 @@ public:
     void setId(const QString &);
     QString id()const;
 
-    QByteArray exportToJson(const bool binary = false) const;
+    QByteArray exportToJson(const bool binary = false, const bool isCompact = true) const;
 
 private:
     QSharedDataPointer<SweepServerSettingsData> data;

@@ -43,6 +43,7 @@ private:
     QPointer<QThread> ptrSystemMonitorThread;
 
     bool readSettings(const QString &);
+    bool saveSettings(const QString &);
     void initialization();
     void launching();
 

@@ -26,7 +26,7 @@ void sweepMessageOutput(QtMsgType type, const QMessageLogContext &context, const
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setApplicationName("CoreSweepServer");
+    QCoreApplication::setApplicationName("QCoreSweepServer");
     QCoreApplication::setApplicationVersion("1.0");
 
 #ifdef QT_DEBUG

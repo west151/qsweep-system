@@ -62,10 +62,46 @@ bool CoreSweep::readSettings(const QString &file)
             }
         }else{
             qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
+
+            fprintf(stderr, "Create new file settings: %s\n", qUtf8Printable(fileConfig));
+            saveSettings(fileConfig);
         }
     }
 
     return isRead;
+}
+
+bool CoreSweep::saveSettings(const QString &file)
+{
+    bool isSave(false);
+
+    if(!file.isEmpty())
+    {
+        QFileInfo info(file);
+        QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+        QFileInfo config(fileConfig);
+        bool fileExists = config.exists();
+
+        QFile file(fileConfig);
+
+        if(file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+            if(fileExists){
+                if(ptrSweepServerSettings)
+                    file.write(ptrSweepServerSettings->exportToJson());
+            }else{
+                const auto defaultSettings = SweepServerSettings();
+                file.write(defaultSettings.exportToJson(false, false));
+            }
+
+            file.close();
+            isSave = true;
+        }else{
+            qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
+            qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
+        }
+    }
+
+    return isSave;
 }
 
 void CoreSweep::initialization()
@@ -156,7 +192,6 @@ void CoreSweep::launching()
             if (ptrMqttClient->state() == QMqttClient::Disconnected)
                 ptrMqttClient->connectToHost();
         }
-
         // start system monitor
         ptrTimer->start(ptrSweepServerSettings->systemMonitorInterval());
     }
