@@ -84,7 +84,8 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
         if (value >= _colors.length())
             value = _colors.length() - 1;
 
-        painter.setPen(_colors[value]);
+        //painter.setPen(_colors[value]);
+        painter.setPen(_colors.at(value));
         painter.drawRect(x, 0, 1, 5);
     }
 
