@@ -11,7 +11,6 @@
 
 #include "model/hackrfinfomodel.h"
 #include "model/messagelogmodel.h"
-#include "settings/sweepclientsettings.h"
 
 class UserInterface;
 class QSweepTopic;
@@ -20,6 +19,7 @@ class QHackrfInfo;
 class DataSource;
 class SystemMonitorInterface;
 class StateSweepClient;
+class SweepClientSettings;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -56,8 +56,12 @@ private:
     QTime *m_timerReceive {Q_NULLPTR};
     qint32 m_sizeDatacReceive;
 
+    // settings
+    SweepClientSettings* ptrSweepClientSettings {Q_NULLPTR};
+
     void initialization();
-    bool readSettings(const QString &) const;
+    bool readSettings(const QString &);
+    bool saveSettings(const QString &);
     void launching();
 
     void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());

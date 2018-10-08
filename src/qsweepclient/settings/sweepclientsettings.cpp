@@ -106,7 +106,7 @@ qint32 SweepClientSettings::maxSizeMessageLog() const
     return  data->m_maxSizeMessageLog;
 }
 
-QByteArray SweepClientSettings::exportToJson(const bool binary) const
+QByteArray SweepClientSettings::exportToJson(const bool binary, const bool isCompact) const
 {
     QJsonObject jsonObject;
     jsonObject.insert(HOST_BROKER_KEY, data->m_hostBroker);
@@ -117,6 +117,10 @@ QByteArray SweepClientSettings::exportToJson(const bool binary) const
 
     if(binary)
         return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    else{
+        if(isCompact)
+            return doc.toJson(QJsonDocument::Compact);
+        else
+            return doc.toJson();
+    }
 }

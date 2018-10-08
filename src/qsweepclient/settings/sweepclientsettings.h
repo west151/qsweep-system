@@ -26,7 +26,7 @@ public:
     void setMaxSizeMessageLog(const qint32 &);
     qint32 maxSizeMessageLog()const;
 
-    QByteArray exportToJson(const bool binary = false) const;
+    QByteArray exportToJson(const bool binary = false, const bool isCompact = true) const;
 
 private:
     QSharedDataPointer<SweepClientSettingsData> data;

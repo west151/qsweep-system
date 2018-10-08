@@ -22,6 +22,7 @@
 #include "chart/waterfallitem.h"
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
+#include "settings/sweepclientsettings.h"
 
 static const QString config_suffix(QString(".config"));
 
@@ -155,30 +156,81 @@ void CoreSweepClient::initialization()
             ptrStateSweepClient, &StateSweepClient::onDisconnect);
 }
 
-bool CoreSweepClient::readSettings(const QString &file) const
+bool CoreSweepClient::readSettings(const QString &file)
 {
-    QFileInfo info(file);
-    QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
-    QFileInfo config(fileConfig);
+    bool isRead(false);
 
-    if(config.exists())
+    if(!file.isEmpty())
     {
-        QFile file(fileConfig);
+        QFileInfo info(file);
+        const QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+        QFileInfo config(fileConfig);
 
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
-            const SweepClientSettings settings(file.readAll(), false);
-            ptrUserInterface->onSweepClientSettings(settings);
-            // MessageLogModel
-            ptrMessageLogModel->setMaxSize(settings.maxSizeMessageLog());
+        if(config.exists())
+        {
+            QFile file(fileConfig);
 
-            file.close();
+            if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                const SweepClientSettings settings(file.readAll(), false); // !!!!!!!!!!!!!!!
 
-            return true;
-        }else
-            return false;
+                ptrSweepClientSettings = new SweepClientSettings(file.readAll(), false);
+                file.close();
+
+                isRead = ptrSweepClientSettings->isValid();
+
+                ptrUserInterface->onSweepClientSettings(settings);
+                // MessageLogModel
+                ptrMessageLogModel->setMaxSize(ptrSweepClientSettings->maxSizeMessageLog());
+
+
+                return isRead;
+            }else{
+                qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
+                qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
+            }
+        }else{
+            qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
+
+            fprintf(stderr, "Create new file settings: %s\n", qUtf8Printable(fileConfig));
+            saveSettings(fileConfig);
+        }
     }
 
-    return false;
+    return isRead;
+}
+
+bool CoreSweepClient::saveSettings(const QString &file)
+{
+    bool isSave(false);
+
+    if(!file.isEmpty())
+    {
+        const QFileInfo info(file);
+        const QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+        QFileInfo config(fileConfig);
+        bool fileExists = config.exists();
+
+        QFile file(fileConfig);
+
+        if(file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+            if(fileExists){
+                if(ptrSweepClientSettings)
+                    file.write(ptrSweepClientSettings->exportToJson());
+            }else{
+                const auto defaultSettings = SweepClientSettings();
+                file.write(defaultSettings.exportToJson(false, false));
+            }
+
+            file.close();
+            isSave = true;
+        }else{
+            qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
+            qCritical("Error: '%s'", qUtf8Printable(file.errorString()));
+        }
+    }
+
+    return isSave;
 }
 
 void CoreSweepClient::launching()
