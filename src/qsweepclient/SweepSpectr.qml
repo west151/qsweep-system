@@ -49,7 +49,7 @@ SweepSpectrForm {
                 id: minFreq
                 anchors.centerIn: parent
                 color: "#fff"
-                text: "← " + userInterface.frequencyMin + " MHz"
+                text: "← " + userInterface.frequencyMin + qsTr(" MHz")
             }
         }
 
@@ -66,7 +66,7 @@ SweepSpectrForm {
                 id: maxFreq
                 anchors.centerIn: parent
                 color: "#fff"
-                text: userInterface.frequencyMax + " MHz →"
+                text: userInterface.frequencyMax + qsTr(" MHz") + " →"
             }
         }
     }
