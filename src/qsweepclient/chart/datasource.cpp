@@ -1,7 +1,6 @@
 #include "datasource.h"
 #include <QtCharts/QXYSeries>
 #include <QtCharts/QAreaSeries>
-#include <QtCore/QRandomGenerator>
 #include <QtCore/QtMath>
 
 #ifdef QT_DEBUG
