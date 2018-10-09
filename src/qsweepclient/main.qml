@@ -36,7 +36,7 @@ ApplicationWindow {
         }
 
         onCurrentIndexChanged: {
-            console.log("SwipeView: currentIndex = ", currentIndex);
+//            console.log("SwipeView: currentIndex = ", currentIndex);
         }
     }
 

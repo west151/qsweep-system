@@ -70,6 +70,8 @@ private:
     void pingReceived();
     void connecting();
     void sendingRequest(const QSweepRequest &);
+
+    void errorChanged(QMqttClient::ClientError error);
 };
 
 #endif // CORESWEEPCLIENT_H

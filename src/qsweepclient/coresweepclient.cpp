@@ -28,13 +28,11 @@ static const QString config_suffix(QString(".config"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrUserInterface(new UserInterface(this)),
-    ptrMqttClient(new QMqttClient(this)),
+//    ptrMqttClient(new QMqttClient(this)),
     ptrSweepTopic(new QSweepTopic(this)),
     ptrHackrfInfoModel(new HackrfInfoModel(this)),
     ptrMessageLogModel(new MessageLogModel(this)),
     ptrDataSource(new DataSource(this)),
-    ptrAxisX(new QValueAxis(this)),
-    ptrAxisY(new QValueAxis(this)),
     ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
     ptrStateSweepClient(new StateSweepClient(this))
 {
@@ -130,6 +128,7 @@ void CoreSweepClient::onDisconnectFromHost()
 void CoreSweepClient::initialization()
 {
     // MQTT
+    ptrMqttClient = new QMqttClient(this);
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweepClient::messageReceived);
     connect(ptrMqttClient, &QMqttClient::stateChanged,
@@ -140,6 +139,9 @@ void CoreSweepClient::initialization()
             this, &CoreSweepClient::pingReceived);
     connect(ptrMqttClient, &QMqttClient::pingResponseReceived,
             this , &CoreSweepClient::pingReceived);
+    connect(ptrMqttClient, &QMqttClient::errorChanged,
+            this, &CoreSweepClient::errorChanged);
+
     // user interface
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
@@ -449,5 +451,40 @@ void CoreSweepClient::sendingRequest(const QSweepRequest &value)
             qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.exportToJson();
 #endif
         }
+    }
+}
+
+void CoreSweepClient::errorChanged(QMqttClient::ClientError error)
+{
+    qCritical("Mqtt client error code: '%d'", error);
+
+    switch (error) {
+    case QMqttClient::NoError:
+        qCritical("No error occurred");
+        break;
+    case QMqttClient::InvalidProtocolVersion:
+        qCritical("The broker does not accept a connection using the specified protocol version.");
+        break;
+    case QMqttClient::IdRejected:
+        qCritical("The client ID is malformed. This might be related to its length.");
+        break;
+    case QMqttClient::ServerUnavailable:
+        qCritical("The network connection has been established, but the service is unavailable on the broker side.");
+        break;
+    case QMqttClient::BadUsernameOrPassword:
+        qCritical("The data in the username or password is malformed.");
+        break;
+    case QMqttClient::NotAuthorized:
+        qCritical("The client is not authorized to connect.");
+        break;
+    case QMqttClient::TransportInvalid:
+        qCritical("The underlying transport caused an error. For example, the connection might have been interrupted unexpectedly.");
+        break;
+    case QMqttClient::ProtocolViolation:
+        qCritical("The client encountered a protocol violation, and therefore closed the connection.");
+        break;
+    case QMqttClient::UnknownError:
+        qCritical("An unknown error occurred.");
+        break;
     }
 }
