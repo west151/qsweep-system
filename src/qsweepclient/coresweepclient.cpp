@@ -27,12 +27,9 @@
 static const QString config_suffix(QString(".config"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
-    ptrUserInterface(new UserInterface(this)),
-//    ptrMqttClient(new QMqttClient(this)),
     ptrSweepTopic(new QSweepTopic(this)),
     ptrHackrfInfoModel(new HackrfInfoModel(this)),
     ptrMessageLogModel(new MessageLogModel(this)),
-    ptrDataSource(new DataSource(this)),
     ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
     ptrStateSweepClient(new StateSweepClient(this))
 {
@@ -42,7 +39,7 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setApplicationName("CoreSweepClient");
+    QCoreApplication::setApplicationName("SweepClient");
     QCoreApplication::setApplicationVersion("1.0");
 
     QApplication app(argc, argv);
@@ -101,22 +98,6 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     return app.exec();
 }
 
-void CoreSweepClient::onConnectToHost(const QString &host, const quint16 &port)
-{
-#ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << tr("Connect to host:") << host << tr("port:") << port;
-#endif
-
-    if(ptrMqttClient)
-    {
-        ptrMqttClient->setHostname(host);
-        ptrMqttClient->setPort(port);
-
-        if (ptrMqttClient->state() == QMqttClient::Disconnected)
-            ptrMqttClient->connectToHost();
-    }
-}
-
 void CoreSweepClient::onDisconnectFromHost()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected){
@@ -142,7 +123,11 @@ void CoreSweepClient::initialization()
     connect(ptrMqttClient, &QMqttClient::errorChanged,
             this, &CoreSweepClient::errorChanged);
 
+    // DataSource
+    ptrDataSource = new DataSource(this);
+
     // user interface
+    ptrUserInterface = new UserInterface(this);
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
     connect(this, &CoreSweepClient::sendStartSpectr,
@@ -176,7 +161,8 @@ bool CoreSweepClient::readSettings(const QString &file)
             {
                 const SweepClientSettings settings(file.readAll(), false); // !!!!!!!!!!!!!!!
 
-                ptrSweepClientSettings = new SweepClientSettings(file.readAll(), false);
+                //ptrSweepClientSettings = new SweepClientSettings(file.readAll(), false);
+                ptrSweepClientSettings = new SweepClientSettings(settings);
                 file.close();
 
                 isRead = ptrSweepClientSettings->isValid();
@@ -359,9 +345,13 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 
 void CoreSweepClient::updateLogStateChange()
 {
+#ifdef QT_DEBUG
     const QString content = QDateTime::currentDateTime().toString()
-            + QLatin1String(": State Change")
+            + QLatin1String(": State Change ")
             + QString::number(ptrMqttClient->state());
+
+    qDebug() << Q_FUNC_INFO << content;
+#endif
 
     // Subscribers topic
     if (ptrMqttClient->state() == QMqttClient::Connected)
@@ -413,10 +403,6 @@ void CoreSweepClient::updateLogStateChange()
     {
         emit sendStateDisconnected();
     }
-
-#ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << content;
-#endif
 }
 
 void CoreSweepClient::brokerDisconnected()

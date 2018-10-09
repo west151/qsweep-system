@@ -31,7 +31,6 @@ public:
     int runCoreSweepClient(int argc, char *argv[]);
 
 public slots:
-    void onConnectToHost(const QString &host, const quint16 &port);
     void onDisconnectFromHost();
 
 signals:
