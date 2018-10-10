@@ -134,7 +134,7 @@ void WaterfallItem::sizeChanged()
         painter.end();
 
         _image = img;
-    }
 
-    update();
+        update();
+    }
 }
