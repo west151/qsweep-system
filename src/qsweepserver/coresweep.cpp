@@ -27,14 +27,6 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
     }
 }
 
-void CoreSweep::onDataFromWorker(const QByteArray &value)
-{
-    Q_UNUSED(value)
-//#ifdef QT_DEBUG
-//    qDebug() << Q_FUNC_INFO << ">" << value << "size" << value.size();
-//#endif
-}
-
 bool CoreSweep::readSettings(const QString &file)
 {
     bool isRead(false);

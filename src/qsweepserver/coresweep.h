@@ -22,8 +22,6 @@ class CoreSweep : public QObject
 public:
     explicit CoreSweep(const QString &, QObject *parent = nullptr);
 
-    void onDataFromWorker(const QByteArray &value);
-
 signals:
     void sendRunSweepInfo(const QByteArray &);
     void sendRunSweepWorker(const QByteArray &);

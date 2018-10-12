@@ -2,7 +2,6 @@
 
 #include <QApplication>
 #include <QQmlContext>
-#include <QDateTime>
 #include <QFileInfo>
 #include <QDir>
 #include <QTime>
