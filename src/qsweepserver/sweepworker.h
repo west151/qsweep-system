@@ -22,7 +22,6 @@ public:
     explicit SweepWorker(QObject *parent = nullptr);
     static SweepWorker* getInstance();
 
-    void onTestDataCallbacks(const QByteArray &value);
     void onDataPowerSpectrCallbacks(const PowerSpectr &, const bool &isSending = false);
 
 public slots:
@@ -31,7 +30,6 @@ public slots:
 
 signals:
     void sendSweepWorkerMessagelog(const QByteArray &value);
-    void sendData(const QByteArray &value);
     void sendPowerSpectr(const QByteArray &value);
 
 private:

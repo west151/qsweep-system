@@ -38,6 +38,9 @@ signals:
     void sendStateConnected();
     void sendStateDisconnected();
 
+    void sendHackrfInfoResult(const QHackrfInfo &);
+    void sendMessageLogResult(const QSweepMessageLog &);
+
 private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
     UserInterface* ptrUserInterface {Q_NULLPTR};

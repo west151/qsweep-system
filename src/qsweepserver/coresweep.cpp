@@ -12,7 +12,7 @@
 #include "qsweepanswer.h"
 #include "qsweepparams.h"
 
-static const QString config_suffix(QString(".config"));
+static const QString config_suffix(QString(".conf"));
 
 CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
 {
@@ -122,10 +122,6 @@ void CoreSweep::initialization()
     // stop spectr
     connect(this, &CoreSweep::sendStopSweepWorker,
             SweepWorker::getInstance(), &SweepWorker::onStopSweepWorker);
-
-    // TEST
-//    connect(SweepWorker::getInstance(), &SweepWorker::sendData,
-//            this, &CoreSweep::onDataFromWorker);
 
     ptrSweepThread->start();
 

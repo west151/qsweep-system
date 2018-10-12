@@ -75,7 +75,6 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
     for (int x = 0; x < img.width(); x++)
     {
         int i1 = static_cast<int>(x * spectr.size() / img.width());
-        //qreal amplitude = std::log10(std::abs(spectr[i1]));
         qreal amplitude = std::log10(std::abs(spectr.at(i1)));
         int value = static_cast<int>(amplitude * static_cast<qreal>(_sensitivity) * static_cast<qreal>(_colors.length()));
 
@@ -84,7 +83,6 @@ void WaterfallItem::onPowerSpectr(const QVector<qreal> &spectr)
         if (value >= _colors.length())
             value = _colors.length() - 1;
 
-        //painter.setPen(_colors[value]);
         painter.setPen(_colors.at(value));
         painter.drawRect(x, 0, 1, 5);
     }
@@ -109,7 +107,7 @@ void WaterfallItem::setSensitivity(const qreal &value)
 
 qreal WaterfallItem::sensitivity() const
 {
-    return  _sensitivity;
+    return _sensitivity;
 }
 
 void WaterfallItem::clear()

@@ -91,7 +91,7 @@ void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QV
 
         qreal minFreq = static_cast<qreal>(f_min);
         qreal maxFreq = static_cast<qreal>(f_max);
-        qreal step = (maxFreq - minFreq)/tmpPower.count();
+        qreal step = (maxFreq - minFreq)/tmpPower.size();
 
         bool isLastPower(false);
         if(m_lastPower.size() == tmpPower.size())

@@ -3,23 +3,23 @@ import QtQuick 2.4
 SweepSystemMonitorForm {
 
     textHostName {
-        text: "host name: " + systemMonitorInterface.hostName
+        text: qsTr("host name: ") + systemMonitorInterface.hostName
     }
 
     textUptime {
-        text: "uptime: " + systemMonitorInterface.uptime
+        text: qsTr("uptime: ") + systemMonitorInterface.uptime
     }
 
     textTotalMemory {
-        text: "total memory: "+ (systemMonitorInterface.totalMemory/1024).toFixed(1) + " Мб"
+        text: qsTr("total memory: ") + (systemMonitorInterface.totalMemory/1024).toFixed(1) + qsTr(" Мб")
     }
 
     textFreeMemory {
-        text: "free memory: "+ (systemMonitorInterface.freeMemory/1024).toFixed(1) + " Мб"
+        text: qsTr("free memory: ") + (systemMonitorInterface.freeMemory/1024).toFixed(1) + qsTr(" Мб")
     }
 
     textBufferMemory {
-        text: "buffer memory: "+ (systemMonitorInterface.bufferMemory/1024).toFixed(1) + " Мб"
+        text: qsTr("buffer memory: ") + (systemMonitorInterface.bufferMemory/1024).toFixed(1) + qsTr(" Мб")
     }
 
     //************************************************************************************

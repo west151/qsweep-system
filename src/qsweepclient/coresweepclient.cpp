@@ -5,8 +5,6 @@
 #include <QDateTime>
 #include <QFileInfo>
 #include <QDir>
-#include <QLineSeries>
-#include <QChartView>
 #include <QTime>
 #include <QtCore/qdebug.h>
 
@@ -24,12 +22,10 @@
 #include "statesweepclient.h"
 #include "settings/sweepclientsettings.h"
 
-static const QString config_suffix(QString(".config"));
+static const QString config_suffix(QString(".conf"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrSweepTopic(new QSweepTopic(this)),
-    ptrHackrfInfoModel(new HackrfInfoModel(this)),
-    ptrMessageLogModel(new MessageLogModel(this)),
     ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
     ptrStateSweepClient(new StateSweepClient(this))
 {
@@ -141,6 +137,16 @@ void CoreSweepClient::initialization()
             ptrUserInterface, &UserInterface::onRequestSweepInfo);
     connect(this, &CoreSweepClient::sendStateDisconnected,
             ptrStateSweepClient, &StateSweepClient::onDisconnect);
+
+    // Hackrf Info Model
+    ptrHackrfInfoModel = new HackrfInfoModel(this);
+    connect(this, &CoreSweepClient::sendHackrfInfoResult,
+            ptrHackrfInfoModel, &HackrfInfoModel::addResult);
+
+    // Message Log Model
+    ptrMessageLogModel = new MessageLogModel(this);
+    connect(this, &CoreSweepClient::sendMessageLogResult,
+            ptrMessageLogModel, &MessageLogModel::addResult);
 }
 
 bool CoreSweepClient::readSettings(const QString &file)
@@ -160,8 +166,6 @@ bool CoreSweepClient::readSettings(const QString &file)
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
                 const SweepClientSettings settings(file.readAll(), false); // !!!!!!!!!!!!!!!
-
-                //ptrSweepClientSettings = new SweepClientSettings(file.readAll(), false);
                 ptrSweepClientSettings = new SweepClientSettings(settings);
                 file.close();
 
@@ -247,7 +251,8 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         const QHackrfInfo info(answer.dataAnswer(), false);
 
         if(info.isValid()){
-            ptrHackrfInfoModel->addResult(info);
+            // hackrf info & libhackrf
+            emit sendHackrfInfoResult(info);
 
 //#ifdef QT_DEBUG
 //            qDebug() << "---------------------------------------------------";
@@ -267,8 +272,8 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     {
         QSweepAnswer answer(message);
         QSweepMessageLog log(answer.dataAnswer());
-        if(ptrMessageLogModel)
-            ptrMessageLogModel->addResult(log);
+
+        emit sendMessageLogResult(log);
     }
         break;
     case QSweepTopic::TOPIC_POWER_SPECTR:
@@ -312,28 +317,15 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 
     if(m_timerReceive->elapsed()>=5000)
     {
-        //qreal
 #ifdef QT_DEBUG
         qDebug() << Q_FUNC_INFO
                  << "Data size:" << QString::number(m_sizeDatacReceive/1024.0, 'f', 2) << "Kbyte"
                  << "Data size:" << QString::number((m_sizeDatacReceive/1024)/1024.0, 'f', 2) << "Mbyte"
-                 << QString("Time elapsed: %1 ms").arg(m_timerReceive->elapsed());
+                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timerReceive->elapsed()).arg(m_timerReceive->elapsed()/1000);
 #endif
         m_timerReceive->restart();
         m_sizeDatacReceive = 0;
     }
-//QString::number(12.625, 'f', 2);.
-//    if(m_timerReceive->elapsed()>=5000)
-//    {
-//        qDebug("Time elapsed: %d ms", m_timerReceive->elapsed());
-//        qDebug() << Q_FUNC_INFO
-//                 << m_sizeDatacReceive
-//                 << "(" << m_sizeDatacReceive/1024 << ")"
-//                 << m_timerReceive->elapsed()/1000;
-
-//        m_timerReceive->restart();
-//        m_sizeDatacReceive = 0;
-//    }
 
 #ifdef QT_DEBUG
 //    qDebug() << "---------------------------------------------------";

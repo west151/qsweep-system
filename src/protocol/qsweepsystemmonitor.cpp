@@ -14,9 +14,9 @@ public:
         m_hostName.clear();
         m_uptime.clear();
         m_currentCpuArchitecture.clear();
-        m_totalMemory = -1;
-        m_freeMemory = -1;
-        m_bufferMemory = -1;
+        m_totalMemory = 0;
+        m_freeMemory = 0;
+        m_bufferMemory = 0;
         m_dateTime = QDateTime::currentDateTimeUtc();
     }
     QSweepSystemMonitorData(const QSweepSystemMonitorData &other) : QSharedData(other)

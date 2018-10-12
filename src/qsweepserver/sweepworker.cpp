@@ -59,20 +59,16 @@ SweepWorker *SweepWorker::getInstance()
     return m_instance;
 }
 
-void SweepWorker::onTestDataCallbacks(const QByteArray &value)
-{
-
-    emit sendData(value);
-}
-
 void SweepWorker::onDataPowerSpectrCallbacks(const PowerSpectr &power, const bool &isSending)
 {
     m_powerSpectrBuffer.append(power);
 
     if(isSending)
     {
-//        qDebug() << "-------------------------------";
-//        qDebug() << "Sending data" << m_powerSpectrBuffer.count();
+//        // sort
+//        std::sort(m_powerSpectrBuffer.begin(), m_powerSpectrBuffer.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
+//            return a.m_frequency_min < b.m_frequency_min;
+//        });
 
         QSweepAnswer answer;
         answer.setTypeAnswer(TypeAnswer::SWEEP_POWER_SPECTR);
@@ -184,7 +180,6 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         if(static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4))
                 >= static_cast<uint64_t>(FREQ_ONE_MHZ*frequencies[num_ranges*2-1]))
         {
-
             isSending = true;
 
             if(one_shot){
@@ -372,9 +367,10 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
      * whole number of steps, minimum 1.
      */
     for(i = 0; i < num_ranges; i++) {
-        step_count = 1 + (frequencies[2*i+1] - frequencies[2*i] - 1)
-                / TUNE_STEP;
-        frequencies[2*i+1] = (uint16_t) (frequencies[2*i] + step_count * TUNE_STEP);
+        step_count = 1 + (frequencies[2*i+1] - frequencies[2*i] - 1) / TUNE_STEP;
+        // frequencies[2*i+1] = (uint16_t) (frequencies[2*i] + step_count * TUNE_STEP);
+        frequencies[2*i+1] = static_cast<uint16_t> (frequencies[2*i] + step_count * TUNE_STEP);
+
         fprintf(stderr, "Sweeping from %u MHz to %u MHz\n", frequencies[2*i], frequencies[2*i+1]);
         sweepWorkerMessagelog(tr("Sweeping from %1 MHz to %2 MHz").arg(frequencies[2*i]).arg(frequencies[2*i+1]));
     }
