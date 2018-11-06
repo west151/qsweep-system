@@ -14,11 +14,11 @@ public:
     explicit HackrfInfo(QObject *parent = nullptr);
 
 public slots:
-    void onRunHackrfInfo(const QByteArray &value);
+    void slot_run_hackrf_info(const QByteArray &value);
 
 signals:
-    void sendHackrfInfo(const QSweepAnswer &);
-    //void sendHackrfInfo(const QByteArray &);
+    void signal_hackrf_info(const QByteArray &value);
+    //void sendHackrfInfo(const QSweepAnswer &);
 
 private:
     int result = HACKRF_SUCCESS;

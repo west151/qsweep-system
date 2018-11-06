@@ -11,6 +11,7 @@
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 #include "qsweepparams.h"
+#include "sweep_message.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -24,6 +25,20 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
         initialization();
     } else {
         qCritical("Error: Read settings.");
+    }
+}
+
+void CoreSweep::slot_sending_message(const QByteArray &value)
+{
+    if (ptrMqttClient->state() == QMqttClient::Connected)
+    {
+        const sweep_message send_data(value);
+
+        if(send_data.is_valid())
+        {
+            if(send_data.type() == type_message::DATA_INFO)
+                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value);
+        }
     }
 }
 
@@ -121,6 +136,11 @@ void CoreSweep::initialization()
     ptrMqttClient = new QMqttClient(this);
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweep::messageReceived);
+
+    // new style
+    connect(ptrMqttClient, &QMqttClient::messageReceived,
+            this, &CoreSweep::received_sweep_message);
+
     connect(ptrMqttClient, &QMqttClient::stateChanged,
             this, &CoreSweep::updateLogStateChange);
     connect(ptrMqttClient, &QMqttClient::disconnected,
@@ -134,10 +154,12 @@ void CoreSweep::initialization()
 
     // HackRF Info
     ptrHackrfInfo = new HackrfInfo(this);
-    connect(this, &CoreSweep::sendRunSweepInfo,
-            ptrHackrfInfo, &HackrfInfo::onRunHackrfInfo);
-    connect(ptrHackrfInfo, &HackrfInfo::sendHackrfInfo,
-            this, &CoreSweep::sendingMessage);
+    // get hacrf info
+    connect(this, &CoreSweep::signal_run_hackrf_info,
+            ptrHackrfInfo, &HackrfInfo::slot_run_hackrf_info);
+    // send result to broker
+    connect(ptrHackrfInfo, &HackrfInfo::signal_hackrf_info,
+            this, &CoreSweep::slot_sending_message);
 
     // System monitor
     ptrSystemMonitorWorker = new SystemMonitorWorker;
@@ -194,9 +216,6 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
 
         if(request.isValid()){
             switch (request.typeRequest()) {
-            case TypeRequest::INFO:
-                emit sendRunSweepInfo(message);
-                break;
             case TypeRequest::START_SWEEP_SPECTR:
                 emit sendRunSweepWorker(message);
                 break;
@@ -211,6 +230,20 @@ void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName 
         break;
     default:
         break;
+    }
+}
+
+void CoreSweep::received_sweep_message(const QByteArray &message, const QMqttTopicName &topic)
+{
+    if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_CTRL)
+    {
+        const sweep_message ctrl_message(message, false);
+
+        if(ctrl_message.is_valid())
+        {
+            if(ctrl_message.type() == type_message::CTRL_INFO)
+                emit signal_run_hackrf_info(message);
+        }
     }
 }
 
@@ -255,21 +288,6 @@ void CoreSweep::connecting()
 #ifdef QT_DEBUG
     qDebug() << "connecting";
 #endif
-}
-
-void CoreSweep::sendingMessage(const QSweepAnswer &value)
-{
-    switch (value.typeAnswer()) {
-    case TypeAnswer::INFO:
-        if (ptrMqttClient->state() == QMqttClient::Connected) {
-            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value.exportToJson());
-
-            Q_UNUSED(result)
-        }
-        break;
-    default:
-        break;
-    }
 }
 
 void CoreSweep::onSendingMessageRequest(const QByteArray &value)

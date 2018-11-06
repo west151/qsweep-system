@@ -12,7 +12,6 @@
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 #include "qsweepspectr.h"
-#include "qhackrfinfo.h"
 #include "qsweepmessagelog.h"
 #include "qsweepsystemmonitor.h"
 #include "chart/datasource.h"
@@ -20,6 +19,9 @@
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
 #include "settings/sweepclientsettings.h"
+
+#include "sweep_message.h"
+#include "sdr_info.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -107,6 +109,11 @@ void CoreSweepClient::initialization()
     ptrMqttClient = new QMqttClient(this);
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweepClient::messageReceived);
+
+    connect(ptrMqttClient, &QMqttClient::messageReceived,
+            this, &CoreSweepClient::slot_message_received);
+
+
     connect(ptrMqttClient, &QMqttClient::stateChanged,
             this, &CoreSweepClient::updateLogStateChange);
     connect(ptrMqttClient, &QMqttClient::disconnected,
@@ -125,6 +132,10 @@ void CoreSweepClient::initialization()
     ptrUserInterface = new UserInterface(this);
     connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
             this, &CoreSweepClient::sendingRequest);
+    // new style
+    connect(ptrUserInterface, &UserInterface::signal_sweep_message,
+            this, &CoreSweepClient::slot_publish_message);
+
     connect(this, &CoreSweepClient::sendStartSpectr,
             ptrUserInterface, &UserInterface::sendStartSpectr);
     connect(ptrUserInterface, &UserInterface::sendClearMaxPowerSpectr,
@@ -139,8 +150,8 @@ void CoreSweepClient::initialization()
 
     // Hackrf Info Model
     ptrHackrfInfoModel = new HackrfInfoModel(this);
-    connect(this, &CoreSweepClient::sendHackrfInfoResult,
-            ptrHackrfInfoModel, &HackrfInfoModel::addResult);
+    connect(this, &CoreSweepClient::signal_sdr_info,
+            ptrHackrfInfoModel, &HackrfInfoModel::add_result);
 
     // Message Log Model
     ptrMessageLogModel = new MessageLogModel(this);
@@ -243,30 +254,8 @@ void CoreSweepClient::launching()
 
 void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
-    switch (ptrSweepTopic->sweepTopic(topic.name())) {
-    case QSweepTopic::TOPIC_INFO:
+    switch (ptrSweepTopic->sweepTopic(topic.name()))
     {
-        QSweepAnswer answer(message);
-        const QHackrfInfo info(answer.dataAnswer(), false);
-
-        if(info.isValid()){
-            // hackrf info & libhackrf
-            emit sendHackrfInfoResult(info);
-
-//#ifdef QT_DEBUG
-//            qDebug() << "---------------------------------------------------";
-//            qDebug() << Q_FUNC_INFO << tr("Type Answer:") << static_cast<qint32>(answer.typeAnswer());
-//            qDebug() << Q_FUNC_INFO << tr("Index Board:") << info.indexBoard();
-//            qDebug() << Q_FUNC_INFO << tr("Serial Numbers:") << info.serialNumbers();
-//            qDebug() << Q_FUNC_INFO << tr("Board ID Number:") << info.boardID();
-//            qDebug() << Q_FUNC_INFO << tr("Firmware Version:") << info.firmwareVersion();
-//            qDebug() << Q_FUNC_INFO << tr("Part ID Number:") << info.partIDNumber();
-//            qDebug() << Q_FUNC_INFO << tr("Libhackrf Version:") << info.libHackrfVersion();
-//            qDebug() << Q_FUNC_INFO << tr("Size message (byte):") << message.size();
-//#endif
-        }
-    }
-        break;
     case QSweepTopic::TOPIC_MESSAGE_LOG:
     {
         QSweepAnswer answer(message);
@@ -312,19 +301,19 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
         break;
     }
 
-    m_sizeDatacReceive = m_sizeDatacReceive + message.size();
+//    m_sizeDatacReceive = m_sizeDatacReceive + message.size();
 
-    if(m_timerReceive->elapsed()>=5000)
-    {
-#ifdef QT_DEBUG
-        qDebug() << Q_FUNC_INFO
-                 << "Data size:" << QString::number(m_sizeDatacReceive/1024.0, 'f', 2) << "Kbyte"
-                 << "Data size:" << QString::number((m_sizeDatacReceive/1024)/1024.0, 'f', 2) << "Mbyte"
-                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timerReceive->elapsed()).arg(m_timerReceive->elapsed()/1000);
-#endif
-        m_timerReceive->restart();
-        m_sizeDatacReceive = 0;
-    }
+//    if(m_timerReceive->elapsed()>=5000)
+//    {
+//#ifdef QT_DEBUG
+//        qDebug() << Q_FUNC_INFO
+//                 << "Data size:" << QString::number(m_sizeDatacReceive/1024.0, 'f', 2) << "Kbyte"
+//                 << "(" << QString::number((m_sizeDatacReceive/1024)/1024.0, 'f', 2) << "Mbyte" << ")"
+//                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timerReceive->elapsed()).arg(m_timerReceive->elapsed()/1000);
+//#endif
+//        m_timerReceive->restart();
+//        m_sizeDatacReceive = 0;
+//    }
 
 #ifdef QT_DEBUG
 //    qDebug() << "---------------------------------------------------";
@@ -428,6 +417,52 @@ void CoreSweepClient::sendingRequest(const QSweepRequest &value)
             qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.exportToJson();
 #endif
         }
+    }
+}
+
+void CoreSweepClient::slot_publish_message(const sweep_message &value)
+{
+    if(ptrMqttClient)
+    {
+        if (ptrMqttClient->state() == QMqttClient::Connected)
+        {
+            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.export_json());
+
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.export_json();
+#endif
+        }
+    }
+}
+
+void CoreSweepClient::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
+{
+    if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_INFO)
+    {
+        const sweep_message data_received(message, false);
+
+        if(data_received.is_valid())
+        {
+            if(data_received.type() == type_message::DATA_INFO)
+            {
+                const sdr_info sdr_info_data(data_received.data_message(), false);
+                emit signal_sdr_info(sdr_info_data);
+            }
+        }
+    }
+
+    m_sizeDatacReceive = m_sizeDatacReceive + message.size();
+
+    if(m_timerReceive->elapsed()>=5000)
+    {
+#ifdef QT_DEBUG
+        qDebug() << Q_FUNC_INFO
+                 << "Data size:" << QString::number(m_sizeDatacReceive/1024.0, 'f', 2) << "Kbyte"
+                 << "(" << QString::number((m_sizeDatacReceive/1024)/1024.0, 'f', 2) << "Mbyte" << ")"
+                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timerReceive->elapsed()).arg(m_timerReceive->elapsed()/1000);
+#endif
+        m_timerReceive->restart();
+        m_sizeDatacReceive = 0;
     }
 }
 

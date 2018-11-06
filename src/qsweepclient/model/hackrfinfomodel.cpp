@@ -13,17 +13,17 @@ QVariant HackrfInfoModel::data(const QModelIndex &index, int role) const
     if ((index.row() >= 0) && (index.row() < m_data.size())){
         switch (role) {
         case DATAROLE_INDEX_BOARD:
-            return m_data.at(index.row()).indexBoard();
+            return m_data.at(index.row()).index_board();
         case DATAROLE_SERIAL_NUMBERS:
-            return m_data.at(index.row()).serialNumbers();
+            return m_data.at(index.row()).serial_numbers();
         case DATAROLE_BOARD_ID:
-            return m_data.at(index.row()).boardID();
+            return m_data.at(index.row()).board_id();
         case DATAROLE_FIRMWARE_VERSION:
-            return m_data.at(index.row()).firmwareVersion();
+            return m_data.at(index.row()).firmware_version();
         case DATAROLE_PART_ID_NUMBER:
-            return m_data.at(index.row()).partIDNumber();
+            return m_data.at(index.row()).part_id_number();
         case DATAROLE_HACKRF_VERSION:
-            return m_data.at(index.row()).libHackrfVersion();
+            return m_data.at(index.row()).lib_sdr_version();
         }
     }
 
@@ -62,7 +62,7 @@ void HackrfInfoModel::clearResult()
     }
 }
 
-void HackrfInfoModel::addResult(const QHackrfInfo &data)
+void HackrfInfoModel::add_result(const sdr_info &data)
 {
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     m_data.append(data);

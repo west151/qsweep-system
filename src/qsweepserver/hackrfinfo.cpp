@@ -1,7 +1,7 @@
 #include "hackrfinfo.h"
 
-#include "qsweepanswer.h"
-#include "qhackrfinfo.h"
+#include "sweep_message.h"
+#include "sdr_info.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -10,6 +10,11 @@
 HackrfInfo::HackrfInfo(QObject *parent) : QObject(parent)
 {
 
+}
+
+void HackrfInfo::slot_run_hackrf_info(const QByteArray &value)
+{
+    hackrfInfo(value);
 }
 
 int HackrfInfo::hackrfInfo(const QByteArray &value)
@@ -34,15 +39,15 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
 
     for (int i = 0; i < list->devicecount; i++)
     {
-        QSweepAnswer answerData;
-        answerData.setTypeAnswer(TypeAnswer::INFO);
-        QHackrfInfo info;
+        sweep_message answer_data;
+        answer_data.set_type(type_message::DATA_INFO);
+        sdr_info hackrf_info;
 
-        info.setIndexBoard(i);
+        hackrf_info.set_index_board(i);
 
         // Serial number
         if (list->serial_numbers[i])
-            info.setSerialNumbers(QString(list->serial_numbers[i]));
+            hackrf_info.set_serial_numbers(QString(list->serial_numbers[i]));
 
         device = NULL;
         result = hackrf_device_list_open(list, i, &device);
@@ -56,7 +61,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
         if (result == HACKRF_SUCCESS) {
             QString boardID(QString::number(board_id));
             boardID.append(tr(" (%1)").arg(hackrf_board_id_name(static_cast<hackrf_board_id>(board_id))));
-            info.setBoardID(boardID);
+            hackrf_info.set_board_id(boardID);
         }else{
             errorHackrf(tr("hackrf_board_id_read() failed:"), result);
             return EXIT_FAILURE;
@@ -72,7 +77,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
             if (result == HACKRF_SUCCESS) {
                 QString firmwareVer(version);
                 firmwareVer.append(tr("(API:%1.%2)").arg((usb_version>>8)&0xFF).arg(usb_version&0xFF));
-                info.setFirmwareVersion(firmwareVer);
+                hackrf_info.set_firmware_version(firmwareVer);
             }else{
                 errorHackrf(tr("hackrf_usb_api_version_read() failed:"), result);
                 return EXIT_FAILURE;
@@ -88,7 +93,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
             partIDNumber.append(QString::number(read_partid_serialno.part_id[0], 16));
             partIDNumber.append(" 0x");
             partIDNumber.append(QString::number(read_partid_serialno.part_id[1], 16));
-            info.setPartIDNumber(partIDNumber);
+            hackrf_info.set_part_id_number(partIDNumber);
         }else{
             errorHackrf(tr("hackrf_board_partid_serialno_read() failed:"), result);
             return EXIT_FAILURE;
@@ -120,29 +125,23 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
         libStr.append("(");
         libStr.append(hackrf_library_version());
         libStr.append(")");
-        info.setLibHackrfVersion(libStr);
+        hackrf_info.set_lib_sdr_version(libStr);
 
 #ifdef QT_DEBUG
-        qDebug() << tr("Serial number:") << info.serialNumbers();
-        qDebug() << tr("Board ID Number:") << info.boardID();
-        qDebug() << tr("Firmware Version:") << info.firmwareVersion();
-        qDebug() << tr("Part ID Number:") << info.partIDNumber();
-        qDebug() << tr("Libhackrf Version:") << info.libHackrfVersion();
+        qDebug() << tr("Serial number:") << hackrf_info.serial_numbers();
+        qDebug() << tr("Board ID Number:") << hackrf_info.board_id();
+        qDebug() << tr("Firmware Version:") << hackrf_info.firmware_version();
+        qDebug() << tr("Part ID Number:") << hackrf_info.part_id_number();
+        qDebug() << tr("Libhackrf Version:") << hackrf_info.lib_sdr_version();
 #endif
-
-        answerData.setDataAnswer(info.exportToJson());
-        emit sendHackrfInfo(answerData);
+        answer_data.set_data_message(hackrf_info.export_json());
+        emit signal_hackrf_info(answer_data.export_json());
     }
 
     hackrf_device_list_free(list);
     hackrf_exit();
 
     return EXIT_SUCCESS;
-}
-
-void HackrfInfo::onRunHackrfInfo(const QByteArray &value)
-{
-    hackrfInfo(value);
 }
 
 void HackrfInfo::errorHackrf(const QString &text, int result)

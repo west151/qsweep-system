@@ -2,7 +2,7 @@
 #define HACKRFINFOMODEL_H
 
 #include <QtCore/qabstractitemmodel.h>
-#include "qhackrfinfo.h"
+#include "sdr_info.h"
 
 class HackrfInfoModel : public QAbstractListModel
 {
@@ -24,10 +24,10 @@ public:
     QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
     void clearResult();
-    void addResult(const QHackrfInfo &);
+    void add_result(const sdr_info &);
 
 private:
-    QList<QHackrfInfo> m_data;
+    QList<sdr_info> m_data;
 };
 
 #endif // HACKRFINFOMODEL_H

@@ -16,6 +16,7 @@ static const QString PART_ID_NUMBER_KEY = QStringLiteral("part_id_number");
 static const QString LIB_HACKRF_VERSION_KEY = QStringLiteral("lib_hackrf_version");
 
 static const QString ID_KEY = QStringLiteral("id");
+static const QString TYPE_MESSAGE_KEY = QStringLiteral("type_msg");
 static const QString TYPE_ANSWER_KEY = QStringLiteral("TypeAnswer");
 static const QString DT_ANSWER_KEY = QStringLiteral("DateTimeAnswer");
 static const QString TEXT_MESSAGE_KEY = QStringLiteral("text_msg");

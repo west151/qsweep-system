@@ -3,6 +3,8 @@
 #include "qsweeprequest.h"
 #include "qsweepparams.h"
 
+#include "sweep_message.h"
+
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_freqMin(30),
     m_freqMax(6000),
@@ -135,10 +137,9 @@ quint32 UserInterface::fftBinWidth() const
 
 void UserInterface::onRequestSweepInfo()
 {
-    QSweepRequest info(this);
-    info.setTypeRequest(TypeRequest::INFO);
-
-    emit sendRequestSweepServer(info);
+    sweep_message ctrl_info;
+    ctrl_info.set_type(type_message::CTRL_INFO);
+    emit signal_sweep_message(ctrl_info);
 }
 
 void UserInterface::onRequestSweepSpectr(const bool &start)

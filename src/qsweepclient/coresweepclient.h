@@ -15,11 +15,12 @@
 class UserInterface;
 class QSweepTopic;
 class QSweepRequest;
-class QHackrfInfo;
 class DataSource;
 class SystemMonitorInterface;
 class StateSweepClient;
 class SweepClientSettings;
+class sweep_message;
+class sdr_info;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -38,8 +39,14 @@ signals:
     void sendStateConnected();
     void sendStateDisconnected();
 
-    void sendHackrfInfoResult(const QHackrfInfo &);
+
+    void signal_sdr_info(const sdr_info &);
+
     void sendMessageLogResult(const QSweepMessageLog &);
+
+private slots:
+    void slot_publish_message(const sweep_message &);
+    void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
 private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
@@ -72,6 +79,7 @@ private:
     void pingReceived();
     void connecting();
     void sendingRequest(const QSweepRequest &);
+
 
     void errorChanged(QMqttClient::ClientError error);
 };

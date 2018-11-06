@@ -23,9 +23,14 @@ public:
     explicit CoreSweep(const QString &, QObject *parent = nullptr);
 
 signals:
+    void signal_run_hackrf_info(const QByteArray &);
+
     void sendRunSweepInfo(const QByteArray &);
     void sendRunSweepWorker(const QByteArray &);
     void sendStopSweepWorker();
+
+private slots:
+    void slot_sending_message(const QByteArray &);
 
 private:
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};
@@ -46,11 +51,14 @@ private:
     void launching();
 
     void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
+
+    void received_sweep_message(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
+
     void updateLogStateChange();
     void brokerDisconnected();
     void pingReceived();
     void connecting();
-    void sendingMessage(const QSweepAnswer &);
+
     void onSendingMessageRequest(const QByteArray &);
     void errorChanged(QMqttClient::ClientError error);
 };
