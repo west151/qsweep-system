@@ -12,7 +12,6 @@
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 #include "qsweepspectr.h"
-#include "qsweepmessagelog.h"
 #include "qsweepsystemmonitor.h"
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
@@ -22,6 +21,7 @@
 
 #include "sweep_message.h"
 #include "sdr_info.h"
+#include "data_log.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -155,8 +155,8 @@ void CoreSweepClient::initialization()
 
     // Message Log Model
     ptrMessageLogModel = new MessageLogModel(this);
-    connect(this, &CoreSweepClient::sendMessageLogResult,
-            ptrMessageLogModel, &MessageLogModel::addResult);
+    connect(this, &CoreSweepClient::signal_data_log,
+            ptrMessageLogModel, &MessageLogModel::add_result);
 }
 
 bool CoreSweepClient::readSettings(const QString &file)
@@ -256,14 +256,14 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 {
     switch (ptrSweepTopic->sweepTopic(topic.name()))
     {
-    case QSweepTopic::TOPIC_MESSAGE_LOG:
-    {
-        QSweepAnswer answer(message);
-        QSweepMessageLog log(answer.dataAnswer());
+//    case QSweepTopic::TOPIC_MESSAGE_LOG:
+//    {
+//        QSweepAnswer answer(message);
+//        QSweepMessageLog log(answer.dataAnswer());
 
-        emit sendMessageLogResult(log);
-    }
-        break;
+//        emit sendMessageLogResult(log);
+//    }
+//        break;
     case QSweepTopic::TOPIC_POWER_SPECTR:
     {
         QSweepAnswer answer(message);
@@ -437,6 +437,7 @@ void CoreSweepClient::slot_publish_message(const sweep_message &value)
 
 void CoreSweepClient::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
+    // system info
     if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_INFO)
     {
         const sweep_message data_received(message, false);
@@ -447,6 +448,21 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
             {
                 const sdr_info sdr_info_data(data_received.data_message(), false);
                 emit signal_sdr_info(sdr_info_data);
+            }
+        }
+    }
+
+    // message log
+    if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_MESSAGE_LOG)
+    {
+        const sweep_message data_received(message, false);
+
+        if(data_received.is_valid())
+        {
+            if(data_received.type() == type_message::DATA_MESSAGE_LOG)
+            {
+                const data_log data_log_data(data_received.data_message(), false);
+                emit signal_data_log(data_log_data);
             }
         }
     }

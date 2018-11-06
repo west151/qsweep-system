@@ -35,7 +35,7 @@ void MessageLogModel::clearResult()
     }
 }
 
-void MessageLogModel::addResult(const QSweepMessageLog &data)
+void MessageLogModel::add_result(const data_log &data)
 {
     if(m_data.size() >= m_maxSize)
         clearResult();
@@ -60,9 +60,9 @@ QVariant MessageLogModel::data(const QModelIndex &index, int role) const
 //        case DATAROLE_MESSAGE_TYPE:
 //            return m_data.at(index.row()).messageLogType();
         case DATAROLE_DT_MESSAGE:
-            return m_data.at(index.row()).dateTime().toUTC().toString("hh:mm:ss.zzz");
+            return m_data.at(index.row()).date_time().toUTC().toString("hh:mm:ss.zzz");
         case DATAROLE_MESSAGE_TEXT:
-            return m_data.at(index.row()).textMessage();
+            return m_data.at(index.row()).text_message();
         }
 
     return QVariant();

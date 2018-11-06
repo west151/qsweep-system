@@ -21,6 +21,7 @@ class StateSweepClient;
 class SweepClientSettings;
 class sweep_message;
 class sdr_info;
+class data_log;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -39,10 +40,10 @@ signals:
     void sendStateConnected();
     void sendStateDisconnected();
 
-
     void signal_sdr_info(const sdr_info &);
+    void signal_data_log(const data_log &);
 
-    void sendMessageLogResult(const QSweepMessageLog &);
+//    void sendMessageLogResult(const QSweepMessageLog &);
 
 private slots:
     void slot_publish_message(const sweep_message &);

@@ -38,6 +38,9 @@ void CoreSweep::slot_sending_message(const QByteArray &value)
         {
             if(send_data.type() == type_message::DATA_INFO)
                 ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value);
+
+            if(send_data.type() == type_message::DATA_MESSAGE_LOG)
+                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), value);
         }
     }
 }
@@ -121,8 +124,10 @@ void CoreSweep::initialization()
 
     connect(this, &CoreSweep::sendRunSweepWorker,
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
-    connect(ptrSweepWorker, &SweepWorker::sendSweepWorkerMessagelog,
-            this, &CoreSweep::onSendingMessageRequest);
+
+    connect(ptrSweepWorker, &SweepWorker::signal_data_log,
+            this, &CoreSweep::slot_sending_message);
+
     // Power spectr
     connect(SweepWorker::getInstance(), &SweepWorker::sendPowerSpectr,
             this, &CoreSweep::onSendingMessageRequest);

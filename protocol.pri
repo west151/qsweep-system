@@ -1,5 +1,4 @@
 SOURCES += \
-    ../protocol/qsweepmessagelog.cpp \
     ../protocol/qsweeprequest.cpp \
     ../protocol/qsweeptopic.cpp \
     ../protocol/qsweepanswer.cpp \
@@ -12,7 +11,6 @@ SOURCES += \
     $$PWD/src/protocol/data_log.cpp
 
 HEADERS += \
-    ../protocol/qsweepmessagelog.h \
     ../protocol/qsweeprequest.h \
     ../protocol/qsweeptopic.h \
     ../protocol/qsweepanswer.h \

@@ -2,7 +2,7 @@
 #define MESSAGELOGMODEL_H
 
 #include <QtCore/qabstractitemmodel.h>
-#include "qsweepmessagelog.h"
+#include "data_log.h"
 
 class MessageLogModel : public QAbstractListModel
 {
@@ -21,11 +21,11 @@ public:
     QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
     void clearResult();
-    void addResult(const QSweepMessageLog &data);
+    void add_result(const data_log &data);
     void setMaxSize(const qint32 &);
 
 private:
-    QList<QSweepMessageLog> m_data;
+    QList<data_log> m_data;
     qint32 m_maxSize;
 };
 

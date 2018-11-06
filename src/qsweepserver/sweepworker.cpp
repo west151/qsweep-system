@@ -5,7 +5,9 @@
 #include "qsweepparams.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
-#include "qsweepmessagelog.h"
+
+#include "sweep_message.h"
+#include "data_log.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -227,13 +229,14 @@ void SweepWorker::errorHackrf(const QString &text, int result)
 
 void SweepWorker::sweepWorkerMessagelog(const QString &value)
 {
-    QSweepAnswer answer;
-    answer.setTypeAnswer(TypeAnswer::SWEEP_MESSAGE_LOG);
-    QSweepMessageLog log;
-    log.setTextMessage(value);
-    answer.setDataAnswer(log.exportToJson());
+    data_log message;
+    message.set_text_message(value);
 
-    emit sendSweepWorkerMessagelog(answer.exportToJson());
+    sweep_message send_data;
+    send_data.set_type(type_message::DATA_MESSAGE_LOG);
+    send_data.set_data_message(message.export_json());
+
+    emit signal_data_log(send_data.export_json());
 }
 
 void SweepWorker::onRunSweepWorker(const QByteArray &value)

@@ -29,8 +29,9 @@ public slots:
     void onStopSweepWorker();
 
 signals:
-    void sendSweepWorkerMessagelog(const QByteArray &value);
     void sendPowerSpectr(const QByteArray &value);
+
+    void signal_data_log(const QByteArray &);
 
 private:
     static SweepWorker* m_instance;
