@@ -1,4 +1,4 @@
-#include "qsweepsystemmonitor.h"
+#include "system_monitor.h"
 
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -6,9 +6,9 @@
 
 #include "constkeys.h"
 
-class QSweepSystemMonitorData : public QSharedData {
+class system_monitor_data : public QSharedData {
 public:
-    QSweepSystemMonitorData(): QSharedData()
+    system_monitor_data(): QSharedData()
     {
         m_valid = false;
         m_hostName.clear();
@@ -19,7 +19,7 @@ public:
         m_bufferMemory = 0;
         m_dateTime = QDateTime::currentDateTimeUtc();
     }
-    QSweepSystemMonitorData(const QSweepSystemMonitorData &other) : QSharedData(other)
+    system_monitor_data(const system_monitor_data &other) : QSharedData(other)
     {
         m_valid = other.m_valid;
         m_hostName = other.m_hostName;
@@ -31,7 +31,7 @@ public:
         m_currentCpuArchitecture = other.m_currentCpuArchitecture;
     }
 
-    ~QSweepSystemMonitorData() {}
+    ~system_monitor_data() {}
 
     bool m_valid;
     QString m_hostName;
@@ -43,15 +43,15 @@ public:
     QDateTime m_dateTime;
 };
 
-QSweepSystemMonitor::QSweepSystemMonitor() : data(new QSweepSystemMonitorData)
+system_monitor::system_monitor() : data(new system_monitor_data)
 {
 }
 
-QSweepSystemMonitor::QSweepSystemMonitor(const QSweepSystemMonitor &rhs) : data(rhs.data)
+system_monitor::system_monitor(const system_monitor &rhs) : data(rhs.data)
 {
 }
 
-QSweepSystemMonitor::QSweepSystemMonitor(const QByteArray &json, const bool binary) : data(new QSweepSystemMonitorData)
+system_monitor::system_monitor(const QByteArray &json, const bool binary) : data(new system_monitor_data)
 {
     QJsonDocument doc;
     if (binary)
@@ -76,7 +76,7 @@ QSweepSystemMonitor::QSweepSystemMonitor(const QByteArray &json, const bool bina
         data->m_valid = false;
 }
 
-QSweepSystemMonitor &QSweepSystemMonitor::operator=(const QSweepSystemMonitor &rhs)
+system_monitor &system_monitor::operator=(const system_monitor &rhs)
 {
     if (this != &rhs) {
         data.operator=(rhs.data);
@@ -84,81 +84,81 @@ QSweepSystemMonitor &QSweepSystemMonitor::operator=(const QSweepSystemMonitor &r
     return *this;
 }
 
-QSweepSystemMonitor::~QSweepSystemMonitor()
+system_monitor::~system_monitor()
 {
 }
 
-bool QSweepSystemMonitor::isValid() const
+bool system_monitor::is_valid() const
 {
     return data->m_valid;
 }
 
-QString QSweepSystemMonitor::hostName() const
+QString system_monitor::host_name() const
 {
     return data->m_hostName;
 }
 
-void QSweepSystemMonitor::setHostName(const QString &value)
+void system_monitor::set_host_name(const QString &value)
 {
     data->m_hostName = value;
 }
 
-QString QSweepSystemMonitor::uptime() const
+QString system_monitor::uptime() const
 {
     return  data->m_uptime;
 }
 
-void QSweepSystemMonitor::setUptime(const QString &value)
+void system_monitor::set_uptime(const QString &value)
 {
     data->m_uptime = value;
 }
 
-QString QSweepSystemMonitor::currentCpuArchitecture() const
+QString system_monitor::current_cpu_architecture() const
 {
     return data->m_currentCpuArchitecture;
 }
 
-void QSweepSystemMonitor::setCurrentCpuArchitecture(const QString &value)
+void system_monitor::set_current_cpu_architecture(const QString &value)
 {
     data->m_currentCpuArchitecture = value;
 }
 
-int QSweepSystemMonitor::totalMemory() const
+int system_monitor::total_memory() const
 {
     return  data->m_totalMemory;
 }
 
-void QSweepSystemMonitor::setTotalMemory(const int &value)
+void system_monitor::set_total_memory(const int &value)
 {
     data->m_totalMemory = value;
 }
 
-int QSweepSystemMonitor::freeMemory() const
+int system_monitor::free_memory() const
 {
     return  data->m_freeMemory;
 }
 
-void QSweepSystemMonitor::setFreeMemory(const int &value)
+void system_monitor::set_free_memory(const int &value)
 {
     data->m_freeMemory = value;
 }
 
-int QSweepSystemMonitor::bufferMemory() const
+int system_monitor::buffer_memory() const
 {
     return  data->m_bufferMemory;
 }
 
-void QSweepSystemMonitor::setBufferMemory(const int &value)
+void system_monitor::set_buffer_memory(const int &value)
 {
     data->m_bufferMemory = value;
 }
 
-QDateTime QSweepSystemMonitor::dateTime() const
+QDateTime system_monitor::date_time() const
 {
     return data->m_dateTime;
 }
 
-QByteArray QSweepSystemMonitor::exportToJson(const bool binary) const
+QByteArray system_monitor::export_json(const bool binary) const
 {
     QJsonObject jsonObject;
     jsonObject.insert(HOST_NAME_KEY, data->m_hostName);

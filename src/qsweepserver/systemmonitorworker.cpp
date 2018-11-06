@@ -3,7 +3,8 @@
 #include <QSysInfo>
 #include <sys/sysinfo.h>
 
-#include "qsweepanswer.h"
+#include "system_monitor.h"
+#include "sweep_message.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -16,12 +17,12 @@ SystemMonitorWorker::SystemMonitorWorker(QObject *parent) : QObject(parent)
 
 void SystemMonitorWorker::runSystemMonitorWorker()
 {
-    QSweepAnswer answer;
-    answer.setTypeAnswer(TypeAnswer::SWEEP_SYSTEM_MONITOR);
-    QSweepSystemMonitor result;
+    system_monitor monitor_data;
+    sweep_message send_data;
+    send_data.set_type(type_message::DATA_SYSTEM_MONITOR);
 
-    result.setHostName(QSysInfo::machineHostName());    // Hostname
-    result.setCurrentCpuArchitecture(QSysInfo::currentCpuArchitecture()); // Процессор (архитектура)
+    monitor_data.set_host_name(QSysInfo::machineHostName());    // Hostname
+    monitor_data.set_current_cpu_architecture(QSysInfo::currentCpuArchitecture());
 
     struct sysinfo o;
     sysinfo(&o);
@@ -32,7 +33,7 @@ void SystemMonitorWorker::runSystemMonitorWorker()
     QString uptime = QString::number(hour) +  QString(" h. ") + QString::number(min) + QString(" m. ")
             + QString::number(sec) + QString(" s.");
 
-    result.setUptime(uptime);   // Uptime
+    monitor_data.set_uptime(uptime);    // Uptime
 
     // memory
     int total, free, buffer, memcache, memfree;
@@ -59,11 +60,11 @@ void SystemMonitorWorker::runSystemMonitorWorker()
     }
     fclose(info);
 
-    result.setTotalMemory(total);
-    result.setFreeMemory(free);
-    result.setBufferMemory(buffer);
+    monitor_data.set_total_memory(total);
+    monitor_data.set_free_memory(free);
+    monitor_data.set_buffer_memory(buffer);
 
-    // send data to broker
-    answer.setDataAnswer(result.exportToJson());
-    emit sendSystemMonitorResult(answer.exportToJson());
+    send_data.set_data_message(monitor_data.export_json());
+
+    emit signal_system_monitor_result(send_data.export_json());
 }

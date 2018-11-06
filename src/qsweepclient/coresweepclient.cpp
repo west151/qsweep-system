@@ -12,7 +12,6 @@
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 #include "qsweepspectr.h"
-#include "qsweepsystemmonitor.h"
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
 #include "systemmonitorinterface.h"
@@ -22,6 +21,7 @@
 #include "sweep_message.h"
 #include "sdr_info.h"
 #include "data_log.h"
+#include "system_monitor.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -124,6 +124,10 @@ void CoreSweepClient::initialization()
             this , &CoreSweepClient::pingReceived);
     connect(ptrMqttClient, &QMqttClient::errorChanged,
             this, &CoreSweepClient::errorChanged);
+
+    // System Monitor Interface
+    connect(this, &CoreSweepClient::signal_system_monitor,
+            ptrSystemMonitorInterface, &SystemMonitorInterface::slot_system_monitor);
 
     // DataSource
     ptrDataSource = new DataSource(this);
@@ -256,14 +260,6 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
 {
     switch (ptrSweepTopic->sweepTopic(topic.name()))
     {
-//    case QSweepTopic::TOPIC_MESSAGE_LOG:
-//    {
-//        QSweepAnswer answer(message);
-//        QSweepMessageLog log(answer.dataAnswer());
-
-//        emit sendMessageLogResult(log);
-//    }
-//        break;
     case QSweepTopic::TOPIC_POWER_SPECTR:
     {
         QSweepAnswer answer(message);
@@ -288,32 +284,9 @@ void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopi
     }
         break;
 
-    case QSweepTopic::TOPIC_SYSTEM_MONITOR:
-    {
-        QSweepAnswer answer(message);
-        QSweepSystemMonitor sysmon(answer.dataAnswer());
-        if(ptrSystemMonitorInterface)
-            ptrSystemMonitorInterface->setSystemMonitor(sysmon);
-    }
-        break;
-
     default:
         break;
     }
-
-//    m_sizeDatacReceive = m_sizeDatacReceive + message.size();
-
-//    if(m_timerReceive->elapsed()>=5000)
-//    {
-//#ifdef QT_DEBUG
-//        qDebug() << Q_FUNC_INFO
-//                 << "Data size:" << QString::number(m_sizeDatacReceive/1024.0, 'f', 2) << "Kbyte"
-//                 << "(" << QString::number((m_sizeDatacReceive/1024)/1024.0, 'f', 2) << "Mbyte" << ")"
-//                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timerReceive->elapsed()).arg(m_timerReceive->elapsed()/1000);
-//#endif
-//        m_timerReceive->restart();
-//        m_sizeDatacReceive = 0;
-//    }
 
 #ifdef QT_DEBUG
 //    qDebug() << "---------------------------------------------------";
@@ -463,6 +436,21 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
             {
                 const data_log data_log_data(data_received.data_message(), false);
                 emit signal_data_log(data_log_data);
+            }
+        }
+    }
+
+    // system monitor
+    if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_SYSTEM_MONITOR)
+    {
+        const sweep_message data_received(message, false);
+
+        if(data_received.is_valid())
+        {
+            if(data_received.type() == type_message::DATA_SYSTEM_MONITOR)
+            {
+                const system_monitor data_system_monitor(data_received.data_message(), false);
+                emit signal_system_monitor(data_system_monitor);
             }
         }
     }

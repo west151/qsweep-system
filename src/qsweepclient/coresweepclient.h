@@ -22,6 +22,7 @@ class SweepClientSettings;
 class sweep_message;
 class sdr_info;
 class data_log;
+class system_monitor;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -42,8 +43,7 @@ signals:
 
     void signal_sdr_info(const sdr_info &);
     void signal_data_log(const data_log &);
-
-//    void sendMessageLogResult(const QSweepMessageLog &);
+    void signal_system_monitor(const system_monitor &);
 
 private slots:
     void slot_publish_message(const sweep_message &);

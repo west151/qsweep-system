@@ -31,7 +31,7 @@ signals:
 
 private slots:
     void slot_sending_message(const QByteArray &);
-//    void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
+    void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
 private:
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};
@@ -52,8 +52,6 @@ private:
     void launching();
 
     void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
-
-    void received_sweep_message(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
     void updateLogStateChange();
     void brokerDisconnected();

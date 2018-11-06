@@ -7,7 +7,7 @@ SystemMonitorInterface::SystemMonitorInterface(QObject *parent) : QObject(parent
 
 QString SystemMonitorInterface::hostName() const
 {
-    return m_systemMonitor.hostName();
+    return m_systemMonitor.host_name();
 }
 
 QString SystemMonitorInterface::uptime() const
@@ -17,20 +17,20 @@ QString SystemMonitorInterface::uptime() const
 
 int SystemMonitorInterface::totalMemory() const
 {
-    return m_systemMonitor.totalMemory();
+    return m_systemMonitor.total_memory();
 }
 
 int SystemMonitorInterface::freeMemory() const
 {
-    return  m_systemMonitor.freeMemory();
+    return  m_systemMonitor.free_memory();
 }
 
 int SystemMonitorInterface::bufferMemory() const
 {
-    return  m_systemMonitor.bufferMemory();
+    return  m_systemMonitor.buffer_memory();
 }
 
-void SystemMonitorInterface::setSystemMonitor(const QSweepSystemMonitor &value)
+void SystemMonitorInterface::slot_system_monitor(const system_monitor &value)
 {
     m_systemMonitor = value;
 

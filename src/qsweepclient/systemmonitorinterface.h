@@ -2,7 +2,8 @@
 #define SYSTEMMONITORINTERFACE_H
 
 #include <QObject>
-#include "qsweepsystemmonitor.h"
+
+#include "system_monitor.h"
 
 class SystemMonitorInterface : public QObject
 {
@@ -26,10 +27,10 @@ signals:
     void sendSystemMonitorChanged();
 
 public slots:
-    void setSystemMonitor(const QSweepSystemMonitor &);
+    void slot_system_monitor(const system_monitor &);
 
 private:
-    QSweepSystemMonitor m_systemMonitor;
+    system_monitor m_systemMonitor;
 };
 
 #endif // SYSTEMMONITORINTERFACE_H
