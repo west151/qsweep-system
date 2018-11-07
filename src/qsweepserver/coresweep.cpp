@@ -10,8 +10,10 @@
 #include "qsweeptopic.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
-#include "qsweepparams.h"
+//#include "qsweepparams.h"
+
 #include "sweep_message.h"
+#include "params_spectr.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -60,11 +62,20 @@ void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopi
             if(ctrl_message.type() == type_message::CTRL_INFO)
                 emit signal_run_hackrf_info(message);
 
-            // start spectr
+            // start/stop spectr
+            if(ctrl_message.type() == type_message::CTRL_SPECTR)
+            {
+                const params_spectr params_spectr_data(ctrl_message.data_message(), false);
 
-            // stop spectr
+                if(params_spectr_data.start_spectr())
+                    emit signal_run_spectr_worker(message);
+                else
+                    emit sendStopSweepWorker();
+            }
         }
     }
+
+    // signal_run_spectr_worker
 
 //    switch (ptrSweepTopic->sweepTopic(topic.name())) {
 //    case QSweepTopic::TOPIC_CTRL:
@@ -167,7 +178,7 @@ void CoreSweep::initialization()
     ptrSweepThread = new QThread;
     ptrSweepWorker->moveToThread(ptrSweepThread);
 
-    connect(this, &CoreSweep::sendRunSweepWorker,
+    connect(this, &CoreSweep::signal_run_spectr_worker,
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
 
     connect(ptrSweepWorker, &SweepWorker::signal_data_log,
@@ -184,8 +195,8 @@ void CoreSweep::initialization()
 
     // MQTT
     ptrMqttClient = new QMqttClient(this);
-    connect(ptrMqttClient, &QMqttClient::messageReceived,
-            this, &CoreSweep::messageReceived);
+//    connect(ptrMqttClient, &QMqttClient::messageReceived,
+//            this, &CoreSweep::messageReceived);
 
     // new style
     connect(ptrMqttClient, &QMqttClient::messageReceived,
@@ -258,31 +269,31 @@ void CoreSweep::launching()
     }
 }
 
-void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
-{
-    switch (ptrSweepTopic->sweepTopic(topic.name())) {
-    case QSweepTopic::TOPIC_CTRL:
-    {
-        QSweepRequest request(message, false);
+//void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
+//{
+//    switch (ptrSweepTopic->sweepTopic(topic.name())) {
+//    case QSweepTopic::TOPIC_CTRL:
+//    {
+//        QSweepRequest request(message, false);
 
-        if(request.isValid()){
-            switch (request.typeRequest()) {
-            case TypeRequest::START_SWEEP_SPECTR:
-                emit sendRunSweepWorker(message);
-                break;
-            case TypeRequest::STOP_SWEEP_SPECTR:
-                emit sendStopSweepWorker();
-                break;
-            default:
-                break;
-            }
-        }
-    }
-        break;
-    default:
-        break;
-    }
-}
+//        if(request.isValid()){
+//            switch (request.typeRequest()) {
+//            case TypeRequest::START_SWEEP_SPECTR:
+//                emit sendRunSweepWorker(message);
+//                break;
+//            case TypeRequest::STOP_SWEEP_SPECTR:
+//                emit sendStopSweepWorker();
+//                break;
+//            default:
+//                break;
+//            }
+//        }
+//    }
+//        break;
+//    default:
+//        break;
+//    }
+//}
 
 void CoreSweep::updateLogStateChange()
 {

@@ -24,9 +24,10 @@ public:
 
 signals:
     void signal_run_hackrf_info(const QByteArray &);
+    void signal_run_spectr_worker(const QByteArray &);
 
     void sendRunSweepInfo(const QByteArray &);
-    void sendRunSweepWorker(const QByteArray &);
+    //void sendRunSweepWorker(const QByteArray &);
     void sendStopSweepWorker();
 
 private slots:
@@ -51,7 +52,7 @@ private:
     void initialization();
     void launching();
 
-    void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
+    //void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
     void updateLogStateChange();
     void brokerDisconnected();

@@ -4,9 +4,6 @@
 #include <QObject>
 #include "settings/sweepclientsettings.h"
 
-class QSweepRequest;
-class sweep_message;
-
 class UserInterface : public QObject
 {
     Q_OBJECT
@@ -56,8 +53,8 @@ public:
 
 signals:
     void sendMessageToHost();
-    void sendRequestSweepServer(const QSweepRequest &);
-    void signal_sweep_message(const sweep_message &);
+    //void sendRequestSweepServer(const QSweepRequest &);
+    void signal_sweep_message(const QByteArray &);
 
     // spectr params
     void sendFrequencyMinChanged();

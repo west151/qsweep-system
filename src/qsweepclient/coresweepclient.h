@@ -46,7 +46,7 @@ signals:
     void signal_system_monitor(const system_monitor &);
 
 private slots:
-    void slot_publish_message(const sweep_message &);
+    void slot_publish_message(const QByteArray &);
     void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
 private:
@@ -80,7 +80,6 @@ private:
     void pingReceived();
     void connecting();
     void sendingRequest(const QSweepRequest &);
-
 
     void errorChanged(QMqttClient::ClientError error);
 };

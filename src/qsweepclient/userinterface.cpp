@@ -1,9 +1,7 @@
 #include "userinterface.h"
 
-#include "qsweeprequest.h"
-#include "qsweepparams.h"
-
 #include "sweep_message.h"
+#include "params_spectr.h"
 
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_freqMin(30),
@@ -139,27 +137,27 @@ void UserInterface::onRequestSweepInfo()
 {
     sweep_message ctrl_info;
     ctrl_info.set_type(type_message::CTRL_INFO);
-    emit signal_sweep_message(ctrl_info);
+    emit signal_sweep_message(ctrl_info.export_json());
 }
 
 void UserInterface::onRequestSweepSpectr(const bool &start)
 {
-    QSweepRequest info(this);
-    QSweepParams params(this);
-    params.setFrequencyMin(m_freqMin);
-    params.setFrequencyMax(m_freqMax);
-    params.setFFTBinWidth(m_fftBinWidth);
-    params.setLnaGain(m_lnaGain);
-    params.setVgaGain(m_vgaGain);
-    params.setOneShot(m_oneShot);
+    sweep_message ctrl_spectr;
+    ctrl_spectr.set_type(type_message::CTRL_SPECTR);
 
-    info.setDataRequest(params.exportToJson());
-    if(start)
-        info.setTypeRequest(TypeRequest::START_SWEEP_SPECTR);
-    else
-        info.setTypeRequest(TypeRequest::STOP_SWEEP_SPECTR);
+    params_spectr params_spectr_data;
 
-    emit sendRequestSweepServer(info);
+    params_spectr_data.set_frequency_min(m_freqMin);
+    params_spectr_data.set_frequency_max(m_freqMax);
+    params_spectr_data.set_fft_bin_width(m_fftBinWidth);
+    params_spectr_data.set_lna_gain(m_lnaGain);
+    params_spectr_data.set_vga_gain(m_vgaGain);
+    params_spectr_data.set_one_shot(m_oneShot);
+    params_spectr_data.set_start_spectr(start);
+
+    ctrl_spectr.set_data_message(params_spectr_data.export_json());
+
+    emit signal_sweep_message(ctrl_spectr.export_json());
 }
 
 void UserInterface::onClearMaxPowerSpectr()

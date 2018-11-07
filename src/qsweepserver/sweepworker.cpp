@@ -2,12 +2,12 @@
 
 #include <QThread>
 
-#include "qsweepparams.h"
 #include "qsweeprequest.h"
 #include "qsweepanswer.h"
 
 #include "sweep_message.h"
 #include "data_log.h"
+#include "params_spectr.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -241,21 +241,25 @@ void SweepWorker::sweepWorkerMessagelog(const QString &value)
 
 void SweepWorker::onRunSweepWorker(const QByteArray &value)
 {
-    const QSweepRequest request(value, false);
-    const QSweepParams params(request.dataRequest());
+    const sweep_message ctrl_info(value);
+    const params_spectr params_spectr_data(ctrl_info.data_message());
 
-    fft_bin_width = params.fftBinWidth();   // FFT bin width (frequency resolution) in Hz
-    lna_gain = params.lnaGain();            // RX LNA (IF) gain, 0-40dB, 8dB steps
-    vga_gain = params.vgaGain();            // RX VGA (baseband) gain, 0-62dB, 2dB steps
+
+//    const QSweepRequest request(value, false);
+//    const QSweepParams params(request.dataRequest());
+
+    fft_bin_width = params_spectr_data.fft_bin_width(); // FFT bin width (frequency resolution) in Hz
+    lna_gain = params_spectr_data.lna_gain();           // RX LNA (IF) gain, 0-40dB, 8dB steps
+    vga_gain = params_spectr_data.vga_gain();           // RX VGA (baseband) gain, 0-62dB, 2dB steps
 
     if (0 == num_ranges) {
-        frequencies[0] = static_cast<uint16_t>(params.frequencyMin());
-        frequencies[1] = static_cast<uint16_t>(params.frequencyMax());
+        frequencies[0] = static_cast<uint16_t>(params_spectr_data.frequency_min());
+        frequencies[1] = static_cast<uint16_t>(params_spectr_data.frequency_max());
         num_ranges++;
     }
 
     fftSize = DEFAULT_SAMPLE_RATE_HZ / fft_bin_width;
-    one_shot = params.oneShot();
+    one_shot = params_spectr_data.one_shot();
 
     amp = true;
 

@@ -134,8 +134,6 @@ void CoreSweepClient::initialization()
 
     // user interface
     ptrUserInterface = new UserInterface(this);
-    connect(ptrUserInterface, &UserInterface::sendRequestSweepServer,
-            this, &CoreSweepClient::sendingRequest);
     // new style
     connect(ptrUserInterface, &UserInterface::signal_sweep_message,
             this, &CoreSweepClient::slot_publish_message);
@@ -309,8 +307,6 @@ void CoreSweepClient::updateLogStateChange()
     // Subscribers topic
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        emit sendStateConnected();
-
         auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO));
 
         if (!subscription)
@@ -350,6 +346,8 @@ void CoreSweepClient::updateLogStateChange()
 #endif
             return;
         }
+
+        emit sendStateConnected();
     }
 
     if (ptrMqttClient->state() == QMqttClient::Disconnected)
@@ -393,17 +391,26 @@ void CoreSweepClient::sendingRequest(const QSweepRequest &value)
     }
 }
 
-void CoreSweepClient::slot_publish_message(const sweep_message &value)
+void CoreSweepClient::slot_publish_message(const QByteArray &value)
 {
     if(ptrMqttClient)
     {
         if (ptrMqttClient->state() == QMqttClient::Connected)
         {
-            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.export_json());
+            const sweep_message send_data(value);
 
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.export_json();
-#endif
+            if(send_data.is_valid())
+            {
+                if(send_data.type() == type_message::CTRL_INFO)
+                    ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), send_data.export_json());
+
+                if(send_data.type() == type_message::CTRL_SPECTR)
+                    ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), send_data.export_json());
+            }
+
+            //#ifdef QT_DEBUG
+            //            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.export_json();
+            //#endif
         }
     }
 }

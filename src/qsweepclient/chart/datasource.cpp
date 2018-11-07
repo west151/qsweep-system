@@ -28,6 +28,7 @@ DataSource::DataSource(QObject *parent) : QObject(parent)
     m_maxFreq = 0;
     m_spectSize = 0;
     m_step = 0;
+    m_index = 0;
 }
 
 qreal DataSource::minValueY() const
@@ -64,7 +65,7 @@ void DataSource::update(QAbstractSeries *series)
             if (series) {
                 QXYSeries *xySeries = static_cast<QXYSeries *>(series);
                 m_index++;
-                if (m_index > m_data.count() - 1)
+                if (m_index > m_data.size() - 1)
                     m_index = 0;
 
                 QVector<QPointF> points = m_data.at(m_index);
