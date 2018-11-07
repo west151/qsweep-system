@@ -13,7 +13,7 @@
 #include <inttypes.h>
 
 #include "constant.h"
-#include "qsweepspectr.h"
+#include "data_spectr.h"
 
 class SweepWorker : public QObject
 {
@@ -22,16 +22,18 @@ public:
     explicit SweepWorker(QObject *parent = nullptr);
     static SweepWorker* getInstance();
 
-    void onDataPowerSpectrCallbacks(const PowerSpectr &, const bool &isSending = false);
+    void onDataPowerSpectrCallbacks(const power_spectr &, const bool &isSending = false);
 
 public slots:
     void onRunSweepWorker(const QByteArray &value);
     void onStopSweepWorker();
 
 signals:
-    void sendPowerSpectr(const QByteArray &value);
+    //void sendPowerSpectr(const QByteArray &value);
 
-    void signal_data_log(const QByteArray &);
+    //void signal_data_log(const QByteArray &);
+
+    void signal_sweep_message(const QByteArray &);
 
 private:
     static SweepWorker* m_instance;
@@ -49,7 +51,7 @@ private:
     int step_count;
 
     hackrf_device* device = nullptr;
-    QVector<PowerSpectr> m_powerSpectrBuffer;
+    QVector<power_spectr> m_powerSpectrBuffer;
 
     static int rx_callback(hackrf_transfer *transfer);
     int hackrf_rx_callback(unsigned char *buffer, uint32_t length);

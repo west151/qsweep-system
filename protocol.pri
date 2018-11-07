@@ -1,8 +1,5 @@
 SOURCES += \
-    ../protocol/qsweeprequest.cpp \
     ../protocol/qsweeptopic.cpp \
-    ../protocol/qsweepanswer.cpp \
-    ../protocol/qsweepspectr.cpp \
     $$PWD/src/protocol/sweep_message.cpp \
     $$PWD/src/protocol/sdr_info.cpp \
     $$PWD/src/protocol/data_spectr.cpp \
@@ -11,10 +8,7 @@ SOURCES += \
     $$PWD/src/protocol/params_spectr.cpp
 
 HEADERS += \
-    ../protocol/qsweeprequest.h \
     ../protocol/qsweeptopic.h \
-    ../protocol/qsweepanswer.h \
-    ../protocol/qsweepspectr.h \
     ../protocol/constkeys.h \
     $$PWD/src/protocol/sweep_message.h \
     $$PWD/src/protocol/sdr_info.h \

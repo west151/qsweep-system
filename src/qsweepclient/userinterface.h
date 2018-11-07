@@ -53,7 +53,6 @@ public:
 
 signals:
     void sendMessageToHost();
-    //void sendRequestSweepServer(const QSweepRequest &);
     void signal_sweep_message(const QByteArray &);
 
     // spectr params

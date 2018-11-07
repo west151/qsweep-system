@@ -3,6 +3,8 @@
 #include <QtCharts/QAreaSeries>
 #include <QtCore/QtMath>
 
+#include "data_spectr.h"
+
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
 #endif
@@ -76,7 +78,7 @@ void DataSource::update(QAbstractSeries *series)
     }
 }
 
-void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QVector<PowerSpectr> &spectr)
+void DataSource::updateDate(const quint32 &f_min, const quint32 &f_max, const QVector<power_spectr> &spectr)
 {
     if(spectr.size()>0)
     {

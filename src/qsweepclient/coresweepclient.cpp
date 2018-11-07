@@ -9,9 +9,6 @@
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
-#include "qsweeprequest.h"
-#include "qsweepanswer.h"
-#include "qsweepspectr.h"
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
 #include "systemmonitorinterface.h"
@@ -22,6 +19,7 @@
 #include "sdr_info.h"
 #include "data_log.h"
 #include "system_monitor.h"
+#include "data_spectr.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -107,12 +105,11 @@ void CoreSweepClient::initialization()
 {
     // MQTT
     ptrMqttClient = new QMqttClient(this);
-    connect(ptrMqttClient, &QMqttClient::messageReceived,
-            this, &CoreSweepClient::messageReceived);
+//    connect(ptrMqttClient, &QMqttClient::messageReceived,
+//            this, &CoreSweepClient::messageReceived);
 
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweepClient::slot_message_received);
-
 
     connect(ptrMqttClient, &QMqttClient::stateChanged,
             this, &CoreSweepClient::updateLogStateChange);
@@ -131,7 +128,6 @@ void CoreSweepClient::initialization()
 
     // DataSource
     ptrDataSource = new DataSource(this);
-
     // user interface
     ptrUserInterface = new UserInterface(this);
     // new style
@@ -254,45 +250,45 @@ void CoreSweepClient::launching()
     m_sizeDatacReceive = 0;
 }
 
-void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
-{
-    switch (ptrSweepTopic->sweepTopic(topic.name()))
-    {
-    case QSweepTopic::TOPIC_POWER_SPECTR:
-    {
-        QSweepAnswer answer(message);
-        QSweepSpectr powers(answer.dataAnswer());
+//void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
+//{
+//    switch (ptrSweepTopic->sweepTopic(topic.name()))
+//    {
+//    case QSweepTopic::TOPIC_POWER_SPECTR:
+//    {
+//        QSweepAnswer answer(message);
+//        QSweepSpectr powers(answer.dataAnswer());
 
-        QVector<PowerSpectr> tmpPowerSpectr(powers.powerSpectr());
+//        QVector<PowerSpectr> tmpPowerSpectr(powers.powerSpectr());
 
-        std::sort(tmpPowerSpectr.begin(), tmpPowerSpectr.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
-            return a.m_frequency_min < b.m_frequency_min;
-        });
+//        std::sort(tmpPowerSpectr.begin(), tmpPowerSpectr.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
+//            return a.m_frequency_min < b.m_frequency_min;
+//        });
 
-        // for test
-        ptrDataSource->updateDate(ptrUserInterface->frequencyMin(),
-                                  ptrUserInterface->frequencyMax(),
-                                  tmpPowerSpectr);
+//        // for test
+//        ptrDataSource->updateDate(ptrUserInterface->frequencyMin(),
+//                                  ptrUserInterface->frequencyMax(),
+//                                  tmpPowerSpectr);
 
-        // X update axis max & min freq
-        ptrAxisX->setMin(ptrUserInterface->frequencyMin());
-        ptrAxisX->setMax(ptrUserInterface->frequencyMax());
-        // test
-        emit sendStartSpectr();
-    }
-        break;
+//        // X update axis max & min freq
+//        ptrAxisX->setMin(ptrUserInterface->frequencyMin());
+//        ptrAxisX->setMax(ptrUserInterface->frequencyMax());
+//        // test
+//        emit sendStartSpectr();
+//    }
+//        break;
 
-    default:
-        break;
-    }
+//    default:
+//        break;
+//    }
 
-#ifdef QT_DEBUG
+//#ifdef QT_DEBUG
 //    qDebug() << "---------------------------------------------------";
 //    qDebug() << Q_FUNC_INFO << topic.name() << ":" << "message size:" << message.size() << "byte";
 //    qDebug() << "---------------------------------------------------";
-#endif
+//#endif
 
-}
+//}
 
 void CoreSweepClient::updateLogStateChange()
 {
@@ -379,17 +375,17 @@ void CoreSweepClient::connecting()
 #endif
 }
 
-void CoreSweepClient::sendingRequest(const QSweepRequest &value)
-{
-    if(ptrMqttClient) {
-        if (ptrMqttClient->state() == QMqttClient::Connected) {
-            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.exportToJson());
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.exportToJson();
-#endif
-        }
-    }
-}
+//void CoreSweepClient::sendingRequest(const QSweepRequest &value)
+//{
+//    if(ptrMqttClient) {
+//        if (ptrMqttClient->state() == QMqttClient::Connected) {
+//            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.exportToJson());
+//#ifdef QT_DEBUG
+//            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.exportToJson();
+//#endif
+//        }
+//    }
+//}
 
 void CoreSweepClient::slot_publish_message(const QByteArray &value)
 {
@@ -458,6 +454,37 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
             {
                 const system_monitor data_system_monitor(data_received.data_message(), false);
                 emit signal_system_monitor(data_system_monitor);
+            }
+        }
+    }
+
+    // power spectr
+    if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_POWER_SPECTR)
+    {
+        const sweep_message data_received(message, false);
+
+        if(data_received.is_valid())
+        {
+            if(data_received.type() == type_message::DATA_SPECTR)
+            {
+                const data_spectr powers(data_received.data_message());
+
+                QVector<power_spectr> tmp_spectr(powers.spectr());
+
+                std::sort(tmp_spectr.begin(), tmp_spectr.end(), [](const power_spectr& a, const power_spectr& b) {
+                    return a.m_frequency_min < b.m_frequency_min;
+                });
+
+                // for test
+                ptrDataSource->updateDate(ptrUserInterface->frequencyMin(),
+                                          ptrUserInterface->frequencyMax(),
+                                          tmp_spectr);
+
+                // X update axis max & min freq
+                ptrAxisX->setMin(ptrUserInterface->frequencyMin());
+                ptrAxisX->setMax(ptrUserInterface->frequencyMax());
+                // test
+                emit sendStartSpectr();
             }
         }
     }

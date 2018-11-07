@@ -3,7 +3,8 @@
 
 #include <QObject>
 #include <QtCharts/QAbstractSeries>
-#include "qsweepspectr.h"
+
+class power_spectr;
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -24,7 +25,7 @@ signals:
     void sendPowerSpectr(const QVector<qreal> &);
 
 public slots:
-    void updateDate(const quint32 &, const quint32 &, const QVector<PowerSpectr> &);
+    void updateDate(const quint32 &, const quint32 &, const QVector<power_spectr> &);
     void update(QAbstractSeries *series);       // realtime
     void clearMaxPowerSpectr();
 

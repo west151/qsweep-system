@@ -8,9 +8,6 @@
 #include "hackrfinfo.h"
 #include "sweepworker.h"
 #include "qsweeptopic.h"
-#include "qsweeprequest.h"
-#include "qsweepanswer.h"
-//#include "qsweepparams.h"
 
 #include "sweep_message.h"
 #include "params_spectr.h"
@@ -30,7 +27,7 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
     }
 }
 
-void CoreSweep::slot_sending_message(const QByteArray &value)
+void CoreSweep::slot_publish_message(const QByteArray &value)
 {
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
@@ -46,6 +43,9 @@ void CoreSweep::slot_sending_message(const QByteArray &value)
 
             if(send_data.type() == type_message::DATA_SYSTEM_MONITOR)
                 ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_SYSTEM_MONITOR), value);
+
+            if(send_data.type() == type_message::DATA_SPECTR)
+                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR), value);
         }
     }
 }
@@ -181,12 +181,12 @@ void CoreSweep::initialization()
     connect(this, &CoreSweep::signal_run_spectr_worker,
             ptrSweepWorker, &SweepWorker::onRunSweepWorker);
 
-    connect(ptrSweepWorker, &SweepWorker::signal_data_log,
-            this, &CoreSweep::slot_sending_message);
+    connect(ptrSweepWorker, &SweepWorker::signal_sweep_message,
+            this, &CoreSweep::slot_publish_message);
 
     // Power spectr
-    connect(SweepWorker::getInstance(), &SweepWorker::sendPowerSpectr,
-            this, &CoreSweep::onSendingMessageRequest);
+    connect(SweepWorker::getInstance(), &SweepWorker::signal_sweep_message,
+            this, &CoreSweep::slot_publish_message);
     // stop spectr
     connect(this, &CoreSweep::sendStopSweepWorker,
             SweepWorker::getInstance(), &SweepWorker::onStopSweepWorker);
@@ -221,7 +221,7 @@ void CoreSweep::initialization()
             ptrHackrfInfo, &HackrfInfo::slot_run_hackrf_info);
     // send result to broker
     connect(ptrHackrfInfo, &HackrfInfo::signal_hackrf_info,
-            this, &CoreSweep::slot_sending_message);
+            this, &CoreSweep::slot_publish_message);
 
     // System monitor
     ptrSystemMonitorWorker = new SystemMonitorWorker;
@@ -234,7 +234,7 @@ void CoreSweep::initialization()
             ptrSystemMonitorWorker, &SystemMonitorWorker::runSystemMonitorWorker);
     // send result
     connect(ptrSystemMonitorWorker, &SystemMonitorWorker::signal_system_monitor_result,
-            this, &CoreSweep::slot_sending_message);
+            this, &CoreSweep::slot_publish_message);
 
     ptrSystemMonitorThread->start();
 
@@ -338,37 +338,37 @@ void CoreSweep::connecting()
 #endif
 }
 
-void CoreSweep::onSendingMessageRequest(const QByteArray &value)
-{
-    if (ptrMqttClient->state() == QMqttClient::Connected)
-    {
-        const QSweepAnswer answer(value, false);
+//void CoreSweep::onSendingMessageRequest(const QByteArray &value)
+//{
+//    if (ptrMqttClient->state() == QMqttClient::Connected)
+//    {
+//        const QSweepAnswer answer(value, false);
 
-        switch (answer.typeAnswer()) {
-//        case TypeAnswer::INFO:
+//        switch (answer.typeAnswer()) {
+////        case TypeAnswer::INFO:
+////        {
+////            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), answer.exportToJson());
+////        }
+////            break;
+////        case TypeAnswer::SWEEP_MESSAGE_LOG:
+////        {
+////            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), answer.exportToJson());
+////        }
+////            break;
+//        case TypeAnswer::SWEEP_POWER_SPECTR:
 //        {
-//            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), answer.exportToJson());
+//            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR), answer.exportToJson());
 //        }
 //            break;
-//        case TypeAnswer::SWEEP_MESSAGE_LOG:
-//        {
-//            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), answer.exportToJson());
-//        }
+//        default:
 //            break;
-        case TypeAnswer::SWEEP_POWER_SPECTR:
-        {
-            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR), answer.exportToJson());
-        }
-            break;
-        default:
-            break;
-        }
+//        }
 
-//#ifdef QT_DEBUG
-//            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
-//#endif
-    }
-}
+////#ifdef QT_DEBUG
+////            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
+////#endif
+//    }
+//}
 
 void CoreSweep::errorChanged(QMqttClient::ClientError error)
 {

@@ -2,9 +2,6 @@
 
 #include <QThread>
 
-#include "qsweeprequest.h"
-#include "qsweepanswer.h"
-
 #include "sweep_message.h"
 #include "data_log.h"
 #include "params_spectr.h"
@@ -61,7 +58,7 @@ SweepWorker *SweepWorker::getInstance()
     return m_instance;
 }
 
-void SweepWorker::onDataPowerSpectrCallbacks(const PowerSpectr &power, const bool &isSending)
+void SweepWorker::onDataPowerSpectrCallbacks(const power_spectr &power, const bool &isSending)
 {
     m_powerSpectrBuffer.append(power);
 
@@ -72,13 +69,15 @@ void SweepWorker::onDataPowerSpectrCallbacks(const PowerSpectr &power, const boo
 //            return a.m_frequency_min < b.m_frequency_min;
 //        });
 
-        QSweepAnswer answer;
-        answer.setTypeAnswer(TypeAnswer::SWEEP_POWER_SPECTR);
-        QSweepSpectr spectr;
-        spectr.setPowerSpectr(m_powerSpectrBuffer);
-        answer.setDataAnswer(spectr.exportToJson());
+        sweep_message send_data;
+        send_data.set_type(type_message::DATA_SPECTR);
 
-        emit sendPowerSpectr(answer.exportToJson());
+        data_spectr spectr;
+        spectr.set_spectr(m_powerSpectrBuffer);
+
+        send_data.set_data_message(spectr.export_json());
+
+        emit signal_sweep_message(send_data.export_json());
 
         m_powerSpectrBuffer.clear();
     }
@@ -150,7 +149,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
 
         //************************************************************************************
         // PowerSpectr for sending
-        PowerSpectr dataPowerSpectr;
+        power_spectr dataPowerSpectr;
         bool isSending = false;
         dataPowerSpectr.dateTime = QDateTime::currentDateTimeUtc();
 
@@ -236,17 +235,13 @@ void SweepWorker::sweepWorkerMessagelog(const QString &value)
     send_data.set_type(type_message::DATA_MESSAGE_LOG);
     send_data.set_data_message(message.export_json());
 
-    emit signal_data_log(send_data.export_json());
+    emit signal_sweep_message(send_data.export_json());
 }
 
 void SweepWorker::onRunSweepWorker(const QByteArray &value)
 {
     const sweep_message ctrl_info(value);
     const params_spectr params_spectr_data(ctrl_info.data_message());
-
-
-//    const QSweepRequest request(value, false);
-//    const QSweepParams params(request.dataRequest());
 
     fft_bin_width = params_spectr_data.fft_bin_width(); // FFT bin width (frequency resolution) in Hz
     lna_gain = params_spectr_data.lna_gain();           // RX LNA (IF) gain, 0-40dB, 8dB steps

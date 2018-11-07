@@ -13,7 +13,6 @@
 class HackrfInfo;
 class SweepWorker;
 class QSweepTopic;
-class QSweepAnswer;
 class QTimer;
 
 class CoreSweep : public QObject
@@ -31,7 +30,7 @@ signals:
     void sendStopSweepWorker();
 
 private slots:
-    void slot_sending_message(const QByteArray &);
+    void slot_publish_message(const QByteArray &);
     void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
 private:
@@ -59,7 +58,7 @@ private:
     void pingReceived();
     void connecting();
 
-    void onSendingMessageRequest(const QByteArray &);
+//    void onSendingMessageRequest(const QByteArray &);
     void errorChanged(QMqttClient::ClientError error);
 };
 

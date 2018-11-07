@@ -14,7 +14,6 @@
 
 class UserInterface;
 class QSweepTopic;
-class QSweepRequest;
 class DataSource;
 class SystemMonitorInterface;
 class StateSweepClient;
@@ -74,12 +73,10 @@ private:
     bool saveSettings(const QString &);
     void launching();
 
-    void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
     void updateLogStateChange();
     void brokerDisconnected();
     void pingReceived();
     void connecting();
-    void sendingRequest(const QSweepRequest &);
 
     void errorChanged(QMqttClient::ClientError error);
 };
