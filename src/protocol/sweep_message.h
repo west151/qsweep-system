@@ -7,7 +7,7 @@
 enum class type_message: qint32 {
     UNKNOWN = 0,
     CTRL_INFO,
-    DATA_INFO,
+    DATA_SDR_INFO,
     CTRL_SPECTR,
     DATA_SPECTR,
     DATA_MESSAGE_LOG,

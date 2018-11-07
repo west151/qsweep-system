@@ -420,7 +420,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
 
         if(data_received.is_valid())
         {
-            if(data_received.type() == type_message::DATA_INFO)
+            if(data_received.type() == type_message::DATA_SDR_INFO)
             {
                 const sdr_info sdr_info_data(data_received.data_message(), false);
                 emit signal_sdr_info(sdr_info_data);

@@ -35,7 +35,7 @@ void CoreSweep::slot_publish_message(const QByteArray &value)
 
         if(send_data.is_valid())
         {
-            if(send_data.type() == type_message::DATA_INFO)
+            if(send_data.type() == type_message::DATA_SDR_INFO)
                 ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value);
 
             if(send_data.type() == type_message::DATA_MESSAGE_LOG)
