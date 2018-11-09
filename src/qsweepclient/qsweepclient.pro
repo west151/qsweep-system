@@ -12,7 +12,8 @@ HEADERS += \
     chart/datasource.h \
     chart/waterfallitem.h \
     systemmonitorinterface.h \
-    statesweepclient.h
+    statesweepclient.h \
+    chart/gl_plots.h
 
 SOURCES += \
     coresweepclient.cpp \
@@ -24,7 +25,8 @@ SOURCES += \
     chart/datasource.cpp \
     chart/waterfallitem.cpp \
     systemmonitorinterface.cpp \
-    statesweepclient.cpp
+    statesweepclient.cpp \
+    chart/gl_plots.cpp
 
 RESOURCES += qml.qrc
 

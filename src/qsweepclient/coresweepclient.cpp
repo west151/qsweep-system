@@ -105,12 +105,8 @@ void CoreSweepClient::initialization()
 {
     // MQTT
     ptrMqttClient = new QMqttClient(this);
-//    connect(ptrMqttClient, &QMqttClient::messageReceived,
-//            this, &CoreSweepClient::messageReceived);
-
     connect(ptrMqttClient, &QMqttClient::messageReceived,
             this, &CoreSweepClient::slot_message_received);
-
     connect(ptrMqttClient, &QMqttClient::stateChanged,
             this, &CoreSweepClient::updateLogStateChange);
     connect(ptrMqttClient, &QMqttClient::disconnected,
@@ -250,46 +246,6 @@ void CoreSweepClient::launching()
     m_sizeDatacReceive = 0;
 }
 
-//void CoreSweepClient::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
-//{
-//    switch (ptrSweepTopic->sweepTopic(topic.name()))
-//    {
-//    case QSweepTopic::TOPIC_POWER_SPECTR:
-//    {
-//        QSweepAnswer answer(message);
-//        QSweepSpectr powers(answer.dataAnswer());
-
-//        QVector<PowerSpectr> tmpPowerSpectr(powers.powerSpectr());
-
-//        std::sort(tmpPowerSpectr.begin(), tmpPowerSpectr.end(), [](const PowerSpectr& a, const PowerSpectr& b) {
-//            return a.m_frequency_min < b.m_frequency_min;
-//        });
-
-//        // for test
-//        ptrDataSource->updateDate(ptrUserInterface->frequencyMin(),
-//                                  ptrUserInterface->frequencyMax(),
-//                                  tmpPowerSpectr);
-
-//        // X update axis max & min freq
-//        ptrAxisX->setMin(ptrUserInterface->frequencyMin());
-//        ptrAxisX->setMax(ptrUserInterface->frequencyMax());
-//        // test
-//        emit sendStartSpectr();
-//    }
-//        break;
-
-//    default:
-//        break;
-//    }
-
-//#ifdef QT_DEBUG
-//    qDebug() << "---------------------------------------------------";
-//    qDebug() << Q_FUNC_INFO << topic.name() << ":" << "message size:" << message.size() << "byte";
-//    qDebug() << "---------------------------------------------------";
-//#endif
-
-//}
-
 void CoreSweepClient::updateLogStateChange()
 {
 #ifdef QT_DEBUG
@@ -374,18 +330,6 @@ void CoreSweepClient::connecting()
     qDebug() << Q_FUNC_INFO;
 #endif
 }
-
-//void CoreSweepClient::sendingRequest(const QSweepRequest &value)
-//{
-//    if(ptrMqttClient) {
-//        if (ptrMqttClient->state() == QMqttClient::Connected) {
-//            qint32 result = ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), value.exportToJson());
-//#ifdef QT_DEBUG
-//            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.exportToJson();
-//#endif
-//        }
-//    }
-//}
 
 void CoreSweepClient::slot_publish_message(const QByteArray &value)
 {
