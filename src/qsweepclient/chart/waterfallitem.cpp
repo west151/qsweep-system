@@ -13,7 +13,7 @@ WaterfallItem::WaterfallItem(QQuickItem *parent) : QQuickPaintedItem(parent)
     this->setFlag(QQuickItem::ItemHasContents);
 
     _image = QImage(static_cast<int>(this->width()), static_cast<int>(this->height()), QImage::Format_ARGB32);
-    _image.fill(QColor(255, 255, 255));
+    _image.fill(QColor(255, 255, 0));
     _sensitivity =0.05;
 
     connect(this, &QQuickItem::widthChanged,
@@ -51,7 +51,7 @@ WaterfallItem::WaterfallItem(QQuickItem *parent) : QQuickPaintedItem(parent)
 void WaterfallItem::paint(QPainter *painter)
 {
     if(painter!= Q_NULLPTR)
-        painter->drawImage(QRect(0, 0, static_cast<int>(width()), static_cast<int>(height())), _image, QRect(0, 0, _image.width(), _image.height()));
+        painter->drawImage(QRect(10, 10, static_cast<int>(width()), static_cast<int>(height())), _image, QRect(0, 0, _image.width(), _image.height()));
 
 //    // test
 //    const auto rect = contentsBoundingRect();

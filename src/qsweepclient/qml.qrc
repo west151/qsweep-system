@@ -8,5 +8,9 @@
         <file>TopForm.ui.qml</file>
         <file>SweepSystemMonitor.qml</file>
         <file>SweepSystemMonitorForm.ui.qml</file>
+        <file>SweepSpectrGL.qml</file>
+        <file>SweepSpectrGLForm.ui.qml</file>
+        <file>SpectrSurface.qml</file>
+        <file>SpectrSurfaceForm.ui.qml</file>
     </qresource>
 </RCC>

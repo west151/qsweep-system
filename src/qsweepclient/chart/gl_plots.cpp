@@ -1,149 +1,83 @@
 #include "gl_plots.h"
 
-gl_plots::gl_plots(QQuickItem *parent) : QQuickItem(parent)
-{
+#ifdef QT_DEBUG
+#include <QtCore/qdebug.h>
+#endif
 
+gl_plots::gl_plots(QQuickItem *parent) : QQuickItem(parent),
+    m_geometry(QSGGeometry::defaultAttributes_Point2D(), 5),
+    m_powerLine(QSGGeometry::defaultAttributes_Point2D(), 2)
+{
+    setFlag(ItemHasContents);
+    m_material.setColor(Qt::black);
+
+    m_materialPowerLine.setColor(Qt::red);
+}
+
+void gl_plots::slot_power_spectr(const QVector<qreal> &value)
+{
+//#ifdef QT_DEBUG
+//    qDebug() << Q_FUNC_INFO << "Size:" << value.size();
+//#endif
 }
 
 QSGNode *gl_plots::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *updatePaintNodeData)
 {
+    if(width() <= 0 || height() <= 0)
+    {
+        delete oldNode;
+        return nullptr;
+    }
 
-    //    QSGGeometryNode *node = static_cast<QSGGeometryNode *>(oldNode);
-    //        if (!node) {
-    //            node = new QSGGeometryNode;
+    if (!oldNode)
+        oldNode = new QSGNode;
 
-    //            QSGVertexColorMaterial * material = new QSGVertexColorMaterial;
-    //            node->setMaterial(material);
-    //            node->setFlag(QSGNode::OwnsMaterial);
-    //        }
+    QSGGeometryNode* geomnode = new QSGGeometryNode();
+    QSGGeometry::Point2D* v = m_geometry.vertexDataAsPoint2D();
+    const QRectF rect = boundingRect();
+    v[0].x = rect.left()+20;
+    v[0].y = rect.bottom()-20;
 
-    //        // if GetMyGeometry returns every time a new dynamically allocated object then you should
-    //        // call node->setFlag(QSGNode::OwnsGeometry) to not leak memory here:
-    //        QSGGeometry * geometry = GetMyGeometry();
-    //        node->setGeometry(geometry);
-    //        // No need to call node->markDirty(QSGNode::DirtyGeometry) because setGeometry is called.
+    v[1].x = rect.left()+20; // + rect.width()/3;
+    v[1].y = rect.top()+20;
 
-    //        return node;
+    v[2].x = rect.right()-20;
+    v[2].y = rect.top()+20;
 
-//==============================================================================
+    v[3].x = rect.right()-20;
+    v[3].y = rect.bottom()-20;
 
-//    if (!oldNode) {
-//        oldNode = new QSGNode;
-//      }
+    v[4].x = rect.left()+20;
+    v[4].y = rect.bottom()-20;
 
-//      oldNode->removeAllChildNodes();
+    geomnode->setGeometry(&m_geometry);
+    geomnode->setMaterial(&m_material);
 
-//      QSGGeometry * geometry = GetMyGeometry();
-//      QSGVertexColorMaterial * material = new QSGVertexColorMaterial;
-//      QSGGeometryNode * child_node = new QSGGeometryNode;
+    oldNode->appendChildNode(geomnode);
 
-//      child_node->setGeometry(geometry);
-//      child_node->setMaterial(material);
-//      child_node->setFlag(QSGNode::OwnsMaterial);
-//      oldNode->appendChildNode(child_node);
+    //********************************************
+    auto geometry1 = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 2);
+    geometry1->setLineWidth(2);
+    geometry1->setDrawingMode(GL_LINE_STRIP);
 
-//      return oldNode;
 
-// =============================================================================
 
-//    Q_UNUSED(updatePaintNodeData)
 
-//    // Если при обновлении нода не существует, то необходимо создать все объекты и прикрепить их к ноде
-//    if (!oldNode)
-//    {
-//        // Функция для отрисовки круга
-//        auto drawCircle = [this](double radius, QSGGeometry* geometry)
-//        {
-//            for (int i = 0; i < 360; ++i)
-//            {
-//                double rad = (i - 90) * Deg2Rad;
-//                geometry->vertexDataAsPoint2D()[i].set(std::cos(rad) * radius + width() / 2, std::sin(rad) * radius + height() / 2);
-//            }
-//        };
+//    QSGGeometryNode* geomnode_line = new QSGGeometryNode();
+//    QSGGeometry::Point2D *line = m_powerLine.vertexDataAsPoint2D();
+//    const QRectF rect_line = boundingRect();
 
-//        // Создаём внешний неактивный обод по 360 точкам с помощью геометрии вершин
-//        QSGGeometry* borderNonActiveGeometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 360);
-//        borderNonActiveGeometry->setDrawingMode(GL_POLYGON); // Отрисовка будет в виде полигона, то есть с заливкой
-//        drawCircle(width() / 2, borderNonActiveGeometry); // Установка координат всех точек обода
+//    line[0].x = rect_line.left()+20;
+//    line[0].y = rect_line.bottom()-20;
 
-//        // Цвет неактивной части обода
-//        QSGFlatColorMaterial* borderNonActiveMaterial = new QSGFlatColorMaterial();
-//        borderNonActiveMaterial->setColor(m_borderNonActiveColor);
+//    line[1].x = rect_line.right()-20;
+//    line[1].y = rect_line.bottom()-20;
 
-//        // Создаём ноду для отрисовки через геометрию вершин
-//        QSGGeometryNode* borderNonActiveNode = new QSGGeometryNode();
-//        borderNonActiveNode->setGeometry(borderNonActiveGeometry); // Установка геометрии
-//        borderNonActiveNode->setMaterial(borderNonActiveMaterial); // Установка материала
-//        // Устанавливаем ноду в качестве парента для геометрии и материала,
-//        // Чтобы при уничтожении нода очистила память от этих объектов
-//        borderNonActiveNode->setFlags(QSGNode::OwnsGeometry|QSGNode::OwnsMaterial);
+//    geomnode_line->setGeometry(&m_powerLine);
+//    geomnode_line->setMaterial(&m_materialPowerLine);
 
-//        //-----------------------------------------------------------------------------------------------
-//        // Создание объекта для отрисовки активной части обода, по началу не используем ни одной точки
-//        QSGGeometry* borderActiveGeometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 0);
-//        borderActiveGeometry->setDrawingMode(GL_POLYGON); // Также отрисовка будет в качестве полигона
+//    geomnode->appendChildNode(geomnode_line);
 
-//        // Цвет активной части обода
-//        QSGFlatColorMaterial* borderActiveMaterial = new QSGFlatColorMaterial();
-//        borderActiveMaterial->setColor(m_borderActiveColor);
-
-//        // Нам потребуется указатель на эту ноду, поскольку именно её геометрию придётся постоянно менять
-//        m_borderActiveNode = new QSGGeometryNode();
-//        m_borderActiveNode->setGeometry(borderActiveGeometry); // Установка геометрии
-//        m_borderActiveNode->setMaterial(borderActiveMaterial); // Установка материала
-//        // Устанавливаем ноду в качестве парента для геометрии и материала,
-//        // Чтобы при уничтожении нода очистила память от этих объектов
-//        m_borderActiveNode->setFlags(QSGNode::OwnsGeometry|QSGNode::OwnsMaterial);
-//        // Прикрепляем ноду к родительской
-//        borderNonActiveNode->appendChildNode(m_borderActiveNode);
-
-//        //-----------------------------------------------------------------------------------------------
-//        // Создание внутреннего фона таймера, также по 360 точкам
-//        QSGGeometry* backgroundGeometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), 360);
-//        backgroundGeometry->setDrawingMode(GL_POLYGON); // Отрисовываем как полигон
-//        drawCircle(width() / 2 - 10, backgroundGeometry); // Установка координат всех точек внутреннего фона
-
-//        // Цвет внутреннего фона
-//        QSGFlatColorMaterial* backgroundMaterial = new QSGFlatColorMaterial();
-//        backgroundMaterial->setColor(m_backgroundColor);
-
-//        // Создаём ноду фона
-//        QSGGeometryNode* backgroundNode = new QSGGeometryNode();
-//        backgroundNode->setGeometry(backgroundGeometry); // Установка геометрии
-//        backgroundNode->setMaterial(backgroundMaterial); // Установка материала
-//        // Устанавливаем ноду в качестве парента для геометрии и материала,
-//        // Чтобы при уничтожении нода очистила память от этих объектов
-//        backgroundNode->setFlags(QSGNode::OwnsGeometry|QSGNode::OwnsMaterial);
-//        // Прикрепляем ноду к родительской
-//        borderNonActiveNode->appendChildNode(backgroundNode);
-
-//        // Возвращаем все отрисованные ноды в первоначальном состоянии
-//        return borderNonActiveNode;
-//    }
-//    else
-//    {
-//        // Если родительская нода существует, значит всё инициализовано и можно отрисовывать активный обод
-//        static const double radius = width() / 2;
-//        // Получаем количество точек
-//        int countPoints = static_cast<int>(angle());
-//        // Берём геометрию из ноды активной части обода
-//        QSGGeometry* geometry = m_borderActiveNode->geometry();
-//        // Перевыделяем память под точки
-//        geometry->allocate(countPoints + 1, 0);
-//        // Уведомляем все отрисовщики об изменении геометрии ноды
-//        m_borderActiveNode->markDirty(QSGNode::DirtyGeometry);
-//        // отрисовываем центральную точку
-//        geometry->vertexDataAsPoint2D()[0].set(radius, radius);
-
-//        // А также все остальные точки
-//        for (int i = 1; i < countPoints + 1; ++i)
-//        {
-//            double rad = (i - 90) * Deg2Rad;
-//            geometry->vertexDataAsPoint2D()[i].set(std::cos(rad) * radius + width() / 2, std::sin(rad) * radius + height() / 2);
-//        }
-//    }
-
-//    // Если нода существовала, то возвращаем старую ноду
-//    return oldNode;
+    return oldNode;
 }
 

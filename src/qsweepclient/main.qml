@@ -35,6 +35,12 @@ ApplicationWindow {
         SweepSystemMonitor {
         }
 
+        SpectrSurface {
+        }
+
+        SweepSpectrGL {
+        }
+
         onCurrentIndexChanged: {
 //            console.log("SwipeView: currentIndex = ", currentIndex);
         }
@@ -50,6 +56,14 @@ ApplicationWindow {
 
         TabButton {
             text: qsTr("System monitor (remote host)")
+        }
+
+        TabButton {
+            text: qsTr("Spectr Surface")
+        }
+
+        TabButton {
+            text: qsTr("Spectr GL")
         }
     }
 

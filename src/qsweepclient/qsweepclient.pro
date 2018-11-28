@@ -13,7 +13,9 @@ HEADERS += \
     chart/waterfallitem.h \
     systemmonitorinterface.h \
     statesweepclient.h \
-    chart/gl_plots.h
+    chart/gl_plots.h \
+    chart/spectr_item.h \
+    chart/surface_spectr.h
 
 SOURCES += \
     coresweepclient.cpp \
@@ -26,7 +28,9 @@ SOURCES += \
     chart/waterfallitem.cpp \
     systemmonitorinterface.cpp \
     statesweepclient.cpp \
-    chart/gl_plots.cpp
+    chart/gl_plots.cpp \
+    chart/spectr_item.cpp \
+    chart/surface_spectr.cpp
 
 RESOURCES += qml.qrc
 

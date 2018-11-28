@@ -11,6 +11,8 @@
 #include "qsweeptopic.h"
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
+#include "chart/gl_plots.h"
+#include "chart/surface_spectr.h"
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
 #include "settings/sweepclientsettings.h"
@@ -64,6 +66,8 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 //    axisY->setTickCount(5);
 
     qmlRegisterType<WaterfallItem>("waterfall", 1, 0, "Waterfall");
+    qmlRegisterType<gl_plots>("glplots", 1, 0, "PlotsGL");
+    qmlRegisterType<surface_spectr>("surfacespectr", 1, 0, "SurfaceSpectr");
 
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
@@ -81,11 +85,29 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 //    QObject *qmlChartView = rootObject->findChild<QObject*>("chartViewSpectr");
 //    qmlChartView->setProperty("title", tr("Spectr"));
 
+    //*******************************************************
+    // Spectr
     QObject *qmlPlotWaterfall = rootObject->findChild<QObject*>("plotWaterfall");
     WaterfallItem *plotWaterfall = static_cast<WaterfallItem *>(qmlPlotWaterfall);
 
     connect(ptrDataSource, &DataSource::sendPowerSpectr,
             plotWaterfall, &WaterfallItem::onPowerSpectr);
+
+    //*******************************************************
+    // plots gl
+    QObject *qmlPlotGL = rootObject->findChild<QObject*>("plotGL");
+    gl_plots *plot = static_cast<gl_plots *>(qmlPlotGL);
+
+    connect(ptrDataSource, &DataSource::sendPowerSpectr,
+            plot, &gl_plots::slot_power_spectr);
+
+    //*******************************************************
+    // Spect surface
+    QObject *qmlSurfaceSpectr = rootObject->findChild<QObject*>("objSurfaceSpectr");
+    surface_spectr *surfaceSpectr = static_cast<surface_spectr *>(qmlSurfaceSpectr);
+
+    connect(ptrDataSource, &DataSource::sendPowerSpectr,
+            surfaceSpectr, &surface_spectr::slot_power_spectr);
 
     if (ptrEngine->rootObjects().isEmpty())
         return -1;

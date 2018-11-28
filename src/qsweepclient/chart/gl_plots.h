@@ -2,7 +2,9 @@
 #define GL_PLOTS_H
 
 #include <QQuickItem>
+#include <QSGGeometry>
 #include <QSGGeometryNode>
+#include <QSGFlatColorMaterial>
 
 // surface
 
@@ -15,12 +17,17 @@ public:
 signals:
 
 public slots:
+    void slot_power_spectr(const QVector<qreal> &value);
 
 protected:
     virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData) override;
 
 private:
-    QSGGeometryNode* m_border_active_node;
+    QSGGeometry m_geometry;
+    QSGFlatColorMaterial m_material;
+
+    QSGGeometry m_powerLine;
+    QSGFlatColorMaterial m_materialPowerLine;
 };
 
 #endif // GL_PLOTS_H
