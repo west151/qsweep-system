@@ -13,7 +13,6 @@ HEADERS += \
     chart/waterfallitem.h \
     systemmonitorinterface.h \
     statesweepclient.h \
-    chart/gl_plots.h \
     chart/surface_spectr.h \
     chart/spectr_item.h
 
@@ -28,7 +27,6 @@ SOURCES += \
     chart/waterfallitem.cpp \
     systemmonitorinterface.cpp \
     statesweepclient.cpp \
-    chart/gl_plots.cpp \
     chart/surface_spectr.cpp \
     chart/spectr_item.cpp
 

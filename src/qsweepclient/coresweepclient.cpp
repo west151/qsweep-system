@@ -11,7 +11,7 @@
 #include "qsweeptopic.h"
 #include "chart/datasource.h"
 #include "chart/waterfallitem.h"
-#include "chart/gl_plots.h"
+//#include "chart/gl_plots.h"
 #include "chart/surface_spectr.h"
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
@@ -66,7 +66,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 //    axisY->setTickCount(5);
 
     qmlRegisterType<WaterfallItem>("waterfall", 1, 0, "Waterfall");
-    qmlRegisterType<gl_plots>("glplots", 1, 0, "PlotsGL");
+//    qmlRegisterType<gl_plots>("glplots", 1, 0, "PlotsGL");
     qmlRegisterType<surface_spectr>("surfacespectr", 1, 0, "SurfaceSpectr");
 
     QQmlContext *context = ptrEngine->rootContext();
@@ -95,11 +95,11 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     //*******************************************************
     // plots gl
-    QObject *qmlPlotGL = rootObject->findChild<QObject*>("plotGL");
-    gl_plots *plot = static_cast<gl_plots *>(qmlPlotGL);
+//    QObject *qmlPlotGL = rootObject->findChild<QObject*>("plotGL");
+//    gl_plots *plot = static_cast<gl_plots *>(qmlPlotGL);
 
-    connect(ptrDataSource, &DataSource::sendPowerSpectr,
-            plot, &gl_plots::slot_power_spectr);
+//    connect(ptrDataSource, &DataSource::sendPowerSpectr,
+//            plot, &gl_plots::slot_power_spectr);
 
     //*******************************************************
     // Spect surface

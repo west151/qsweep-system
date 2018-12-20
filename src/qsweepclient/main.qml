@@ -38,9 +38,6 @@ ApplicationWindow {
         SpectrSurface {
         }
 
-        SweepSpectrGL {
-        }
-
         onCurrentIndexChanged: {
 //            console.log("SwipeView: currentIndex = ", currentIndex);
         }
@@ -60,10 +57,6 @@ ApplicationWindow {
 
         TabButton {
             text: qsTr("Spectr Surface")
-        }
-
-        TabButton {
-            text: qsTr("Spectr GL")
         }
     }
 
