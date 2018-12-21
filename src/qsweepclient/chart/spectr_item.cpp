@@ -1,10 +1,9 @@
 #include "spectr_item.h"
 
-spectr_item::spectr_item(const QString &name)
+spectr_item::spectr_item(const QString &name, const QColor &color)
 {
     m_name = name;
-
-    m_item_pen.setColor(Qt::green);
+    m_item_pen.setColor(color);
 }
 
 void spectr_item::set_item_color(const QColor &color)

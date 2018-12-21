@@ -7,7 +7,7 @@
 class spectr_item
 {
 public:
-    spectr_item(const QString &name);
+    spectr_item(const QString &name, const QColor &color);
 
     QString name()const;
 

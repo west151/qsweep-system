@@ -36,7 +36,7 @@ public slots:
     // for test
     void slot_power_spectr_test();
 
-    void add_spectr_item(const QString &);
+    void add_spectr_item(const QString &, const QColor &color);
 
 signals:
     // level
@@ -55,7 +55,8 @@ private:
 
     QPoint m_surface_point;
 
-    QVector<QPointF> tmp_f_vector;
+    QVector<QPointF> spectr_rt_vector;
+    QVector<QPointF> spectr_max_vector;
 
     // level
     double m_level_min;
@@ -69,9 +70,11 @@ private:
     QMap<QString, double> m_frequency_ticket;
     void frequency_scale_paint(QPainter *painter);
 
+    // spectr
+
     // waterfall
     void time_scale_paint(QPainter *painter);
-    // size
+    // size waterfall
     QPoint waterfall_size()const;
     // start point
     QPoint waterfall_point()const;
