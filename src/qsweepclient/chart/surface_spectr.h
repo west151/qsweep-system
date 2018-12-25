@@ -70,7 +70,7 @@ private:
     // frequency
     double m_frequency_min;
     double m_frequency_max;
-    void frequency_scale_paint(QPainter *painter);
+//    void frequency_scale_paint(QPainter *painter);
 
     // spectr
     // size spectr
@@ -78,11 +78,12 @@ private:
     void spectr_surface_paint(QPainter *painter);
 
     // waterfall
-    void time_scale_paint(QPainter *painter);
+//    void time_scale_paint(QPainter *painter);
     // size waterfall
     QPoint waterfall_size()const;
     // start point
     QPoint waterfall_point()const;
+    void waterfall_surface_paint(QPainter *painter);
 
     QMap<QString, spectr_item*> m_spectr_item_list;
 
