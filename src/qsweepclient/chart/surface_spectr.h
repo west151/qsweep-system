@@ -50,27 +50,32 @@ private slots:
     void slot_size_changed();
 
 private:
+    bool is_spectr_max_calc;
+
     qreal m_split_surface;
     QColor m_color_background;
+    QColor m_color_axis;
 
     QPoint m_surface_point;
 
     QVector<QPointF> spectr_rt_vector;
+    QVector<qreal> spectr_max_value;
     QVector<QPointF> spectr_max_vector;
 
     // level
     double m_level_min;
     double m_level_max;
-    QMap<QString, double> m_level_ticket;
-    void level_scale_paint(QPainter *painter);
+    qint32 m_ticket_segment;
 
     // frequency
     double m_frequency_min;
     double m_frequency_max;
-    QMap<QString, double> m_frequency_ticket;
     void frequency_scale_paint(QPainter *painter);
 
     // spectr
+    // size spectr
+    QPoint spectr_size()const;
+    void spectr_surface_paint(QPainter *painter);
 
     // waterfall
     void time_scale_paint(QPainter *painter);

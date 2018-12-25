@@ -10,19 +10,17 @@
 
 surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 {
+    is_spectr_max_calc = true;
+    m_ticket_segment = 4;
+
     m_spectr_item_list.clear();
     // level
     m_level_min = -100;
     m_level_max = 0;
-    m_level_ticket.insert("0", m_level_max);
-    m_level_ticket.insert("-50", -50);
-    m_level_ticket.insert("-100", m_level_min);
 
     // frequency Hz
     m_frequency_min = 1000000;
     m_frequency_max = 100000000;
-    m_frequency_ticket.insert("1", m_frequency_min);
-    m_frequency_ticket.insert("100", m_frequency_max);
 
     this->setVisible(true);
     this->setFlag(QQuickItem::ItemHasContents);
@@ -44,7 +42,7 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     gradient.setColorAt(0, QColor(255, 255, 255));
     gradient.setColorAt(0.1, QColor(0, 200, 255));
     gradient.setColorAt(0.2, QColor(0, 100, 255));
-    gradient.setColorAt(0.2, QColor(0, 50, 255));
+    gradient.setColorAt(0.3, QColor(0, 50, 255));
     gradient.setColorAt(0.4, QColor(255, 240, 0));
     gradient.setColorAt(0.5, QColor(255, 140, 0));
     gradient.setColorAt(0.6, QColor(255, 0, 0));
@@ -61,6 +59,7 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     // background
     m_color_background = QColor(Qt::darkGray);
+    m_color_axis = QColor(Qt::white);
     // base surface point
     m_surface_point.setX(50);
     m_surface_point.setY(30);
@@ -71,25 +70,26 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
             this, &surface_spectr::slot_size_changed);
 
     add_spectr_item("spectr_rt", Qt::green);
-    add_spectr_item("spectr_max", Qt::red);
+
+    if(is_spectr_max_calc)
+        add_spectr_item("spectr_max", Qt::red);
 
     update();
 
     // for test
-#ifdef QT_DEBUG
-    connect(this, &surface_spectr::signal_power_spectr_test,
-            this, &surface_spectr::slot_power_spectr);
+//#ifdef QT_DEBUG
+//    connect(this, &surface_spectr::signal_power_spectr_test,
+//            this, &surface_spectr::slot_power_spectr);
 
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(slot_power_spectr_test()));
-    timer->start(100);
+//    QTimer *timer = new QTimer(this);
+//    connect(timer, SIGNAL(timeout()), this, SLOT(slot_power_spectr_test()));
+//    timer->start(100);
 
-    for(int i=0; i<150; ++i)
-    {
-        qDebug() << Q_FUNC_INFO << i << "=" <<  std::log10(std::abs(i));
-    }
-
-#endif
+//    for(int i=0; i<150; ++i)
+//    {
+//        qDebug() << Q_FUNC_INFO << i << "=" <<  std::log10(std::abs(i));
+//    }
+//#endif
 
 }
 
@@ -100,24 +100,17 @@ void surface_spectr::paint(QPainter *painter)
     painter->setBrush(brush);
     painter->drawRect(QRectF(0,0,this->width(),this->height()));
 
-    // level scale
-    level_scale_paint(painter);
+    // spectr surface
+    spectr_surface_paint(painter);
+
     // frequency scale
-    frequency_scale_paint(painter);
+    //frequency_scale_paint(painter);
     // waterfall
     time_scale_paint(painter);
 
     if(painter!= Q_NULLPTR)
         painter->drawImage(QRect(waterfall_point().x(), waterfall_point().y(), waterfall_size().x(), waterfall_size().y()), m_image_waterfall, QRect(0, 0, m_image_waterfall.width(), m_image_waterfall.height()));
 
-    // test
-//    const auto rect = contentsBoundingRect();
-//    const QPolygonF trianglePolygon({{0, 0},
-//                                     {rect.width(), 0},
-//                                     {0.5 * rect.width(), rect.height()},
-//                                     {0,0}});
-
-//    painter->drawPolygon(trianglePolygon);
 
     QMap<QString, spectr_item*>::const_iterator spectr_it;
 
@@ -164,8 +157,18 @@ void surface_spectr::slot_power_spectr(const QVector<qreal> &spectr)
     spectr_rt_vector.clear();
     spectr_rt_vector.reserve(spectr.size());
 
-    spectr_max_vector.clear();
-    spectr_max_vector.reserve(spectr.size());
+    if(is_spectr_max_calc)
+    {
+        spectr_max_vector.clear();
+        spectr_max_vector.reserve(spectr.size());
+
+        if(spectr_max_value.size() != spectr.size())
+        {
+            spectr_max_value.clear();
+            spectr_max_value.reserve(spectr.size());
+            spectr_max_value.append(spectr);
+        }
+    }
 
     qreal range = 0;
     qreal shift_x = m_surface_point.x()+1;
@@ -181,27 +184,30 @@ void surface_spectr::slot_power_spectr(const QVector<qreal> &spectr)
         if(level < m_level_min)
             level = m_level_min;
 
-        qreal x = shift_x + range;
-        qreal y = std::abs(shift_y*level) + m_surface_point.y()-1;
+        if(is_spectr_max_calc)
+            if(level > spectr_max_value.at(i))
+                spectr_max_value[i] = level;
 
-        QPointF tmp(x, y);
+        qreal x = shift_x + range;
+        qreal y = std::abs(shift_y * level) + m_surface_point.y()-1;
+
+        const QPointF tmp(x, y);
         spectr_rt_vector.append(tmp);
 
-        // add max
-        QPointF last_max(x, 100);
-
-        if(m_spectr_item_list.value("spectr_max")->raw_data_size() == spectr.size())
-            last_max.setY(m_spectr_item_list.value("spectr_max")->raw_data_pos(i).y());
-
-        qreal y1 = qMin(last_max.y(), tmp.y());
-        QPointF tmp_max(x, y1);
-        spectr_max_vector.append(tmp_max);
+        if(is_spectr_max_calc)
+        {
+            qreal y_max = std::abs(shift_y * spectr_max_value.at(i)) + m_surface_point.y()-1;
+            const QPointF tmp_max(x, y_max);
+            spectr_max_vector.append(tmp_max);
+        }
 
         range += (this->width()-m_surface_point.x()*2-1)/spectr.size();
     }
 
     m_spectr_item_list.value("spectr_rt")->set_raw_data(spectr_rt_vector);
-    m_spectr_item_list.value("spectr_max")->set_raw_data(spectr_max_vector);
+
+    if(is_spectr_max_calc)
+        m_spectr_item_list.value("spectr_max")->set_raw_data(spectr_max_vector);
 
     // waterfall
     QImage img(waterfall_size().x(), waterfall_size().y(), QImage::Format_ARGB32);
@@ -270,7 +276,7 @@ void surface_spectr::slot_power_spectr_test()
 
     for(int i=0; i<size; ++i)
     {
-        qreal value = rm.generateDouble()*-10;
+        qreal value = rm.generateDouble()*-100;
         test_data.append(value);
     }
     emit signal_power_spectr_test(test_data);
@@ -300,58 +306,6 @@ void surface_spectr::slot_size_changed()
     }
 }
 
-void surface_spectr::level_scale_paint(QPainter *painter)
-{
-    QPen scale_pen(Qt::black);
-    painter->setPen(scale_pen);
-    // font
-    QFont font = painter->font();
-    font.setPointSizeF(10);
-    painter->setFont(font);
-
-    QFontMetrics font_metrics(painter->font());
-    int max_text_height = font_metrics.ascent()/2;
-
-    QLine line(m_surface_point, QPoint(m_surface_point.x(), this->height()/2));
-    painter->drawLine(line);
-
-    if(m_level_ticket.keys().size()==2)
-    {
-        // min ticket
-        QLine min_line(QPoint(m_surface_point.x()-5, this->height()/2),
-                       QPoint(m_surface_point.x(), this->height()/2));
-        painter->drawLine(min_line);
-        const QString min_text = m_level_ticket.key(m_level_min);
-        int min_text_width = font_metrics.boundingRect(min_text).width()+5;
-        painter->drawText(QPoint(m_surface_point.x()-5-min_text_width, this->height()/2+max_text_height), min_text);
-
-        // max ticket
-        QLine max_line(QPoint(m_surface_point.x()-5, m_surface_point.y()), m_surface_point);
-        painter->drawLine(max_line);
-        const QString max_text = m_level_ticket.key(m_level_max);
-        int max_text_width = font_metrics.boundingRect(max_text).width()+5;
-        painter->drawText(QPoint(m_surface_point.x()-5-max_text_width, m_surface_point.y()+max_text_height), m_level_ticket.key(m_level_max));
-    }
-
-    if(m_level_ticket.keys().size()>2)
-    {
-        // min ticket
-        QLine min_line(QPoint(m_surface_point.x()-5, this->height()/2),
-                       QPoint(m_surface_point.x(), this->height()/2));
-        painter->drawLine(min_line);
-        const QString min_text = m_level_ticket.key(m_level_min);
-        int min_text_width = font_metrics.boundingRect(min_text).width()+5;
-        painter->drawText(QPoint(m_surface_point.x()-5-min_text_width, this->height()/2+max_text_height), min_text);
-
-        // max ticket
-        QLine max_line(QPoint(m_surface_point.x()-5, m_surface_point.y()), m_surface_point);
-        painter->drawLine(max_line);
-        const QString max_text = m_level_ticket.key(m_level_max);
-        int max_text_width = font_metrics.boundingRect(max_text).width()+5;
-        painter->drawText(QPoint(m_surface_point.x()-5-max_text_width, m_surface_point.y()+max_text_height), m_level_ticket.key(m_level_max));
-    }
-}
-
 void surface_spectr::frequency_scale_paint(QPainter *painter)
 {
     QPen scale_pen(Qt::black);
@@ -366,6 +320,70 @@ void surface_spectr::frequency_scale_paint(QPainter *painter)
 
     painter->setPen(scale_pen);
     painter->drawLine(line_lower);
+}
+
+QPoint surface_spectr::spectr_size() const
+{
+    QPoint size;
+
+    size.setX(static_cast<int>(this->width()-m_surface_point.x()*2-1));
+    size.setY(static_cast<int>(this->height()/2-m_surface_point.y()));
+
+    return size;
+}
+
+void surface_spectr::spectr_surface_paint(QPainter *painter)
+{
+    // const auto rect = contentsBoundingRect(); rect.width(), rect.height()
+
+    painter->setPen(m_color_axis);
+
+    const QPolygonF spectr_polygon({m_surface_point,
+                                    {static_cast<qreal>(spectr_size().x() + m_surface_point.x()), static_cast<qreal>(m_surface_point.y())},
+                                    {static_cast<qreal>(spectr_size().x() + m_surface_point.x()), static_cast<qreal>(spectr_size().y() + m_surface_point.y())},
+                                    {static_cast<qreal>(m_surface_point.x()), static_cast<qreal>(spectr_size().y() + m_surface_point.y())},
+                                    m_surface_point});
+
+    painter->drawPolygon(spectr_polygon);
+
+    // font
+    QFont font = painter->font();
+    font.setPointSizeF(10);
+    painter->setFont(font);
+
+    QFontMetrics font_metrics(painter->font());
+    int max_text_height = font_metrics.ascent()/2;
+
+    // min ticket
+    QLine min_line(QPoint(m_surface_point.x()-5, spectr_size().y() + m_surface_point.y()),
+                   QPoint(m_surface_point.x(), spectr_size().y() + m_surface_point.y()));
+    painter->drawLine(min_line);
+    const QString min_text = QString::number(m_level_min);
+    int min_text_width = font_metrics.boundingRect(min_text).width()+5;
+    painter->drawText(QPoint(m_surface_point.x()-5-min_text_width, this->height()/2+max_text_height), min_text);
+
+    // max ticket
+    QLine max_line(QPoint(m_surface_point.x()-5, m_surface_point.y()), m_surface_point);
+    painter->drawLine(max_line);
+    const QString max_text = QString::number(m_level_max);
+    int max_text_width = font_metrics.boundingRect(max_text).width()+5;
+    painter->drawText(QPoint(m_surface_point.x()-5-max_text_width, m_surface_point.y()+max_text_height), max_text);
+
+    qreal step_y = spectr_size().y()/m_ticket_segment;
+    qreal step_level = std::abs(m_level_max - m_level_min)/m_ticket_segment;
+
+    for(int i=1; i<m_ticket_segment; ++i)
+    {
+        int y = static_cast<int>(m_surface_point.y()+step_y*i);
+        // ticked
+        QLine line(QPoint(m_surface_point.x()-5, y),
+                   QPoint(m_surface_point.x(), y));
+        painter->drawLine(line);
+        // text ticked
+        const QString text = QString::number(step_level*i*-1);
+        int text_width = font_metrics.boundingRect(text).width()+5;
+        painter->drawText(QPoint(m_surface_point.x()-5-text_width, y + max_text_height), text);
+    }
 }
 
 void surface_spectr::time_scale_paint(QPainter *painter)
