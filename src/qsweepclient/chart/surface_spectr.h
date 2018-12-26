@@ -20,14 +20,19 @@ public:
     qreal sensitivity_waterfall() const;
     qreal split_surface()const;
 
+    void clear();
+
     // level
     double level_min()const;
     double level_max()const;
 
 public slots:
-    void slot_power_spectr(const QVector<qreal> &value);
+    void slot_power_spectr(const QVector<qreal> &spectr);
     void slot_sensitivity_waterfall(const qreal &);
     void slot_split_surface(const qreal &);
+
+    // view max spectr
+    void slot_spectr_max_calc(const bool &);
 
     // level
     void slot_level_min(const double &);
@@ -37,6 +42,7 @@ public slots:
     void slot_power_spectr_test();
 
     void add_spectr_item(const QString &, const QColor &color);
+    void remove_spectr_item(const QString &);
 
 signals:
     // level
@@ -70,19 +76,14 @@ private:
     // frequency
     double m_frequency_min;
     double m_frequency_max;
-//    void frequency_scale_paint(QPainter *painter);
 
     // spectr
-    // size spectr
-    QPoint spectr_size()const;
+    QPoint spectr_size()const;  // size spectr
     void spectr_surface_paint(QPainter *painter);
 
     // waterfall
-//    void time_scale_paint(QPainter *painter);
-    // size waterfall
-    QPoint waterfall_size()const;
-    // start point
-    QPoint waterfall_point()const;
+    QPoint waterfall_size()const;   // size waterfall
+    QPoint waterfall_point()const;  // start point
     void waterfall_surface_paint(QPainter *painter);
 
     QMap<QString, spectr_item*> m_spectr_item_list;

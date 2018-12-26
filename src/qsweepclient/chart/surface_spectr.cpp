@@ -13,6 +13,13 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     is_spectr_max_calc = true;
     m_ticket_segment = 4;
 
+    // background
+    m_color_background = QColor(Qt::black);
+    m_color_axis = QColor(Qt::white);
+    // base surface point
+    m_surface_point.setX(50);
+    m_surface_point.setY(30);
+
     m_spectr_item_list.clear();
     // level
     m_level_min = -100;
@@ -25,9 +32,9 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     this->setVisible(true);
     this->setFlag(QQuickItem::ItemHasContents);
 
-    m_image_waterfall = QImage(waterfall_size().y(), waterfall_size().y(), QImage::Format_ARGB32);
-    m_image_waterfall.fill(QColor(255, 255, 0));
-    m_sensitivity_waterfall = 0.1; // 0.1 <-> 0.05;
+    m_image_waterfall = QImage(waterfall_size().x(), waterfall_size().y(), QImage::Format_ARGB32);
+    m_image_waterfall.fill(m_color_background);
+    m_sensitivity_waterfall = 0.47; // 0.48 <-> 0.05;
 
     // Generate displayable colors
     QImage img(500, 1, QImage::Format_ARGB32);
@@ -39,14 +46,17 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     gradient.setStart(0, 0);
     gradient.setFinalStop(img.width(), 0);
 
-    gradient.setColorAt(0, QColor(255, 255, 255));
-    gradient.setColorAt(0.1, QColor(0, 200, 255));
-    gradient.setColorAt(0.2, QColor(0, 100, 255));
-    gradient.setColorAt(0.3, QColor(0, 50, 255));
+//    gradient.setColorAt(0, QColor(255, 255, 255));
+//    gradient.setColorAt(0.2, QColor(0, 0, 255));
+//    gradient.setColorAt(0.4, QColor(255, 240, 0));
+//    gradient.setColorAt(0.6, QColor(255, 0, 0));
+//    gradient.setColorAt(1, QColor(0, 0, 0));
+
+    gradient.setColorAt(1, QColor(255, 255, 255));
+    gradient.setColorAt(0.6, QColor(0, 0, 255));
     gradient.setColorAt(0.4, QColor(255, 240, 0));
-    gradient.setColorAt(0.5, QColor(255, 140, 0));
-    gradient.setColorAt(0.6, QColor(255, 0, 0));
-    gradient.setColorAt(1, QColor(0, 0, 0));
+    gradient.setColorAt(0.2, QColor(255, 0, 0));
+    gradient.setColorAt(0, QColor(0, 0, 0));
 
     gradient.setSpread(QGradient::PadSpread);
     painter.fillRect(QRect(0, 0, img.width(), 1), QBrush(gradient));
@@ -56,13 +66,6 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
         QRgb rgb = img.pixel(i, 0);
         m_colors_waterfall.append(rgb);
     }
-
-    // background
-    m_color_background = QColor(Qt::black); //Qt::darkGray
-    m_color_axis = QColor(Qt::white);
-    // base surface point
-    m_surface_point.setX(50);
-    m_surface_point.setY(30);
 
     connect(this, &QQuickItem::widthChanged,
             this, &surface_spectr::slot_size_changed);
@@ -84,11 +87,6 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 //    QTimer *timer = new QTimer(this);
 //    connect(timer, SIGNAL(timeout()), this, SLOT(slot_power_spectr_test()));
 //    timer->start(100);
-
-//    for(int i=0; i<150; ++i)
-//    {
-//        qDebug() << Q_FUNC_INFO << i << "=" <<  std::log10(std::abs(i));
-//    }
 //#endif
 
 }
@@ -102,14 +100,11 @@ void surface_spectr::paint(QPainter *painter)
 
     // spectr surface
     spectr_surface_paint(painter);
-
-    // frequency scale
-    //frequency_scale_paint(painter);
-    // waterfall
-    //time_scale_paint(painter);
+    // waterfall surface
+    waterfall_surface_paint(painter);
 
     if(painter!= Q_NULLPTR)
-        painter->drawImage(QRect(waterfall_point().x(), waterfall_point().y(), waterfall_size().x(), waterfall_size().y()), m_image_waterfall, QRect(0, 0, m_image_waterfall.width(), m_image_waterfall.height()));
+        painter->drawImage(QRect(waterfall_point().x()+1, waterfall_point().y()+1, waterfall_size().x()-1, waterfall_size().y()-1), m_image_waterfall, QRect(0, 0, m_image_waterfall.width(), m_image_waterfall.height()));
 
     QMap<QString, spectr_item*>::const_iterator spectr_it;
 
@@ -139,6 +134,15 @@ qreal surface_spectr::sensitivity_waterfall() const
 qreal surface_spectr::split_surface() const
 {
     return m_split_surface;
+}
+
+void surface_spectr::clear()
+{
+    if(!m_image_waterfall.isNull())
+    {
+        m_image_waterfall = QImage(waterfall_size().x(), waterfall_size().y(), QImage::Format_ARGB32);
+        m_image_waterfall.fill(QColor(255, 255, 255));
+    }
 }
 
 double surface_spectr::level_min() const
@@ -253,6 +257,16 @@ void surface_spectr::slot_split_surface(const qreal &value)
     m_split_surface = value;
 }
 
+void surface_spectr::slot_spectr_max_calc(const bool &value)
+{
+    is_spectr_max_calc = value;
+
+    if(is_spectr_max_calc)
+        add_spectr_item("spectr_max", Qt::red);
+    else
+        remove_spectr_item("spectr_max");
+}
+
 void surface_spectr::slot_level_min(const double &value)
 {
     m_level_min = value;
@@ -287,12 +301,18 @@ void surface_spectr::add_spectr_item(const QString &name, const QColor &color)
         m_spectr_item_list.insert(name, new spectr_item(name, color));
 }
 
+void surface_spectr::remove_spectr_item(const QString &name)
+{
+    if(m_spectr_item_list.contains(name))
+        m_spectr_item_list.remove(name);
+}
+
 void surface_spectr::slot_size_changed()
 {
-    if (!m_image_waterfall.isNull())
+    if(!m_image_waterfall.isNull())
     {
         QImage img = QImage(waterfall_size().x(), waterfall_size().y(), QImage::Format_ARGB32);
-        img.fill(QColor(255, 255, 255));
+        img.fill(m_color_background);
 
         QPainter painter;
         painter.begin(&img);
@@ -305,27 +325,10 @@ void surface_spectr::slot_size_changed()
     }
 }
 
-//void surface_spectr::frequency_scale_paint(QPainter *painter)
-//{
-//    QPen scale_pen(Qt::black);
-//    QLine line_upper(QPoint(m_surface_point.x(), this->height()/2),
-//                     QPoint(this->width()-m_surface_point.x(), this->height()/2));
-
-//    painter->setPen(scale_pen);
-//    painter->drawLine(line_upper);
-
-//    QLine line_lower(QPoint(m_surface_point.x(), this->height()/2+m_surface_point.y()),
-//                     QPoint(this->width()-m_surface_point.x(), this->height()/2+m_surface_point.y()));
-
-//    painter->setPen(scale_pen);
-//    painter->drawLine(line_lower);
-//}
-
 QPoint surface_spectr::spectr_size() const
 {
     QPoint size;
 
-    //size.setX(static_cast<int>(this->width()-m_surface_point.x()*2-1));
     size.setX(static_cast<int>(this->width()-m_surface_point.x()*2));
     size.setY(static_cast<int>(this->height()/2-m_surface_point.y()));
 
@@ -338,11 +341,11 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
 
     painter->setPen(m_color_axis);
 
-    const QPolygonF spectr_polygon({m_surface_point,
-                                    {static_cast<qreal>(spectr_size().x() + m_surface_point.x()), static_cast<qreal>(m_surface_point.y())},
-                                    {static_cast<qreal>(spectr_size().x() + m_surface_point.x()), static_cast<qreal>(spectr_size().y() + m_surface_point.y())},
-                                    {static_cast<qreal>(m_surface_point.x()), static_cast<qreal>(spectr_size().y() + m_surface_point.y())},
-                                    m_surface_point});
+    const QPolygon spectr_polygon({m_surface_point,
+                                   {spectr_size().x() + m_surface_point.x(), m_surface_point.y()},
+                                   {spectr_size().x() + m_surface_point.x(), spectr_size().y() + m_surface_point.y()},
+                                   {m_surface_point.x(), spectr_size().y() + m_surface_point.y()},
+                                   m_surface_point});
 
     painter->drawPolygon(spectr_polygon);
 
@@ -374,6 +377,7 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
 
     for(int i=1; i<m_ticket_segment; ++i)
     {
+        painter->setPen(m_color_axis);
         int y = static_cast<int>(m_surface_point.y()+step_y*i);
         // ticked
         QLine line(QPoint(m_surface_point.x()-5, y),
@@ -383,24 +387,23 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
         const QString text = QString::number(step_level*i*-1);
         int text_width = font_metrics.boundingRect(text).width()+5;
         painter->drawText(QPoint(m_surface_point.x()-5-text_width, y + max_text_height), text);
+
+        // grid line
+        QPen grid_pen;
+        grid_pen.setColor(Qt::darkGray);
+        grid_pen.setStyle(Qt::DashLine);
+        QLine grid_line(QPoint(m_surface_point.x()+1, y),
+                   QPoint(spectr_size().x()+m_surface_point.x()-1, y));
+        painter->setPen(grid_pen);
+        painter->drawLine(grid_line);
     }
 }
-
-//void surface_spectr::time_scale_paint(QPainter *painter)
-//{
-//    QPen scale_pen(Qt::black);
-//    QLine line(QPoint(m_surface_point.x(), static_cast<int>(this->height()/2+m_surface_point.y())),
-//               QPoint(m_surface_point.x(), static_cast<int>(this->height()-m_surface_point.y())));
-
-//    painter->setPen(scale_pen);
-//    painter->drawLine(line);
-//}
 
 QPoint surface_spectr::waterfall_size() const
 {
     QPoint size;
 
-    size.setX(static_cast<int>(this->width()-m_surface_point.x()*2-1));
+    size.setX(static_cast<int>(this->width()-m_surface_point.x()*2));
     size.setY(static_cast<int>((this->height()-m_surface_point.y())-(this->height()/2+m_surface_point.y())-2));
 
     return size;
@@ -410,14 +413,21 @@ QPoint surface_spectr::waterfall_point() const
 {
     QPoint point;
 
-    point.setX(m_surface_point.x()+1);
-    point.setY(static_cast<int>(this->height()/2 + m_surface_point.y() + 1));
+    point.setX(m_surface_point.x());
+    point.setY(static_cast<int>(this->height()/2 + m_surface_point.y()));
 
     return point;
 }
 
 void surface_spectr::waterfall_surface_paint(QPainter *painter)
 {
-    Q_UNUSED(painter)
+    painter->setPen(m_color_axis);
 
+    const QPolygon spectr_polygon({{waterfall_point().x(), waterfall_point().y()},
+                                   {waterfall_size().x() + m_surface_point.x(), waterfall_point().y()},
+                                   {waterfall_size().x() + m_surface_point.x(), waterfall_point().y() + waterfall_size().y()},
+                                   {waterfall_point().x(), waterfall_point().y() + waterfall_size().y()},
+                                   {waterfall_point().x(), waterfall_point().y()}});
+
+    painter->drawPolygon(spectr_polygon);
 }

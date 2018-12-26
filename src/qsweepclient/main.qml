@@ -29,13 +29,10 @@ ApplicationWindow {
 
         currentIndex: tabBar.currentIndex
 
-        SweepSpectr {
+        SpectrSurface {
         }
 
         SweepSystemMonitor {
-        }
-
-        SpectrSurface {
         }
 
         onCurrentIndexChanged: {
@@ -48,15 +45,11 @@ ApplicationWindow {
         currentIndex: swipeView.currentIndex
 
         TabButton {
-            text: qsTr("Spectr")
+            text: qsTr("Spectr Surface")
         }
 
         TabButton {
             text: qsTr("System monitor (remote host)")
-        }
-
-        TabButton {
-            text: qsTr("Spectr Surface")
         }
     }
 

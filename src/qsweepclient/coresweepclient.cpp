@@ -6,12 +6,10 @@
 #include <QDir>
 #include <QTime>
 #include <QtCore/qdebug.h>
+#include <QThread>
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
-#include "chart/datasource.h"
-#include "chart/waterfallitem.h"
-//#include "chart/gl_plots.h"
 #include "chart/surface_spectr.h"
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
@@ -22,6 +20,7 @@
 #include "data_log.h"
 #include "system_monitor.h"
 #include "data_spectr.h"
+#include "spectr/ta_spectr.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -31,6 +30,8 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrStateSweepClient(new StateSweepClient(this))
 {
     m_timerReceive = new QTime;
+
+    qRegisterMetaType<data_spectr>();
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -50,64 +51,34 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     ptrEngine = new QQmlApplicationEngine(this);
 
-    // Настройка осей графика
-    ptrAxisX = new QValueAxis(this);
-    ptrAxisX->setTitleText("Freq");
-    ptrAxisX->setMin(ptrUserInterface->frequencyMin());
-    ptrAxisX->setMax(ptrUserInterface->frequencyMax());
-//    axisX->setLabelFormat("%i");
-//    axisX->setTickCount(1);
-
-    ptrAxisY = new QValueAxis(this);
-    ptrAxisY->setTitleText("Level");
-    ptrAxisY->setMin(ptrDataSource->minValueY());
-    ptrAxisY->setMax(ptrDataSource->maxValueY());
-//    axisY->setLabelFormat("%g");
-//    axisY->setTickCount(5);
-
-    qmlRegisterType<WaterfallItem>("waterfall", 1, 0, "Waterfall");
-//    qmlRegisterType<gl_plots>("glplots", 1, 0, "PlotsGL");
     qmlRegisterType<surface_spectr>("surfacespectr", 1, 0, "SurfaceSpectr");
 
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
     context->setContextProperty("messageLogModel", ptrMessageLogModel);
-    context->setContextProperty("dataSource", ptrDataSource);
-    context->setContextProperty("valueAxisY", ptrAxisY);
-    context->setContextProperty("valueAxisX", ptrAxisX);
     context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
     context->setContextProperty("stateSweepClient", ptrStateSweepClient);
 
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     QObject *rootObject = ptrEngine->rootObjects().first();
-//    QObject *qmlChartView = rootObject->findChild<QObject*>("chartViewSpectr");
-//    qmlChartView->setProperty("title", tr("Spectr"));
-
-    //*******************************************************
-    // Spectr
-    QObject *qmlPlotWaterfall = rootObject->findChild<QObject*>("plotWaterfall");
-    WaterfallItem *plotWaterfall = static_cast<WaterfallItem *>(qmlPlotWaterfall);
-
-    connect(ptrDataSource, &DataSource::sendPowerSpectr,
-            plotWaterfall, &WaterfallItem::onPowerSpectr);
-
-    //*******************************************************
-    // plots gl
-//    QObject *qmlPlotGL = rootObject->findChild<QObject*>("plotGL");
-//    gl_plots *plot = static_cast<gl_plots *>(qmlPlotGL);
-
-//    connect(ptrDataSource, &DataSource::sendPowerSpectr,
-//            plot, &gl_plots::slot_power_spectr);
-
-    //*******************************************************
     // Spect surface
     QObject *qmlSurfaceSpectr = rootObject->findChild<QObject*>("objSurfaceSpectr");
     surface_spectr *surfaceSpectr = static_cast<surface_spectr *>(qmlSurfaceSpectr);
 
-    connect(ptrDataSource, &DataSource::sendPowerSpectr,
+    // ta spectr
+    ptr_ta_spectr_worker = new ta_spectr;
+    ptr_ta_spectr_thread = new QThread;
+    ptr_ta_spectr_worker->moveToThread(ptr_ta_spectr_thread);
+
+    connect(this, &CoreSweepClient::signal_data_spectr,
+            ptr_ta_spectr_worker, &ta_spectr::slot_data_spectr);
+
+    connect(ptr_ta_spectr_worker, &ta_spectr::signal_spectr_rt,
             surfaceSpectr, &surface_spectr::slot_power_spectr);
+
+    ptr_ta_spectr_thread->start();
 
     if (ptrEngine->rootObjects().isEmpty())
         return -1;
@@ -144,18 +115,14 @@ void CoreSweepClient::initialization()
     connect(this, &CoreSweepClient::signal_system_monitor,
             ptrSystemMonitorInterface, &SystemMonitorInterface::slot_system_monitor);
 
-    // DataSource
-    ptrDataSource = new DataSource(this);
     // user interface
     ptrUserInterface = new UserInterface(this);
     // new style
     connect(ptrUserInterface, &UserInterface::signal_sweep_message,
             this, &CoreSweepClient::slot_publish_message);
-
     connect(this, &CoreSweepClient::sendStartSpectr,
             ptrUserInterface, &UserInterface::sendStartSpectr);
-    connect(ptrUserInterface, &UserInterface::sendClearMaxPowerSpectr,
-            ptrDataSource, &DataSource::clearMaxPowerSpectr);
+
     // StateSweepClient
     connect(this, &CoreSweepClient::sendStateConnected,
             ptrStateSweepClient, &StateSweepClient::onConnect);
@@ -435,22 +402,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
             {
                 const data_spectr powers(data_received.data_message());
 
-                QVector<power_spectr> tmp_spectr(powers.spectr());
-
-                std::sort(tmp_spectr.begin(), tmp_spectr.end(), [](const power_spectr& a, const power_spectr& b) {
-                    return a.m_frequency_min < b.m_frequency_min;
-                });
-
-                // for test
-                ptrDataSource->updateDate(ptrUserInterface->frequencyMin(),
-                                          ptrUserInterface->frequencyMax(),
-                                          tmp_spectr);
-
-                // X update axis max & min freq
-                ptrAxisX->setMin(ptrUserInterface->frequencyMin());
-                ptrAxisX->setMax(ptrUserInterface->frequencyMax());
-                // test
-                emit sendStartSpectr();
+                emit signal_data_spectr(powers);
             }
         }
     }
