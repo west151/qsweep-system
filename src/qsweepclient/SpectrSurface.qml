@@ -7,6 +7,11 @@ SpectrSurfaceForm {
 
     // property alias check_box_max_spectr: check_box_max_spectr
 
+    check_box_max_spectr.onClicked: {
+        userInterface.on_spectr_max_calc(check_box_max_spectr.checked)
+        //userInterface.onRequestSweepSpectr(false)
+    }
+
     in_freq_min{
         //validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
         validator : IntValidator{bottom: 30; top: 6000;}

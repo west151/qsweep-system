@@ -151,7 +151,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         // PowerSpectr for sending
         power_spectr dataPowerSpectr;
         bool isSending = false;
-        dataPowerSpectr.dateTime = QDateTime::currentDateTimeUtc();
+        dataPowerSpectr.m_date_time = QDateTime::currentDateTimeUtc();
 
         time_now = time(nullptr);
         fft_time = localtime(&time_now);

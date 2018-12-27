@@ -51,7 +51,7 @@ data_spectr::data_spectr(const QByteArray &json, const bool binary) : data(new d
         // DateTime
         auto dt = QDateTime::fromString(objectPowerSpectr.value(DT_KEY).toString(), DT_FORMAT);
         dt.setTimeSpec(Qt::UTC);
-        powerSpectr.dateTime = dt;
+        powerSpectr.m_date_time = dt;
         powerSpectr.m_fft_bin_width = objectPowerSpectr.value(FFT_BIN_WIDTH_KEY).toString().toDouble();
         powerSpectr.m_fft_size = objectPowerSpectr.value(FFT_SIZE_KEY).toString().toUInt();
         powerSpectr.m_frequency_min = objectPowerSpectr.value(FREQUENCY_MIN_KEY).toString().toULongLong();
@@ -113,7 +113,7 @@ QByteArray data_spectr::export_json(const bool binary) const
             QJsonObject objectPowerSpectr;
             const power_spectr powerSpectr = data->m_powers.at(i);
 
-            objectPowerSpectr.insert(DT_KEY, powerSpectr.dateTime.toUTC().toString(DT_FORMAT));
+            objectPowerSpectr.insert(DT_KEY, powerSpectr.m_date_time.toUTC().toString(DT_FORMAT));
             objectPowerSpectr.insert(FREQUENCY_MIN_KEY, QString::number(powerSpectr.m_frequency_min));
             objectPowerSpectr.insert(FREQUENCY_MAX_KEY, QString::number(powerSpectr.m_frequency_max));
             objectPowerSpectr.insert(FFT_BIN_WIDTH_KEY, QString::number(powerSpectr.m_fft_bin_width));

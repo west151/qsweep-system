@@ -3,7 +3,7 @@
 
 #include <QString>
 
-static const QString DT_FORMAT = QStringLiteral("hh:mm dd.MM.yyyy");
+static const QString DT_FORMAT = QStringLiteral("hh:mm:ss.zzz dd.MM.yyyy");
 
 static const QString DATA_KEY = QStringLiteral("data");
 static const QString DT_KEY = QStringLiteral("dt");
@@ -17,8 +17,6 @@ static const QString LIB_HACKRF_VERSION_KEY = QStringLiteral("lib_hackrf_version
 
 static const QString ID_KEY = QStringLiteral("id");
 static const QString TYPE_MESSAGE_KEY = QStringLiteral("type_msg");
-static const QString TYPE_ANSWER_KEY = QStringLiteral("TypeAnswer");
-static const QString DT_ANSWER_KEY = QStringLiteral("DateTimeAnswer");
 static const QString TEXT_MESSAGE_KEY = QStringLiteral("text_msg");
 
 static const QString FREQUENCY_MIN_KEY = QStringLiteral("frequency_min");

@@ -26,8 +26,11 @@ public:
     double level_min()const;
     double level_max()const;
 
+    void add_spectr_item(const QString &, const QColor &color);
+    void remove_spectr_item(const QString &);
+
 public slots:
-    void slot_power_spectr(const QVector<qreal> &spectr);
+    void slot_power_spectr(const QDateTime &, const quint64 &, const quint64 &, const QVector<qreal> &spectr);
     void slot_sensitivity_waterfall(const qreal &);
     void slot_split_surface(const qreal &);
 
@@ -40,9 +43,6 @@ public slots:
 
     // for test
     void slot_power_spectr_test();
-
-    void add_spectr_item(const QString &, const QColor &color);
-    void remove_spectr_item(const QString &);
 
 signals:
     // level
@@ -74,8 +74,9 @@ private:
     qint32 m_ticket_segment;
 
     // frequency
-    double m_frequency_min;
-    double m_frequency_max;
+    quint64 m_frequency_min;
+    quint64 m_frequency_max;
+    qint32 m_ticket_segment_frequency;
 
     // spectr
     QPoint spectr_size()const;  // size spectr
@@ -91,6 +92,9 @@ private:
     QImage m_image_waterfall;
     QList<QRgb> m_colors_waterfall;
     qreal m_sensitivity_waterfall;
+
+    QPen m_ticket_pen;
+    QPen m_grid_pen;
 
     // for test
     QRandomGenerator rm;

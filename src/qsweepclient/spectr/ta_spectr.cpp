@@ -24,6 +24,8 @@ void ta_spectr::slot_data_spectr(const data_spectr &data)
         for(qint32 i=0; i<tmp_spectr.size(); ++i)
             tmp_power_rt.append(tmp_spectr.at(i).m_power);
 
-        emit signal_spectr_rt(tmp_power_rt);
+        const auto dt = tmp_spectr.at(0).m_date_time;
+
+        emit signal_spectr_rt(dt, tmp_spectr.at(0).m_frequency_min, tmp_spectr.at(tmp_spectr.size()-1).m_frequency_max, tmp_power_rt);
     }
 }

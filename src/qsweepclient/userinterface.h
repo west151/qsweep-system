@@ -50,6 +50,7 @@ public:
     Q_INVOKABLE void onRequestSweepInfo();
     Q_INVOKABLE void onRequestSweepSpectr(const bool &start = true);
     Q_INVOKABLE void onClearMaxPowerSpectr();
+    Q_INVOKABLE void on_spectr_max_calc(const bool &);
 
 signals:
     void sendMessageToHost();
@@ -70,6 +71,8 @@ signals:
     void sendStartSpectr();
     void sendClearMaxPowerSpectr();
 
+    void signal_spectr_max_calc(const bool &);
+
 private:
     // spectr params
     quint32 m_freqMin;
@@ -85,3 +88,4 @@ private:
 };
 
 #endif // USERINTERFACE_H
+

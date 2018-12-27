@@ -3,6 +3,7 @@
 #include <QtGui/QPainter>
 #include <cmath>
 #include <QTimer>
+#include <QDateTime>
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -10,8 +11,15 @@
 
 surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 {
-    is_spectr_max_calc = true;
+    m_ticket_pen.setColor(Qt::white);
+    m_ticket_pen.setStyle(Qt::SolidLine);
+
+    m_grid_pen.setColor(Qt::darkGray);
+    m_grid_pen.setStyle(Qt::DashLine);
+
+    is_spectr_max_calc = false;
     m_ticket_segment = 4;
+    m_ticket_segment_frequency = 5;
 
     // background
     m_color_background = QColor(Qt::black);
@@ -155,8 +163,21 @@ double surface_spectr::level_max() const
     return m_level_max;
 }
 
-void surface_spectr::slot_power_spectr(const QVector<qreal> &spectr)
+void surface_spectr::slot_power_spectr(const QDateTime &dt, const quint64 &freq_min, const quint64 &freq_max, const QVector<qreal> &spectr)
 {
+    Q_UNUSED(dt)
+
+    // update min max freq
+    if(freq_min != m_frequency_min)
+        m_frequency_min = freq_min;
+
+    if(freq_max != m_frequency_max)
+        m_frequency_max = freq_max;
+
+//#ifdef QT_DEBUG
+//    qDebug() << Q_FUNC_INFO << "dt" << dt.toLocalTime();
+//#endif
+
     spectr_rt_vector.clear();
     spectr_rt_vector.reserve(spectr.size());
 
@@ -304,7 +325,11 @@ void surface_spectr::add_spectr_item(const QString &name, const QColor &color)
 void surface_spectr::remove_spectr_item(const QString &name)
 {
     if(m_spectr_item_list.contains(name))
+    {
         m_spectr_item_list.remove(name);
+        spectr_max_value.clear();
+        spectr_max_vector.clear();
+    }
 }
 
 void surface_spectr::slot_size_changed()
@@ -357,6 +382,7 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
     QFontMetrics font_metrics(painter->font());
     int max_text_height = font_metrics.ascent()/2;
 
+    // level scale
     // min ticket
     QLine min_line(QPoint(m_surface_point.x()-5, spectr_size().y() + m_surface_point.y()),
                    QPoint(m_surface_point.x(), spectr_size().y() + m_surface_point.y()));
@@ -389,12 +415,35 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
         painter->drawText(QPoint(m_surface_point.x()-5-text_width, y + max_text_height), text);
 
         // grid line
-        QPen grid_pen;
-        grid_pen.setColor(Qt::darkGray);
-        grid_pen.setStyle(Qt::DashLine);
         QLine grid_line(QPoint(m_surface_point.x()+1, y),
                    QPoint(spectr_size().x()+m_surface_point.x()-1, y));
-        painter->setPen(grid_pen);
+        painter->setPen(m_grid_pen);
+        painter->drawLine(grid_line);
+    }
+
+    // freq scale
+    // min freq ticket
+    QLine freq_min_line(QPoint(m_surface_point.x(), spectr_size().y() + m_surface_point.y() + 5),
+                   QPoint(m_surface_point.x(), spectr_size().y() + m_surface_point.y()));
+    painter->setPen(m_ticket_pen);
+    painter->drawLine(freq_min_line);
+
+    // max freq ticket
+    QLine freq_max_line(QPoint(m_surface_point.x() + spectr_size().x(), spectr_size().y() + m_surface_point.y() + 5),
+                   QPoint(m_surface_point.x()+ spectr_size().x(), spectr_size().y() + m_surface_point.y()));
+    painter->setPen(m_ticket_pen);
+    painter->drawLine(freq_max_line);
+
+    qreal step_x = spectr_size().x()/m_ticket_segment_frequency;
+    //qreal step_level = std::abs(m_level_max - m_level_min)/m_ticket_segment;
+
+    for(int i=0; i<m_ticket_segment_frequency; ++i)
+    {
+        int x = static_cast<int>(m_surface_point.x() + step_x * i);
+        // grid line
+        QLine grid_line(QPoint(x, m_surface_point.y() + 1),
+                        QPoint(x, spectr_size().y() + m_surface_point.y() - 1));
+        painter->setPen(m_grid_pen);
         painter->drawLine(grid_line);
     }
 }

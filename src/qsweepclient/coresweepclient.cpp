@@ -67,6 +67,9 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QObject *qmlSurfaceSpectr = rootObject->findChild<QObject*>("objSurfaceSpectr");
     surface_spectr *surfaceSpectr = static_cast<surface_spectr *>(qmlSurfaceSpectr);
 
+    connect(ptrUserInterface, &UserInterface::signal_spectr_max_calc,
+            surfaceSpectr, &surface_spectr::slot_spectr_max_calc);
+
     // ta spectr
     ptr_ta_spectr_worker = new ta_spectr;
     ptr_ta_spectr_thread = new QThread;

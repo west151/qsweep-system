@@ -164,3 +164,8 @@ void UserInterface::onClearMaxPowerSpectr()
 {
     emit sendClearMaxPowerSpectr();
 }
+
+void UserInterface::on_spectr_max_calc(const bool &value)
+{
+    emit signal_spectr_max_calc(value);
+}
