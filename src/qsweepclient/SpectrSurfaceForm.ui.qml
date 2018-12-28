@@ -42,7 +42,7 @@ Item {
             id: in_freq_min
             x: 8
             y: 8
-            width: 144
+            width: 77
             height: 40
             text: qsTr("2300")
         }
@@ -51,7 +51,7 @@ Item {
             id: in_freq_max
             x: 8
             y: 54
-            width: 144
+            width: 77
             height: 40
             text: qsTr("2700")
         }
@@ -62,21 +62,21 @@ Item {
             y: 100
             width: 144
             height: 40
-        }
 
-        ComboBox {
-            id: cbx_lna_gain
-            x: 72
-            y: 146
-            width: 80
-            height: 40
+            ComboBox {
+                id: cbx_lna_gain
+                x: 67
+                y: 45
+                width: 77
+                height: 40
+            }
         }
 
         ComboBox {
             id: cbx_vga_gain
-            x: 72
+            x: 75
             y: 192
-            width: 80
+            width: 77
             height: 40
         }
 

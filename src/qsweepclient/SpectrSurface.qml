@@ -3,13 +3,8 @@ import surfacespectr 1.0
 
 SpectrSurfaceForm {
 
-
-
-    // property alias check_box_max_spectr: check_box_max_spectr
-
     check_box_max_spectr.onClicked: {
         userInterface.on_spectr_max_calc(check_box_max_spectr.checked)
-        //userInterface.onRequestSweepSpectr(false)
     }
 
     in_freq_min{
@@ -30,50 +25,58 @@ SpectrSurfaceForm {
     }
 
     cbx_fft_size {
-        model: fftSizeModel
         currentIndex: 2
-    }
+        model: ListModel {
+            id: fftSizeModel
+            ListElement { text: "500000" }
+            ListElement { text: "250000" }
+            ListElement { text: "125000" }
+            ListElement { text: "100000" }
+            ListElement { text: "50000" }
+            ListElement { text: "25000" }
+        }
 
-    ListModel {
-        id: fftSizeModel
-        ListElement { text: "500000" }
-        ListElement { text: "250000" }
-        ListElement { text: "125000" }
-        ListElement { text: "100000" }
-        ListElement { text: "50000" }
-        ListElement { text: "25000" }
-    }
-
-    cbx_vga_gain {
-        model: vgaGainModel
-        currentIndex: 10
-    }
-
-    // RX VGA (baseband) gain, 0-62dB, 2dB steps
-    ListModel {
-        id: vgaGainModel
-        Component.onCompleted:
-        {
-            for (var i = 0; i <= 62; i=i+2) {
-                vgaGainModel.append({"text":i})
-            }
+        onActivated: {
+            console.log("cbx_fft_size index:", cbx_fft_size.currentText)
+            userInterface.fftBinWidth = cbx_fft_size.currentText
         }
     }
 
-    cbx_lna_gain{
-        model: lnaGainModel
-        currentIndex: 4
+    // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    cbx_vga_gain {
+        currentIndex: 10
+        inputMethodHints: Qt.ImhDigitsOnly
+        model: ListModel {
+            id: vgaGainModel
+            Component.onCompleted: {
+                for (var i = 0; i <= 62; i=i+2) {
+                    vgaGainModel.append({"text":i})
+                }
+            }
+        }
+
+        onActivated: {
+            console.log("cbx_vga_gain index:", cbx_vga_gain.currentText)
+            userInterface.vgaGain = cbx_vga_gain.currentText
+        }
     }
 
     // RX LNA (IF) gain, 0-40dB, 8dB steps
-    ListModel {
-        id: lnaGainModel
-        ListElement { text: "0" }
-        ListElement { text: "8" }
-        ListElement { text: "16" }
-        ListElement { text: "24" }
-        ListElement { text: "32" }
-        ListElement { text: "40" }
+    cbx_lna_gain{
+        currentIndex: 4
+        model: ListModel {
+            id: lnaGainModel
+            ListElement { text: "0" }
+            ListElement { text: "8" }
+            ListElement { text: "16" }
+            ListElement { text: "24" }
+            ListElement { text: "32" }
+            ListElement { text: "40" }
+        }
+        onActivated: {
+            console.log("cbx_lna_gain index:", cbx_lna_gain.currentText)
+            userInterface.lnaGain = cbx_lna_gain.currentText
+        }
     }
 
     // start spectr

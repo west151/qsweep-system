@@ -19,7 +19,7 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     is_spectr_max_calc = false;
     m_ticket_segment = 4;
-    m_ticket_segment_frequency = 5;
+    m_ticket_segment_frequency = 7;
 
     // background
     m_color_background = QColor(Qt::black);
@@ -427,6 +427,10 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
                    QPoint(m_surface_point.x(), spectr_size().y() + m_surface_point.y()));
     painter->setPen(m_ticket_pen);
     painter->drawLine(freq_min_line);
+    // lebel
+    const QString min_freq_text = QString::number(static_cast<double>(m_frequency_min/1e6),'f', 1);
+    int min_freq_text_width = font_metrics.boundingRect(min_freq_text).height()+5;
+    painter->drawText(QPoint(m_surface_point.x(),  spectr_size().y()+m_surface_point.y()+min_freq_text_width), min_freq_text);
 
     // max freq ticket
     QLine freq_max_line(QPoint(m_surface_point.x() + spectr_size().x(), spectr_size().y() + m_surface_point.y() + 5),
@@ -434,12 +438,26 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
     painter->setPen(m_ticket_pen);
     painter->drawLine(freq_max_line);
 
-    qreal step_x = spectr_size().x()/m_ticket_segment_frequency;
-    //qreal step_level = std::abs(m_level_max - m_level_min)/m_ticket_segment;
+    // lebel
+    const QString max_freq_text = QString::number(static_cast<double>(m_frequency_max/1e6),'f', 1);
+    int max_freq_text_height = font_metrics.boundingRect(max_freq_text).height()+5;
+    int max_freq_text_width = font_metrics.boundingRect(max_freq_text).width();
+    painter->drawText(QPoint( spectr_size().x() + m_surface_point.x() - max_freq_text_width, spectr_size().y()+m_surface_point.y()+max_freq_text_height), max_freq_text);
 
-    for(int i=0; i<m_ticket_segment_frequency; ++i)
+    qreal step_x = spectr_size().x()/m_ticket_segment_frequency;
+    qreal step_freq = ((m_frequency_max - m_frequency_min)/static_cast<quint32>(m_ticket_segment_frequency))/1e6;
+
+    for(int i=1; i<m_ticket_segment_frequency; ++i)
     {
         int x = static_cast<int>(m_surface_point.x() + step_x * i);
+
+        // text ticked
+        const QString text = QString::number(static_cast<double>((m_frequency_min/1e6)+step_freq*i), 'f', 1);
+        int text_width = font_metrics.boundingRect(text).width();
+        int text_height = font_metrics.boundingRect(text).height()+5;
+        painter->setPen(m_ticket_pen);
+        painter->drawText(QPoint(x-(text_width/2), spectr_size().y()+m_surface_point.y()+text_height), text);
+
         // grid line
         QLine grid_line(QPoint(x, m_surface_point.y() + 1),
                         QPoint(x, spectr_size().y() + m_surface_point.y() - 1));
