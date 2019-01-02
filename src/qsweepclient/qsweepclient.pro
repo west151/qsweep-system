@@ -9,7 +9,6 @@ HEADERS += \
     model/messagelogmodel.h \
     model/hackrfinfomodel.h \
     settings/sweepclientsettings.h \
-    chart/waterfallitem.h \
     systemmonitorinterface.h \
     statesweepclient.h \
     chart/surface_spectr.h \
@@ -23,7 +22,6 @@ SOURCES += \
     model/messagelogmodel.cpp \
     model/hackrfinfomodel.cpp \
     settings/sweepclientsettings.cpp \
-    chart/waterfallitem.cpp \
     systemmonitorinterface.cpp \
     statesweepclient.cpp \
     chart/surface_spectr.cpp \
