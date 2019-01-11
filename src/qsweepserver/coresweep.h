@@ -24,16 +24,15 @@ public:
 signals:
     void signal_run_hackrf_info(const QByteArray &);
     void signal_run_spectr_worker(const QByteArray &);
-
-    void sendRunSweepInfo(const QByteArray &);
-    //void sendRunSweepWorker(const QByteArray &);
-    void sendStopSweepWorker();
+    void signal_stop_spectr_worker();
 
 private slots:
     void slot_publish_message(const QByteArray &);
     void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
+    void slot_sweep_worker(const bool &);
 
 private:
+    bool m_run_sweep_worker;
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};
     SweepWorker* ptrSweepWorker {Q_NULLPTR};
     QPointer<QThread> ptrSweepThread;

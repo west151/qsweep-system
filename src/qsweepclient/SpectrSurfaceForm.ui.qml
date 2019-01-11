@@ -42,16 +42,16 @@ Item {
             id: in_freq_min
             x: 8
             y: 8
-            width: 77
+            width: 65
             height: 40
             text: qsTr("2300")
         }
 
         TextField {
             id: in_freq_max
-            x: 8
-            y: 54
-            width: 77
+            x: 87
+            y: 8
+            width: 65
             height: 40
             text: qsTr("2700")
         }

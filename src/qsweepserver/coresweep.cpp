@@ -67,38 +67,24 @@ void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopi
             {
                 const params_spectr params_spectr_data(ctrl_message.data_message(), false);
 
-                if(params_spectr_data.start_spectr())
-                    emit signal_run_spectr_worker(message);
-                else
-                    emit sendStopSweepWorker();
+                if(params_spectr_data.start_spectr()){
+                    if(!m_run_sweep_worker)
+                        emit signal_run_spectr_worker(message);
+
+                    if(m_run_sweep_worker){
+                        emit signal_stop_spectr_worker();
+                        emit signal_run_spectr_worker(message);
+                    }
+                }else
+                    emit signal_stop_spectr_worker();
             }
         }
     }
+}
 
-    // signal_run_spectr_worker
-
-//    switch (ptrSweepTopic->sweepTopic(topic.name())) {
-//    case QSweepTopic::TOPIC_CTRL:
-//    {
-//        QSweepRequest request(message, false);
-
-//        if(request.isValid()){
-//            switch (request.typeRequest()) {
-//            case TypeRequest::START_SWEEP_SPECTR:
-//                emit sendRunSweepWorker(message);
-//                break;
-//            case TypeRequest::STOP_SWEEP_SPECTR:
-//                emit sendStopSweepWorker();
-//                break;
-//            default:
-//                break;
-//            }
-//        }
-//    }
-//        break;
-//    default:
-//        break;
-//    }
+void CoreSweep::slot_sweep_worker(const bool &on)
+{
+    m_run_sweep_worker = on;
 }
 
 bool CoreSweep::readSettings(const QString &file)
@@ -172,6 +158,8 @@ bool CoreSweep::saveSettings(const QString &file)
 
 void CoreSweep::initialization()
 {    
+    m_run_sweep_worker = false;
+
     ptrSweepTopic = new QSweepTopic(this);
 
     ptrSweepWorker = new SweepWorker;
@@ -179,17 +167,21 @@ void CoreSweep::initialization()
     ptrSweepWorker->moveToThread(ptrSweepThread);
 
     connect(this, &CoreSweep::signal_run_spectr_worker,
-            ptrSweepWorker, &SweepWorker::onRunSweepWorker);
+            ptrSweepWorker, &SweepWorker::slot_run_sweep_worker);
 
     connect(ptrSweepWorker, &SweepWorker::signal_sweep_message,
             this, &CoreSweep::slot_publish_message);
+
+    connect(ptrSweepWorker, &SweepWorker::signal_sweep_worker,
+            this, &CoreSweep::slot_sweep_worker);
 
     // Power spectr
     connect(SweepWorker::getInstance(), &SweepWorker::signal_sweep_message,
             this, &CoreSweep::slot_publish_message);
     // stop spectr
-    connect(this, &CoreSweep::sendStopSweepWorker,
-            SweepWorker::getInstance(), &SweepWorker::onStopSweepWorker);
+    connect(this, &CoreSweep::signal_stop_spectr_worker,
+            SweepWorker::getInstance(), &SweepWorker::slot_stop_sweep_worker);
+
 
     ptrSweepThread->start();
 

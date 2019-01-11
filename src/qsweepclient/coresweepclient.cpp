@@ -120,11 +120,8 @@ void CoreSweepClient::initialization()
 
     // user interface
     ptrUserInterface = new UserInterface(this);
-    // new style
     connect(ptrUserInterface, &UserInterface::signal_sweep_message,
             this, &CoreSweepClient::slot_publish_message);
-    connect(this, &CoreSweepClient::sendStartSpectr,
-            ptrUserInterface, &UserInterface::sendStartSpectr);
 
     // StateSweepClient
     connect(this, &CoreSweepClient::sendStateConnected,

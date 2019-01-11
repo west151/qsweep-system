@@ -35,7 +35,6 @@ public slots:
     void onDisconnectFromHost();
 
 signals:
-    void sendStartSpectr();
     void sendStateConnected();
     void sendStateDisconnected();
 

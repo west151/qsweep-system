@@ -22,9 +22,6 @@ struct timeval t_start;
 bool amp = false;
 uint32_t amp_enable;
 
-//bool antenna = false;
-//uint32_t antenna_enable;
-
 volatile bool one_shot = true;
 volatile bool sweep_started = false;
 volatile bool do_exit = false;
@@ -238,7 +235,7 @@ void SweepWorker::sweepWorkerMessagelog(const QString &value)
     emit signal_sweep_message(send_data.export_json());
 }
 
-void SweepWorker::onRunSweepWorker(const QByteArray &value)
+void SweepWorker::slot_run_sweep_worker(const QByteArray &value)
 {
     const sweep_message ctrl_info(value);
     const params_spectr params_spectr_data(ctrl_info.data_message());
@@ -398,6 +395,9 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
     gettimeofday(&t_start, nullptr);
     gettimeofday(&time_start, nullptr);
 
+    if((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false))
+        emit signal_sweep_worker(true);
+
     while((hackrf_is_streaming(device) == HACKRF_TRUE) && (do_exit == false))
     {
         uint32_t byte_count_now;
@@ -481,9 +481,11 @@ void SweepWorker::onRunSweepWorker(const QByteArray &value)
 
     do_exit = false;
     num_ranges = 0;
+
+    emit signal_sweep_worker(false);
 }
 
-void SweepWorker::onStopSweepWorker()
+void SweepWorker::slot_stop_sweep_worker()
 {
-    one_shot = true;
+    do_exit = true;
 }

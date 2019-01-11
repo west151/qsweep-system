@@ -25,15 +25,12 @@ public:
     void onDataPowerSpectrCallbacks(const power_spectr &, const bool &isSending = false);
 
 public slots:
-    void onRunSweepWorker(const QByteArray &value);
-    void onStopSweepWorker();
+    void slot_run_sweep_worker(const QByteArray &value);
+    void slot_stop_sweep_worker();
 
 signals:
-    //void sendPowerSpectr(const QByteArray &value);
-
-    //void signal_data_log(const QByteArray &);
-
     void signal_sweep_message(const QByteArray &);
+    void signal_sweep_worker(const bool &);
 
 private:
     static SweepWorker* m_instance;

@@ -67,8 +67,6 @@ signals:
     void hostBrokerChanged();
     void portBrokerChanged();
     void pingReceivedCountChanged();
-    // start update spectr
-    void sendStartSpectr();
     void sendClearMaxPowerSpectr();
 
     void signal_spectr_max_calc(const bool &);
