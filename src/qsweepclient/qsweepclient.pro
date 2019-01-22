@@ -1,4 +1,4 @@
-QT += charts quick mqtt
+QT += charts quick mqtt sql
 
 include(../../common.pri)
 include(../../protocol.pri)
@@ -13,7 +13,9 @@ HEADERS += \
     statesweepclient.h \
     chart/surface_spectr.h \
     chart/spectr_item.h \
-    spectr/ta_spectr.h
+    spectr/ta_spectr.h \
+    database/db_local_state.h \
+    model/params_spectr_model.h
 
 SOURCES += \
     coresweepclient.cpp \
@@ -26,7 +28,9 @@ SOURCES += \
     statesweepclient.cpp \
     chart/surface_spectr.cpp \
     chart/spectr_item.cpp \
-    spectr/ta_spectr.cpp
+    spectr/ta_spectr.cpp \
+    database/db_local_state.cpp \
+    model/params_spectr_model.cpp
 
 RESOURCES += qml.qrc
 

@@ -7,6 +7,7 @@
 #include <QTime>
 #include <QtCore/qdebug.h>
 #include <QThread>
+#include <QStandardPaths>
 
 #include "userinterface.h"
 #include "qsweeptopic.h"
@@ -21,6 +22,7 @@
 #include "system_monitor.h"
 #include "data_spectr.h"
 #include "spectr/ta_spectr.h"
+#include "database/db_local_state.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -37,7 +39,8 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setApplicationName("SweepClient");
+    QCoreApplication::setOrganizationName("sdr_qsweep");
+    QCoreApplication::setApplicationName("qsweep-cli");
     QCoreApplication::setApplicationVersion("1.0");
 
     QApplication app(argc, argv);
@@ -140,6 +143,16 @@ void CoreSweepClient::initialization()
     ptrMessageLogModel = new MessageLogModel(this);
     connect(this, &CoreSweepClient::signal_data_log,
             ptrMessageLogModel, &MessageLogModel::add_result);
+
+    // database local
+    ptr_db_local_state_worker = new db_local_state;
+    ptr_db_local_thread = new QThread;
+    ptr_db_local_state_worker->moveToThread(ptr_db_local_thread);
+
+    connect(this, &CoreSweepClient::signal_open_db,
+            ptr_db_local_state_worker, &db_local_state::slot_open_db);
+
+    ptr_db_local_thread->start();
 }
 
 bool CoreSweepClient::readSettings(const QString &file)
@@ -233,6 +246,9 @@ void CoreSweepClient::launching()
     // start timer
     m_timerReceive->start();
     m_sizeDatacReceive = 0;
+
+    // open/create database
+    emit signal_open_db(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
 }
 
 void CoreSweepClient::updateLogStateChange()

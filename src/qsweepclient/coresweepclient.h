@@ -23,6 +23,7 @@ class data_log;
 class system_monitor;
 class ta_spectr;
 class data_spectr;
+class db_local_state;
 
 class CoreSweepClient : public QObject
 {
@@ -42,6 +43,7 @@ signals:
     void signal_data_log(const data_log &);
     void signal_system_monitor(const system_monitor &);
     void signal_data_spectr(const data_spectr &);
+    void signal_open_db(const QString &);
 
 private slots:
     void slot_publish_message(const QByteArray &);
@@ -66,6 +68,10 @@ private:
     // ta spectr
     ta_spectr* ptr_ta_spectr_worker {Q_NULLPTR};
     QPointer<QThread> ptr_ta_spectr_thread;
+
+    // database local
+    db_local_state* ptr_db_local_state_worker {Q_NULLPTR};
+    QPointer<QThread> ptr_db_local_thread;
 
     void initialization();
     bool readSettings(const QString &);
