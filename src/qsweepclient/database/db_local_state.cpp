@@ -24,7 +24,12 @@ db_local_state::db_local_state(QObject *parent) : QObject(parent)
 {
     m_dbase = QSqlDatabase::addDatabase(database_driver, connection_name);
 
-    m_column_visual_settings.insert("ID_PK", sqlite_type_integer_pk);
+    m_column_visual_settings.insert("id_pk", sqlite_type_integer_pk);
+    m_column_visual_settings.insert("min_freq", sqlite_type_double);
+    m_column_visual_settings.insert("max_freq", sqlite_type_double);
+    m_column_visual_settings.insert("lna_gain", sqlite_type_integer);
+    m_column_visual_settings.insert("vga_gain", sqlite_type_integer);
+    m_column_visual_settings.insert("fft_bin_width", sqlite_type_double);
 
     m_table.insert(visual_settings_table, m_column_visual_settings);
 }
@@ -53,87 +58,33 @@ void db_local_state::slot_open_db(const QString &dbpath)
             if(!is_table_name_resolve(list_table.at(i)))
                 create_table(list_table.at(i));
 
+        //PRAGMA page_size = bytes; // размер страницы БД; страница БД - это единица обмена между диском и кэшом, разумно сделать равным размеру кластера диска (у меня 4096)
+        //PRAGMA cache_size = -kibibytes; // задать размер кэша соединения в килобайтах, по умолчанию он равен 2000 страниц БД
+        //PRAGMA encoding = "UTF-8";  // тип данных БД, всегда используйте UTF-8
+        //PRAGMA foreign_keys = 1; // включить поддержку foreign keys, по умолчанию - ОТКЛЮЧЕНА
+        //PRAGMA journal_mode = DELETE | TRUNCATE | PERSIST | MEMORY | WAL | OFF;  // задать тип журнала, см. далее
+        //PRAGMA synchronous = 0 | OFF | 1 | NORMAL | 2 | FULL; // тип синхронизации транзакции, см. далее
+
+        set_pragma("synchronous","0");
+
     }else{
 #ifdef QT_DEBUG
         qDebug() << Q_FUNC_INFO << "Can't database open:" << full_path;
         qDebug() << Q_FUNC_INFO << "error:" << m_dbase.lastError();
 #endif
     }
+}
 
+void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &)
+{
 
+}
 
+QVector<params_spectr> db_local_state::slot_read_params_spectr() const
+{
+    QVector<params_spectr> result {};
 
-
-
-
-
-
-//    if((!sname.isEmpty())&&(dbase.driverName()=="QSQLITE"))
-//        {
-//            // имя файла БД
-//            QString fileName("reo"+sname.toLower()+".sqlite");
-//            // имя таблицы в БД для хранения данных РЭО
-//            QString tableName("reo_"+sname.toLower()+"_tbl");
-//            m_tableName = tableName;
-
-//            QString path(dbpath);
-//            path.append(QDir::separator());
-//            path.append(sname);
-//            path.append(QDir::separator());
-//            path.append(fileName);
-
-//            dbase.setDatabaseName(path);
-
-//            if (dbase.open())
-//            {
-//                // проверка наличия таб.
-//                if(!isTableNameResolve(tableName))
-//                {
-//                    if(createTable(sname.toLower(),tableName))
-//                    {
-//    #ifdef QT_DEBUG
-//                        if(ptrSettings->isDebugLog()){
-//                            qDebug() << Q_FUNC_INFO << trUtf8("Создана таблица: %1 БД: %2").arg(tableName).arg(dbase.databaseName());
-//                        }
-//    #endif
-//                    }
-//                    else
-//                    {
-//    #ifdef QT_DEBUG
-//                        if(ptrSettings->isDebugLog()){
-//                            qDebug() << Q_FUNC_INFO << trUtf8("Ошибка создания таблицы: %1 БД: %2").arg(tableName).arg(dbase.databaseName());
-//                        }
-//    #endif
-//                    }
-//                }//if(!isTableNameResolve(tableName))
-
-//    //PRAGMA page_size = bytes; // размер страницы БД; страница БД - это единица обмена между диском и кэшом, разумно сделать равным размеру кластера диска (у меня 4096)
-//    //PRAGMA cache_size = -kibibytes; // задать размер кэша соединения в килобайтах, по умолчанию он равен 2000 страниц БД
-//    //PRAGMA encoding = "UTF-8";  // тип данных БД, всегда используйте UTF-8
-//    //PRAGMA foreign_keys = 1; // включить поддержку foreign keys, по умолчанию - ОТКЛЮЧЕНА
-//    //PRAGMA journal_mode = DELETE | TRUNCATE | PERSIST | MEMORY | WAL | OFF;  // задать тип журнала, см. далее
-//    //PRAGMA synchronous = 0 | OFF | 1 | NORMAL | 2 | FULL; // тип синхронизации транзакции, см. далее
-
-//                // Параметры соединения (БД)
-//                setPRAGMA("synchronous","OFF");
-
-//                return true;
-
-//            }
-//            else
-//            {
-//    #ifdef QT_DEBUG
-//                        if(ptrSettings->isDebugLog()){
-//                            qDebug() << Q_FUNC_INFO << tr("Ошибка открытия БД") << dbase.lastError().text();
-//                        }
-//    #endif
-
-//                return false;
-//            }
-
-//        }
-
-//        return false;
+    return result;
 }
 
 void db_local_state::slot_close_db()
@@ -216,7 +167,7 @@ void db_local_state::set_pragma(const QString &param, const QString &value)
 {
     QString sql_query = QString("PRAGMA %1 = %2").arg(param).arg(value);
 
-    if (m_dbase.open())
+    if (m_dbase.isOpen())
     {
         QSqlQuery query(m_dbase);
         query.prepare(sql_query);

@@ -38,6 +38,14 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 8
 
+        ComboBox {
+            id: cbx_lna_gain
+            x: 75
+            y: 108
+            width: 77
+            height: 40
+        }
+
         TextField {
             id: in_freq_min
             x: 8
@@ -59,31 +67,23 @@ Item {
         ComboBox {
             id: cbx_fft_size
             x: 8
-            y: 100
+            y: 58
             width: 144
             height: 40
-
-            ComboBox {
-                id: cbx_lna_gain
-                x: 67
-                y: 45
-                width: 77
-                height: 40
-            }
         }
 
         ComboBox {
             id: cbx_vga_gain
             x: 75
-            y: 192
+            y: 160
             width: 77
             height: 40
         }
 
         Label {
             id: label
-            x: 30
-            y: 155
+            x: 32
+            y: 117
             text: qsTr("lna")
             font.pointSize: 14
         }
@@ -91,7 +91,7 @@ Item {
         Label {
             id: label1
             x: 28
-            y: 201
+            y: 169
             text: qsTr("vga")
             font.pointSize: 14
         }
@@ -124,10 +124,20 @@ Item {
         CheckBox {
             id: check_box_max_spectr
             x: 8
-            y: 243
+            y: 257
             width: 144
             height: 40
             text: qsTr("max spectr")
         }
+
+        Button {
+            id: button_settings
+            x: 8
+            y: 211
+            width: 144
+            height: 40
+            text: qsTr("Settings")
+        }
+
     }
 }

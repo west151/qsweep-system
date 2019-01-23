@@ -20,6 +20,8 @@ signals:
 
 public slots:
     void slot_open_db(const QString &);
+    void slot_write_params_spectr(const QVector<params_spectr> &);
+    QVector<params_spectr> slot_read_params_spectr()const;
     void slot_close_db();
 
 private:
