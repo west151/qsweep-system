@@ -69,7 +69,7 @@ void db_local_state::slot_open_db(const QString &dbpath)
 
         set_pragma("synchronous","0");
 
-
+#ifdef QT_DEBUG
         // for test
         QVector<params_spectr> tmpVector;
         params_spectr data;
@@ -81,6 +81,7 @@ void db_local_state::slot_open_db(const QString &dbpath)
 
         tmpVector.append(data);
         slot_write_params_spectr(tmpVector);
+#endif
 
     }else{
 #ifdef QT_DEBUG
