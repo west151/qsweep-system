@@ -68,3 +68,17 @@ void params_spectr_model::add_result(const params_spectr &data)
     m_data << data;
     endInsertRows();
 }
+
+void params_spectr_model::slot_set_vector_result(const QVector<params_spectr> &data)
+{
+    if (m_data.size() > 0) {
+        beginRemoveRows(QModelIndex(), 0, m_data.size() - 1);
+        m_data.clear();
+        endRemoveRows();
+    }
+    if (data.size() > 0) {
+        beginInsertRows(QModelIndex(), 0, data.size() - 1);
+        m_data = data;
+        endInsertRows();
+    }
+}

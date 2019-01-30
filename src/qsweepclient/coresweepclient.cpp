@@ -34,6 +34,7 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     m_timerReceive = new QTime;
 
     qRegisterMetaType<data_spectr>();
+    qRegisterMetaType<QVector<params_spectr> >();
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -62,10 +63,12 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     context->setContextProperty("messageLogModel", ptrMessageLogModel);
     context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
     context->setContextProperty("stateSweepClient", ptrStateSweepClient);
+    context->setContextProperty("paramsSpectrModel", ptr_params_spectr_model);
 
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
     QObject *rootObject = ptrEngine->rootObjects().first();
+
     // Spect surface
     QObject *qmlSurfaceSpectr = rootObject->findChild<QObject*>("objSurfaceSpectr");
     surface_spectr *surfaceSpectr = static_cast<surface_spectr *>(qmlSurfaceSpectr);
@@ -151,6 +154,13 @@ void CoreSweepClient::initialization()
 
     connect(this, &CoreSweepClient::signal_open_db,
             ptr_db_local_state_worker, &db_local_state::slot_open_db);
+    connect(ptrUserInterface, &UserInterface::signal_read_params_spectr,
+            ptr_db_local_state_worker, &db_local_state::slot_read_params_spectr);
+
+    // params spectr model
+    ptr_params_spectr_model = new params_spectr_model(this);
+    connect(ptr_db_local_state_worker, &db_local_state::signal_read_params_spectr,
+            ptr_params_spectr_model, &params_spectr_model::slot_set_vector_result);
 
     ptr_db_local_thread->start();
 }

@@ -51,6 +51,7 @@ public:
     Q_INVOKABLE void onRequestSweepSpectr(const bool &start = true);
     Q_INVOKABLE void onClearMaxPowerSpectr();
     Q_INVOKABLE void on_spectr_max_calc(const bool &);
+    Q_INVOKABLE void on_read_params_spectr();
 
 signals:
     void sendMessageToHost();
@@ -70,6 +71,7 @@ signals:
     void sendClearMaxPowerSpectr();
 
     void signal_spectr_max_calc(const bool &);
+    void signal_read_params_spectr();
 
 private:
     // spectr params

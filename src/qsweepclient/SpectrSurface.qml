@@ -2,6 +2,19 @@ import QtQuick 2.4
 import surfacespectr 1.0
 
 SpectrSurfaceForm {
+    id: idSpectrSurfaceForm
+
+    Loader {
+        id: idLoader
+        onLoaded: {
+            console.log("Spectr params loaded ...");
+            userInterface.on_read_params_spectr()
+        }
+    }
+
+    button_params.onClicked: {
+        idLoader.setSource("DialogParamsSpectr.qml")
+    }
 
     check_box_max_spectr.onClicked: {
         userInterface.on_spectr_max_calc(check_box_max_spectr.checked)

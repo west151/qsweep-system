@@ -25,11 +25,13 @@ db_local_state::db_local_state(QObject *parent) : QObject(parent)
     m_dbase = QSqlDatabase::addDatabase(database_driver, connection_name);
 
     m_column_visual_settings.insert("id_pk", sqlite_type_integer_pk);
+    m_column_visual_settings.insert("id_params", sqlite_type_char.arg(8));
     m_column_visual_settings.insert("min_freq", sqlite_type_double);
     m_column_visual_settings.insert("max_freq", sqlite_type_double);
     m_column_visual_settings.insert("lna_gain", sqlite_type_integer);
     m_column_visual_settings.insert("vga_gain", sqlite_type_integer);
     m_column_visual_settings.insert("fft_bin_width", sqlite_type_double);
+    m_column_visual_settings.insert("descr", sqlite_type_varchar.arg(250));
 
     m_table.insert(visual_settings_table, m_column_visual_settings);
 }
@@ -67,6 +69,19 @@ void db_local_state::slot_open_db(const QString &dbpath)
 
         set_pragma("synchronous","0");
 
+
+        // for test
+        QVector<params_spectr> tmpVector;
+        params_spectr data;
+        data.set_frequency_min(2200000);
+        data.set_frequency_max(2700000);
+        data.set_lna_gain(32);
+        data.set_vga_gain(20);
+        data.set_descr(tr("describe"));
+
+        tmpVector.append(data);
+        slot_write_params_spectr(tmpVector);
+
     }else{
 #ifdef QT_DEBUG
         qDebug() << Q_FUNC_INFO << "Can't database open:" << full_path;
@@ -75,21 +90,105 @@ void db_local_state::slot_open_db(const QString &dbpath)
     }
 }
 
-void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &)
+void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &value)
+{
+    if((value.size()>0)&&(m_dbase.isOpen()))
+    {
+        QStringList str_insert_table;
+
+        str_insert_table << "INSERT INTO"
+                         << visual_settings_table
+                         << "(" << list_column() << ")"
+                         << "VALUES"
+                         << "(" << list_column(":") << ");";
+
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+
+        QString str_insert_sql(str_insert_table.join(" "));
+        query->prepare(str_insert_sql);
+
+        start_transaction();
+
+        for(int i=0; i<value.size(); ++i)
+        {
+            query->bindValue(":id_params", value.at(i).id_params_spectr());
+            query->bindValue(":min_freq", value.at(i).frequency_min());
+            query->bindValue(":max_freq", value.at(i).frequency_max());
+            query->bindValue(":lna_gain", value.at(i).lna_gain());
+            query->bindValue(":vga_gain", value.at(i).vga_gain());
+            query->bindValue(":fft_bin_width", value.at(i).fft_bin_width());
+            query->bindValue(":descr", value.at(i).descr());
+        }
+
+        bool on = query->exec();
+
+        if(!on){
+            m_str_error_dbase = query->lastError().text();
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << tr("error:") << query->lastError().text();
+            qDebug() << Q_FUNC_INFO << tr("last query:") << query->lastQuery();
+#endif
+        }
+        commit_transaction();
+    }
+}
+
+void db_local_state::slot_sync_params_spectr(const QVector<params_spectr> &value)
 {
 
 }
 
-QVector<params_spectr> db_local_state::slot_read_params_spectr() const
+void db_local_state::slot_read_params_spectr()
 {
     QVector<params_spectr> result {};
 
-    return result;
+    if(m_dbase.isOpen())
+    {
+        QStringList str_select_table;
+
+        str_select_table << "SELECT"
+                         << list_column()
+                         << "FROM"
+                         << visual_settings_table;
+
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+
+        if(query->prepare(str_select_table.join(" ")))
+        {
+            if (query->exec())
+            {
+                QSqlRecord sql_rec(query->record());
+
+                while(query->next())
+                {
+                    params_spectr data;
+
+                    data.set_descr(query->value(sql_rec.indexOf("id_params")).toString());
+                    data.set_frequency_min(query->value(sql_rec.indexOf("min_freq")).toUInt());
+                    data.set_frequency_max(query->value(sql_rec.indexOf("max_freq")).toUInt());
+                    data.set_lna_gain(query->value(sql_rec.indexOf("lna_gain")).toUInt());
+                    data.set_vga_gain(query->value(sql_rec.indexOf("vga_gain")).toUInt());
+                    data.set_fft_bin_width(query->value(sql_rec.indexOf("fft_bin_width")).toUInt());
+                    data.set_descr(query->value(sql_rec.indexOf("descr")).toString());
+
+                    result.append(data);
+                }
+            }
+        }else{
+            m_str_error_dbase = query->lastError().text();
+#ifdef QT_DEBUG
+            qDebug() << Q_FUNC_INFO << tr("error:") << query->lastError().text();
+            qDebug() << Q_FUNC_INFO << tr("last query:") << query->lastQuery();
+#endif
+        }
+    }
+    emit signal_read_params_spectr(result);
 }
 
 void db_local_state::slot_close_db()
 {
-
+    if(m_dbase.isOpen())
+        m_dbase.close();
 }
 
 bool db_local_state::create_table(const QString &table_name) const
@@ -163,6 +262,25 @@ QString db_local_state::list_column_and_type(const QString &table_name) const
     return list.join(",");
 }
 
+QString db_local_state::list_column(const QString &prefix)
+{
+    QStringList list;
+
+    for(int i=0; i<m_column_visual_settings.keys().size(); ++i)
+    {
+        QString tmp;
+
+        if(!prefix.isEmpty())
+            tmp.append(prefix);
+
+        tmp.append(m_column_visual_settings.keys().at(i));
+
+        list.append(tmp);
+    }
+
+    return list.join(",");
+}
+
 void db_local_state::set_pragma(const QString &param, const QString &value)
 {
     QString sql_query = QString("PRAGMA %1 = %2").arg(param).arg(value);
@@ -180,4 +298,20 @@ void db_local_state::set_pragma(const QString &param, const QString &value)
 #endif
         }
     }
+}
+
+bool db_local_state::start_transaction()
+{
+    bool on(false);
+    if(m_dbase.isOpen())
+        on = m_dbase.transaction();
+    return on;
+}
+
+bool db_local_state::commit_transaction()
+{
+    bool on(false);
+    if(m_dbase.isOpen())
+        on = m_dbase.commit();
+    return on;
 }

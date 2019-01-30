@@ -17,11 +17,13 @@ public:
     explicit db_local_state(QObject *parent = nullptr);
 
 signals:
+    void signal_read_params_spectr(const QVector<params_spectr> &);
 
 public slots:
     void slot_open_db(const QString &);
     void slot_write_params_spectr(const QVector<params_spectr> &);
-    QVector<params_spectr> slot_read_params_spectr()const;
+    void slot_sync_params_spectr(const QVector<params_spectr> &);
+    void slot_read_params_spectr();
     void slot_close_db();
 
 private:
@@ -33,7 +35,10 @@ private:
     bool create_table(const QString &)const;
     bool is_table_name_resolve(const QString &)const;
     QString list_column_and_type(const QString &)const;
+    QString list_column(const QString &prefix = "");
     void set_pragma(const QString &, const QString &);
+    bool start_transaction();
+    bool commit_transaction();
 };
 
 #endif // DB_LOCAL_STATE_H

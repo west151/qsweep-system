@@ -11,6 +11,7 @@
 
 #include "model/hackrfinfomodel.h"
 #include "model/messagelogmodel.h"
+#include "model/params_spectr_model.h"
 
 class UserInterface;
 class QSweepTopic;
@@ -56,6 +57,7 @@ private:
     QSweepTopic* ptrSweepTopic {Q_NULLPTR};
     HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
     MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
+    params_spectr_model* ptr_params_spectr_model {Q_NULLPTR};
 
     SystemMonitorInterface *ptrSystemMonitorInterface {Q_NULLPTR};
     StateSweepClient *ptrStateSweepClient {Q_NULLPTR};

@@ -26,6 +26,7 @@ static const QString LNA_GAIN_KEY = QStringLiteral("lna_gain");
 static const QString VGA_GAIN_KEY = QStringLiteral("vga_gain");
 static const QString ONE_SHOT_KEY = QStringLiteral("one_shot");
 static const QString START_SPECTR_KEY = QStringLiteral("start_spectr");
+static const QString DESCR_KEY = QStringLiteral("descr");
 
 static const QString TYPE_REQUEST_KEY = QStringLiteral("TypeRequest");
 static const QString DT_REQUEST_KEY = QStringLiteral("DateTimeRequest");

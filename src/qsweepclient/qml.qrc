@@ -8,5 +8,8 @@
         <file>SweepSystemMonitorForm.ui.qml</file>
         <file>SpectrSurface.qml</file>
         <file>SpectrSurfaceForm.ui.qml</file>
+        <file>ParamsSpectr.qml</file>
+        <file>ParamsSpectrForm.ui.qml</file>
+        <file>DialogParamsSpectr.qml</file>
     </qresource>
 </RCC>

@@ -169,3 +169,8 @@ void UserInterface::on_spectr_max_calc(const bool &value)
 {
     emit signal_spectr_max_calc(value);
 }
+
+void UserInterface::on_read_params_spectr()
+{
+    emit signal_read_params_spectr();
+}

@@ -26,8 +26,11 @@ public:
     void clear_result(const params_spectr &data);
     void add_result(const params_spectr &data);
 
+public slots:
+    void slot_set_vector_result(const QVector<params_spectr> &data);
+
 private:
-    QList<params_spectr> m_data;
+    QVector<params_spectr> m_data;
 };
 
 #endif // PARAMS_SPECTR_MODEL_H

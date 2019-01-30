@@ -5,6 +5,7 @@ Item {
     id: item_main
     width: 800
     height: 600
+    property alias button_params: button_params
     property alias check_box_max_spectr: check_box_max_spectr
     property alias button_start: button_start
     property alias button_stop: button_stop
@@ -131,12 +132,12 @@ Item {
         }
 
         Button {
-            id: button_settings
+            id: button_params
             x: 8
             y: 211
             width: 144
             height: 40
-            text: qsTr("Settings")
+            text: qsTr("Profile")
         }
 
     }

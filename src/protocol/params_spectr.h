@@ -16,6 +16,7 @@ public:
     ~params_spectr();
 
     bool is_valid() const;
+    QString id_params_spectr()const;
 
     void set_one_shot(const bool &);
     bool one_shot()const;
@@ -37,6 +38,9 @@ public:
 
     void set_frequency_max(const quint32 &);
     quint32 frequency_max()const;
+
+    void set_descr(const QString &);
+    QString descr()const;
 
     QByteArray export_json(const bool binary = false) const;
 
