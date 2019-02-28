@@ -5,6 +5,7 @@ Item {
     id: item_main
     width: 800
     height: 600
+    property alias button_save: button_save
     property alias button_params: button_params
     property alias check_box_max_spectr: check_box_max_spectr
     property alias button_start: button_start
@@ -135,9 +136,19 @@ Item {
             id: button_params
             x: 8
             y: 211
-            width: 144
+            width: 65
             height: 40
             text: qsTr("Profile")
+        }
+
+        Button {
+            id: button_save
+            x: 87
+            y: 211
+            width: 65
+            height: 40
+            text: qsTr("Save")
+            checked: false
         }
 
     }

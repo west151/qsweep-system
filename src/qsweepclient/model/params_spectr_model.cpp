@@ -82,3 +82,11 @@ void params_spectr_model::slot_set_vector_result(const QVector<params_spectr> &d
         endInsertRows();
     }
 }
+
+void params_spectr_model::slot_remove_from_model(const QString &id_params)
+{
+    if ((m_data.size() > 0)&&(!id_params.isEmpty()))
+    {
+
+    }
+}

@@ -26,8 +26,13 @@ public:
     void clear_result(const params_spectr &data);
     void add_result(const params_spectr &data);
 
+signals:
+    // remove parameter from model
+    void signal_remove_from_model(const QString &id_params);
+
 public slots:
     void slot_set_vector_result(const QVector<params_spectr> &data);
+    void slot_remove_from_model(const QString &id_params);
 
 private:
     QVector<params_spectr> m_data;

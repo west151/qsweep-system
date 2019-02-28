@@ -4,6 +4,9 @@ import surfacespectr 1.0
 SpectrSurfaceForm {
     id: idSpectrSurfaceForm
 
+    in_freq_min.text: userInterface.frequencyMin
+    in_freq_max.text: userInterface.frequencyMax
+
     Loader {
         id: idLoader
         onLoaded: {
@@ -106,12 +109,12 @@ SpectrSurfaceForm {
     button_stop.onClicked: {
         userInterface.onRequestSweepSpectr(false)
     }
+
+    // save params
+    button_save.onClicked: {
+        userInterface.on_save_params_spectr("test")
+    }
 }
-
-
-
-
-
 
 //Connections {
 //    target: stateSweepClient

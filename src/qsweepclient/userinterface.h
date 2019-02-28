@@ -4,6 +4,8 @@
 #include <QObject>
 #include "settings/sweepclientsettings.h"
 
+class params_spectr;
+
 class UserInterface : public QObject
 {
     Q_OBJECT
@@ -52,6 +54,7 @@ public:
     Q_INVOKABLE void onClearMaxPowerSpectr();
     Q_INVOKABLE void on_spectr_max_calc(const bool &);
     Q_INVOKABLE void on_read_params_spectr();
+    Q_INVOKABLE void on_save_params_spectr(const QString &);
 
 signals:
     void sendMessageToHost();
@@ -72,6 +75,7 @@ signals:
 
     void signal_spectr_max_calc(const bool &);
     void signal_read_params_spectr();
+    void signal_save_params_spectr(const QVector<params_spectr> &);
 
 private:
     // spectr params

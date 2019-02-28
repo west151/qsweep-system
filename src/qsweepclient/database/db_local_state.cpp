@@ -69,19 +69,19 @@ void db_local_state::slot_open_db(const QString &dbpath)
 
         set_pragma("synchronous","0");
 
-#ifdef QT_DEBUG
-        // for test
-        QVector<params_spectr> tmpVector;
-        params_spectr data;
-        data.set_frequency_min(2200000);
-        data.set_frequency_max(2700000);
-        data.set_lna_gain(32);
-        data.set_vga_gain(20);
-        data.set_descr(tr("describe"));
+//#ifdef QT_DEBUG
+//        // for test
+//        QVector<params_spectr> tmpVector;
+//        params_spectr data;
+//        data.set_frequency_min(2200000);
+//        data.set_frequency_max(2700000);
+//        data.set_lna_gain(32);
+//        data.set_vga_gain(20);
+//        data.set_descr(tr("describe"));
 
-        tmpVector.append(data);
-        slot_write_params_spectr(tmpVector);
-#endif
+//        tmpVector.append(data);
+//        slot_write_params_spectr(tmpVector);
+//#endif
 
     }else{
 #ifdef QT_DEBUG
@@ -123,20 +123,46 @@ void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &valu
 
         bool on = query->exec();
 
-        if(!on){
-            m_str_error_dbase = query->lastError().text();
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("error:") << query->lastError().text();
-            qDebug() << Q_FUNC_INFO << tr("last query:") << query->lastQuery();
-#endif
-        }
-        commit_transaction();
+        if(!on)
+            update_last_error(query);
+
+        if(!commit_transaction())
+            m_dbase.rollback();
     }
 }
 
-void db_local_state::slot_sync_params_spectr(const QVector<params_spectr> &value)
+void db_local_state::slot_update_params_spectr(const QVector<params_spectr> &value)
 {
 
+}
+
+void db_local_state::slot_remove_params_spectr(const QString &id_params)
+{
+    if((!id_params.isEmpty())&&(m_dbase.isOpen()))
+    {
+        QStringList str_delete_table;
+
+        str_delete_table << "DELETE FROM"
+                         << visual_settings_table
+                         << "WHERE"
+                         << "id_params"
+                         << "="
+                         << ":id_params";
+
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+
+        QString str_insert_sql(str_delete_table.join(" "));
+        query->prepare(str_insert_sql);
+        query->bindValue(":id_params", id_params);
+
+        start_transaction();
+
+        if(!query->exec())
+            update_last_error(query);
+
+        if(!commit_transaction())
+            m_dbase.rollback();
+    }
 }
 
 void db_local_state::slot_read_params_spectr()
@@ -175,13 +201,8 @@ void db_local_state::slot_read_params_spectr()
                     result.append(data);
                 }
             }
-        }else{
-            m_str_error_dbase = query->lastError().text();
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("error:") << query->lastError().text();
-            qDebug() << Q_FUNC_INFO << tr("last query:") << query->lastQuery();
-#endif
-        }
+        }else
+            update_last_error(query);
     }
     emit signal_read_params_spectr(result);
 }
@@ -223,19 +244,20 @@ bool db_local_state::create_table(const QString &table_name) const
     return false;
 }
 
-bool db_local_state::is_table_name_resolve(const QString &table_name) const
+bool db_local_state::is_table_name_resolve(const QString &table_name)
 {
     if(m_dbase.isOpen()&&(!table_name.isEmpty()))
     {
-        QSqlQuery query(m_dbase);
-        QString sqlQuery = QString("SELECT name FROM sqlite_master WHERE type =:table AND name = '%1' ").arg(table_name);
-        query.prepare(sqlQuery);
-        query.bindValue(":table", "table");
-        query.exec();
-        int field_no = query.record().indexOf("name");
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+        QString str_sql = QString("SELECT name FROM sqlite_master WHERE type =:table AND name = '%1' ").arg(table_name);
+        query->prepare(str_sql);
+        query->bindValue(":table", "table");
+        if(!query->exec())
+            update_last_error(query);
+        int field_no = query->record().indexOf("name");
 
-        while (query.next()) {
-            QString _name = query.value(field_no).toString();
+        while (query->next()) {
+            QString _name = query->value(field_no).toString();
 
             // если таблица существует
             if(_name.contains(table_name, Qt::CaseInsensitive))
@@ -288,16 +310,11 @@ void db_local_state::set_pragma(const QString &param, const QString &value)
 
     if (m_dbase.isOpen())
     {
-        QSqlQuery query(m_dbase);
-        query.prepare(sql_query);
-        if(!query.exec())
-        {
-            m_str_error_dbase = query.lastError().text();
-#ifdef QT_DEBUG
-            qDebug() << Q_FUNC_INFO << tr("error:") << m_str_error_dbase;
-            qDebug() << Q_FUNC_INFO << tr("last query:") << query.lastQuery();
-#endif
-        }
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+        query->prepare(sql_query);
+
+        if(!query->exec())
+            update_last_error(query);
     }
 }
 
@@ -315,4 +332,19 @@ bool db_local_state::commit_transaction()
     if(m_dbase.isOpen())
         on = m_dbase.commit();
     return on;
+}
+
+void db_local_state::update_last_error(QSqlQuery *query)
+{
+    if(query)
+    {
+        m_str_error_dbase = query->lastError().text();
+        emit signal_last_error(m_str_error_dbase);
+
+#ifdef QT_DEBUG
+        qDebug() << Q_FUNC_INFO << tr("error:") << m_str_error_dbase;
+        qDebug() << Q_FUNC_INFO << tr("last query:") << query->lastQuery();
+#endif
+
+    }
 }

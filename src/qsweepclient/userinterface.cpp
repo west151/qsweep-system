@@ -1,14 +1,16 @@
 #include "userinterface.h"
 
+#include <QVector>
+
 #include "sweep_message.h"
 #include "params_spectr.h"
 
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
-    m_freqMin(30),
-    m_freqMax(6000),
-    m_lnaGain(0),
-    m_vgaGain(0),
-    m_fftBinWidth(500000),
+    m_freqMin(2300),
+    m_freqMax(2700),
+    m_lnaGain(32),
+    m_vgaGain(30),
+    m_fftBinWidth(100000),
     m_oneShot(true),
     m_pingReceivedCount(0)
 {
@@ -173,4 +175,21 @@ void UserInterface::on_spectr_max_calc(const bool &value)
 void UserInterface::on_read_params_spectr()
 {
     emit signal_read_params_spectr();
+}
+
+void UserInterface::on_save_params_spectr(const QString &descr)
+{
+    QVector<params_spectr> tmpVector;
+
+    params_spectr params_spectr_data;
+    params_spectr_data.set_frequency_min(m_freqMin);
+    params_spectr_data.set_frequency_max(m_freqMax);
+    params_spectr_data.set_fft_bin_width(m_fftBinWidth);
+    params_spectr_data.set_lna_gain(m_lnaGain);
+    params_spectr_data.set_vga_gain(m_vgaGain);
+    params_spectr_data.set_descr(descr);
+
+    tmpVector.append(params_spectr_data);
+
+    emit signal_save_params_spectr(tmpVector);
 }

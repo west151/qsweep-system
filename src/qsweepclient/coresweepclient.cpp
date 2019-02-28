@@ -156,6 +156,9 @@ void CoreSweepClient::initialization()
             ptr_db_local_state_worker, &db_local_state::slot_open_db);
     connect(ptrUserInterface, &UserInterface::signal_read_params_spectr,
             ptr_db_local_state_worker, &db_local_state::slot_read_params_spectr);
+    // save params
+    connect(ptrUserInterface, &UserInterface::signal_save_params_spectr,
+            ptr_db_local_state_worker, &db_local_state::slot_write_params_spectr);
 
     // params spectr model
     ptr_params_spectr_model = new params_spectr_model(this);
