@@ -20,10 +20,12 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex &parent) const Q_DECL_OVERRIDE;
+    bool removeRows(int row, int count, const QModelIndex &index) Q_DECL_OVERRIDE;
     QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
     void clear_result_all();
     void clear_result(const params_spectr &data);
+    Q_INVOKABLE void clear_result_by_index(const int &row);
     void add_result(const params_spectr &data);
 
 signals:

@@ -1,5 +1,9 @@
 #include "params_spectr_model.h"
 
+#ifdef QT_DEBUG
+#include <QtCore/qdebug.h>
+#endif
+
 params_spectr_model::params_spectr_model(QObject *parent) : QAbstractListModel(parent)
 {
 
@@ -35,6 +39,15 @@ int params_spectr_model::rowCount(const QModelIndex &parent) const
         return 0;
 }
 
+bool params_spectr_model::removeRows(int row, int count, const QModelIndex &index)
+{
+    beginRemoveRows(index, row, row + count - 1);
+    m_data.clear();
+    endRemoveRows();
+
+    return true;
+}
+
 QHash<int, QByteArray> params_spectr_model::roleNames() const
 {
     QHash<int,QByteArray> roles;
@@ -60,6 +73,11 @@ void params_spectr_model::clear_result_all()
 void params_spectr_model::clear_result(const params_spectr &data)
 {
     Q_UNUSED(data)
+}
+
+void params_spectr_model::clear_result_by_index(const int &row)
+{
+    qDebug() << Q_FUNC_INFO << row;
 }
 
 void params_spectr_model::add_result(const params_spectr &data)

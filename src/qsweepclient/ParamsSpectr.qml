@@ -12,7 +12,7 @@ ParamsSpectrForm {
 //        }
     }
 
-    listViewParamsSpectr.onCurrentItemChanged: console.log('selected')
+    listViewParamsSpectr.onCurrentItemChanged: console.log('selected', listViewParamsSpectr.currentIndex)
 
     Component {
         id: viewParamsDelegate
@@ -46,17 +46,25 @@ ParamsSpectrForm {
                     spacing: 10
                 }
             }
-            MouseArea {
-                anchors.fill: paramsRectangle
-                onClicked: listViewParamsSpectr.currentIndex = index
-            }
+//            MouseArea {
+//                anchors.fill: paramsRectangle
+//                onClicked: listViewParamsSpectr.currentIndex = index
+//            }
 
             Rectangle{
+                id: paramsControl
                 x: mainItem.width - 45
                 width: mainItem.width - paramsRectangle.width - 5
                 height: mainItem.height
                 border.color: "black"
                 color: "red"
+            }
+            MouseArea {
+                anchors.fill: paramsControl
+                onClicked: {
+                    listViewParamsSpectr.currentIndex = index
+                    paramsSpectrModel.clear_result_by_index(index)
+                }
             }
         }        
     }

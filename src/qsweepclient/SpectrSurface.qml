@@ -112,6 +112,11 @@ SpectrSurfaceForm {
 
     // save params
     button_save.onClicked: {
+        userInterface.frequencyMin = in_freq_min.text
+        userInterface.frequencyMax = in_freq_max.text
+        userInterface.lnaGain = cbx_lna_gain.currentText
+        userInterface.vgaGain = cbx_vga_gain.currentText
+        userInterface.fftBinWidth = cbx_fft_size.currentText
         userInterface.on_save_params_spectr("test")
     }
 }
