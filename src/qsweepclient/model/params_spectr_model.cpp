@@ -75,9 +75,16 @@ void params_spectr_model::clear_result(const params_spectr &data)
     Q_UNUSED(data)
 }
 
-void params_spectr_model::clear_result_by_index(const int &row)
+void params_spectr_model::clear_result_by_index(const int &index)
 {
-    qDebug() << Q_FUNC_INFO << row;
+    if(index < 0 || index >= m_data.size())
+        return;
+
+    emit signal_remove_from_model(m_data.at(index).id_params_spectr());
+
+    beginRemoveRows(QModelIndex(), index, index);
+    m_data.erase(m_data.begin() + index);
+    endRemoveRows();
 }
 
 void params_spectr_model::add_result(const params_spectr &data)

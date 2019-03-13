@@ -16,6 +16,8 @@ public:
     ~params_spectr();
 
     bool is_valid() const;
+
+    void set_id_params_spectr(const QString &);
     QString id_params_spectr()const;
 
     void set_one_shot(const bool &);

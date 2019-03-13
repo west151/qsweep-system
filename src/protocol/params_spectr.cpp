@@ -100,6 +100,11 @@ bool params_spectr::is_valid() const
     return data->m_valid;
 }
 
+void params_spectr::set_id_params_spectr(const QString &value)
+{
+    data->m_id = value;
+}
+
 QString params_spectr::id_params_spectr() const
 {
     return data->m_id;

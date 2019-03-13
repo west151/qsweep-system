@@ -164,6 +164,9 @@ void CoreSweepClient::initialization()
     ptr_params_spectr_model = new params_spectr_model(this);
     connect(ptr_db_local_state_worker, &db_local_state::signal_read_params_spectr,
             ptr_params_spectr_model, &params_spectr_model::slot_set_vector_result);
+    // sync db & model
+    connect(ptr_params_spectr_model, &params_spectr_model::signal_remove_from_model,
+            ptr_db_local_state_worker, &db_local_state::slot_remove_params_spectr);
 
     ptr_db_local_thread->start();
 }

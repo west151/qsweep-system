@@ -25,7 +25,7 @@ public:
 
     void clear_result_all();
     void clear_result(const params_spectr &data);
-    Q_INVOKABLE void clear_result_by_index(const int &row);
+    Q_INVOKABLE void clear_result_by_index(const int &index);
     void add_result(const params_spectr &data);
 
 signals:

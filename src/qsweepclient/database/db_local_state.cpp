@@ -133,7 +133,7 @@ void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &valu
 
 void db_local_state::slot_update_params_spectr(const QVector<params_spectr> &value)
 {
-
+    Q_UNUSED(value)
 }
 
 void db_local_state::slot_remove_params_spectr(const QString &id_params)
@@ -155,13 +155,17 @@ void db_local_state::slot_remove_params_spectr(const QString &id_params)
         query->prepare(str_insert_sql);
         query->bindValue(":id_params", id_params);
 
-        start_transaction();
+        if(start_transaction())
+        {
+            if(!query->exec())
+                update_last_error(query);
 
-        if(!query->exec())
-            update_last_error(query);
-
-        if(!commit_transaction())
-            m_dbase.rollback();
+            if(!commit_transaction())
+            {
+                m_dbase.rollback();
+                update_last_error(query);
+            }
+        }
     }
 }
 
@@ -190,7 +194,7 @@ void db_local_state::slot_read_params_spectr()
                 {
                     params_spectr data;
 
-                    data.set_descr(query->value(sql_rec.indexOf("id_params")).toString());
+                    data.set_id_params_spectr(query->value(sql_rec.indexOf("id_params")).toString());
                     data.set_frequency_min(query->value(sql_rec.indexOf("min_freq")).toUInt());
                     data.set_frequency_max(query->value(sql_rec.indexOf("max_freq")).toUInt());
                     data.set_lna_gain(query->value(sql_rec.indexOf("lna_gain")).toUInt());
