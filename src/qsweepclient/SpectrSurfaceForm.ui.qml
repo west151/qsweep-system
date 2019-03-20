@@ -42,9 +42,9 @@ Item {
 
         ComboBox {
             id: cbx_lna_gain
-            x: 75
+            x: 44
             y: 108
-            width: 77
+            width: 108
             height: 40
         }
 
@@ -76,15 +76,15 @@ Item {
 
         ComboBox {
             id: cbx_vga_gain
-            x: 75
+            x: 44
             y: 160
-            width: 77
+            width: 108
             height: 40
         }
 
         Label {
             id: label
-            x: 32
+            x: 12
             y: 117
             text: qsTr("lna")
             font.pointSize: 14
@@ -92,7 +92,7 @@ Item {
 
         Label {
             id: label1
-            x: 28
+            x: 8
             y: 169
             text: qsTr("vga")
             font.pointSize: 14

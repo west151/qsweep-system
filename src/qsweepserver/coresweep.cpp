@@ -187,8 +187,6 @@ void CoreSweep::initialization()
 
     // MQTT
     ptrMqttClient = new QMqttClient(this);
-//    connect(ptrMqttClient, &QMqttClient::messageReceived,
-//            this, &CoreSweep::messageReceived);
 
     // new style
     connect(ptrMqttClient, &QMqttClient::messageReceived,
@@ -261,32 +259,6 @@ void CoreSweep::launching()
     }
 }
 
-//void CoreSweep::messageReceived(const QByteArray &message, const QMqttTopicName &topic)
-//{
-//    switch (ptrSweepTopic->sweepTopic(topic.name())) {
-//    case QSweepTopic::TOPIC_CTRL:
-//    {
-//        QSweepRequest request(message, false);
-
-//        if(request.isValid()){
-//            switch (request.typeRequest()) {
-//            case TypeRequest::START_SWEEP_SPECTR:
-//                emit sendRunSweepWorker(message);
-//                break;
-//            case TypeRequest::STOP_SWEEP_SPECTR:
-//                emit sendStopSweepWorker();
-//                break;
-//            default:
-//                break;
-//            }
-//        }
-//    }
-//        break;
-//    default:
-//        break;
-//    }
-//}
-
 void CoreSweep::updateLogStateChange()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected)
@@ -330,38 +302,6 @@ void CoreSweep::connecting()
 #endif
 }
 
-//void CoreSweep::onSendingMessageRequest(const QByteArray &value)
-//{
-//    if (ptrMqttClient->state() == QMqttClient::Connected)
-//    {
-//        const QSweepAnswer answer(value, false);
-
-//        switch (answer.typeAnswer()) {
-////        case TypeAnswer::INFO:
-////        {
-////            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), answer.exportToJson());
-////        }
-////            break;
-////        case TypeAnswer::SWEEP_MESSAGE_LOG:
-////        {
-////            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), answer.exportToJson());
-////        }
-////            break;
-//        case TypeAnswer::SWEEP_POWER_SPECTR:
-//        {
-//            ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR), answer.exportToJson());
-//        }
-//            break;
-//        default:
-//            break;
-//        }
-
-////#ifdef QT_DEBUG
-////            qDebug() << Q_FUNC_INFO << tr("Answer JSON:") << answer.exportToJson();
-////#endif
-//    }
-//}
-
 void CoreSweep::errorChanged(QMqttClient::ClientError error)
 {
     qCritical("Mqtt client error code: '%d'", error);
@@ -393,6 +333,9 @@ void CoreSweep::errorChanged(QMqttClient::ClientError error)
         break;
     case QMqttClient::UnknownError:
         qCritical("An unknown error occurred.");
+        break;
+    default:
+        qCritical("Unknown error.");
         break;
     }
 }

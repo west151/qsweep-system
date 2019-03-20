@@ -50,14 +50,11 @@ private:
     void initialization();
     void launching();
 
-    //void messageReceived(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
-
     void updateLogStateChange();
     void brokerDisconnected();
     void pingReceived();
     void connecting();
 
-//    void onSendingMessageRequest(const QByteArray &);
     void errorChanged(QMqttClient::ClientError error);
 };
 

@@ -56,6 +56,9 @@ public:
     Q_INVOKABLE void on_read_params_spectr();
     Q_INVOKABLE void on_save_params_spectr(const QString &);
 
+public slots:
+    void slot_set_params_spectr(const params_spectr &data);
+
 signals:
     void sendMessageToHost();
     void signal_sweep_message(const QByteArray &);

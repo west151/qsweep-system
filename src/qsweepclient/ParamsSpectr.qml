@@ -2,14 +2,17 @@ import QtQuick 2.4
 
 ParamsSpectrForm {
 
+    property int cIndex: listViewParamsSpectr.currentIndex
+
     listViewParamsSpectr {
         clip: true
         focus: true
         model: paramsSpectrModel
         delegate: viewParamsDelegate
-//        highlight: Rectangle {
-//            color: "grey"
-//        }
+        highlight: Rectangle {
+            x: 0
+            color: "grey"
+        }
     }
 
     listViewParamsSpectr.onCurrentItemChanged: console.log('selected', listViewParamsSpectr.currentIndex)
@@ -21,15 +24,26 @@ ParamsSpectrForm {
             width: listViewParamsSpectr.width
             height: idTextInfo.height + 20
 
+            // text params
             Rectangle{
                 id: paramsRectangle
-                width: mainItem.width - 50
-                height: mainItem.height
-                border.color: "black"
-                color: "green"
+                x: 5
+                y: 5
+                width: mainItem.width - 10
+                height: mainItem.height - 10
+                //border.color: "black"
+                color: "yellow"
+
+                MouseArea {
+                    anchors.fill: paramsRectangle
+                    onClicked: {
+                        listViewParamsSpectr.currentIndex = index
+                    }
+                }
 
                 Row {
                     id: idRow
+                    //x: paramsApply.width + 5
                     anchors.verticalCenter: parent.verticalCenter
 
                     Text {
@@ -45,25 +59,21 @@ ParamsSpectrForm {
                     }
                     spacing: 10
                 }
-            }
-//            MouseArea {
-//                anchors.fill: paramsRectangle
-//                onClicked: listViewParamsSpectr.currentIndex = index
-//            }
 
-            Rectangle{
-                id: paramsControl
-                x: mainItem.width - 45
-                width: mainItem.width - paramsRectangle.width - 5
-                height: mainItem.height
-                border.color: "black"
-                color: "red"
-            }
-            MouseArea {
-                anchors.fill: paramsControl
-                onClicked: {
-                    listViewParamsSpectr.currentIndex = index
-                    paramsSpectrModel.clear_result_by_index(index)
+                Rectangle{
+                    id: paramsRemove
+                    x: paramsRectangle.width - paramsRemove.width
+                    width: paramsRectangle.height
+                    height: paramsRectangle.height
+                    color: "red"
+                }
+
+                MouseArea {
+                    anchors.fill: paramsRemove
+                    onClicked: {
+                        listViewParamsSpectr.currentIndex = index
+                        paramsSpectrModel.clear_result_by_index(index)
+                    }
                 }
             }
         }        

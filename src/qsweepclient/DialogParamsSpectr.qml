@@ -12,9 +12,15 @@ Dialog {
     modality : Qt.ApplicationModal
 
     ParamsSpectr{
+        id: idParamsSpectr
         anchors.fill: parent
     }
 
-    onAccepted: console.log("Ok clicked")
+    onAccepted: {
+        paramsSpectrModel.get_params_by_index(idParamsSpectr.cIndex)
+        console.log(idParamsSpectr.cIndex)
+        console.log("Ok clicked")
+    }
+
     onRejected: console.log("Cancel clicked")
 }

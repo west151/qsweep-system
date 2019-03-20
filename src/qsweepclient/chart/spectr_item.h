@@ -1,8 +1,10 @@
 #ifndef SPECTR_ITEM_H
 #define SPECTR_ITEM_H
 
-#include <QPen>
+#include <QColor>
 #include <QString>
+#include <QPointF>
+#include <QPen>
 
 class spectr_item
 {

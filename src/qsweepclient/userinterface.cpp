@@ -193,3 +193,17 @@ void UserInterface::on_save_params_spectr(const QString &descr)
 
     emit signal_save_params_spectr(tmpVector);
 }
+
+void UserInterface::slot_set_params_spectr(const params_spectr &data)
+{
+    //
+    onRequestSweepSpectr(false);
+
+    setFrequencyMin(data.frequency_min());
+    setFrequencyMax(data.frequency_max());
+    setLnaGain(data.lna_gain());
+    setVgaGain(data.vga_gain());
+    setFFTBinWidth(data.fft_bin_width());
+
+    onRequestSweepSpectr(true);
+}

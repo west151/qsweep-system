@@ -23,8 +23,8 @@ public:
     void clear();
 
     // level
-    double level_min()const;
-    double level_max()const;
+    qreal level_min()const;
+    qreal level_max()const;
 
     void add_spectr_item(const QString &, const QColor &color);
     void remove_spectr_item(const QString &);
@@ -38,8 +38,8 @@ public slots:
     void slot_spectr_max_calc(const bool &);
 
     // level
-    void slot_level_min(const double &);
-    void slot_level_max(const double &);
+    void slot_level_min(const qreal &);
+    void slot_level_max(const qreal &);
 
     // for test
     void slot_power_spectr_test();
@@ -69,8 +69,8 @@ private:
     QVector<QPointF> spectr_max_vector;
 
     // level
-    double m_level_min;
-    double m_level_max;
+    qreal m_level_min;
+    qreal m_level_max;
     qint32 m_ticket_segment;
 
     // frequency

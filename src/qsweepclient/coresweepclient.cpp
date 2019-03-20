@@ -164,6 +164,11 @@ void CoreSweepClient::initialization()
     ptr_params_spectr_model = new params_spectr_model(this);
     connect(ptr_db_local_state_worker, &db_local_state::signal_read_params_spectr,
             ptr_params_spectr_model, &params_spectr_model::slot_set_vector_result);
+
+    // send params from model
+    connect(ptr_params_spectr_model, &params_spectr_model::signal_params_from_model,
+            ptrUserInterface, &UserInterface::slot_set_params_spectr);
+
     // sync db & model
     connect(ptr_params_spectr_model, &params_spectr_model::signal_remove_from_model,
             ptr_db_local_state_worker, &db_local_state::slot_remove_params_spectr);
@@ -485,6 +490,9 @@ void CoreSweepClient::errorChanged(QMqttClient::ClientError error)
         break;
     case QMqttClient::UnknownError:
         qCritical("An unknown error occurred.");
+        break;
+    default:
+        qCritical("Unknown error.");
         break;
     }
 }

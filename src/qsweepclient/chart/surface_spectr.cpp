@@ -153,7 +153,7 @@ void surface_spectr::clear()
     }
 }
 
-double surface_spectr::level_min() const
+qreal surface_spectr::level_min() const
 {
     return m_level_min;
 }
@@ -195,8 +195,8 @@ void surface_spectr::slot_power_spectr(const QDateTime &dt, const quint64 &freq_
     }
 
     qreal range = 0;
-    qreal shift_x = m_surface_point.x()+1;
-    qreal shift_y = (this->height()/2 - m_surface_point.y())/100;
+    qreal shift_x = static_cast<qreal>(m_surface_point.x()+1);
+    qreal shift_y = static_cast<qreal>((this->height()/2 - m_surface_point.y())/100);
 
     for(int i=0; i<spectr.size(); ++i)
     {
@@ -288,14 +288,14 @@ void surface_spectr::slot_spectr_max_calc(const bool &value)
         remove_spectr_item("spectr_max");
 }
 
-void surface_spectr::slot_level_min(const double &value)
+void surface_spectr::slot_level_min(const qreal &value)
 {
     m_level_min = value;
 
     emit signal_level_min_changed();
 }
 
-void surface_spectr::slot_level_max(const double &value)
+void surface_spectr::slot_level_max(const qreal &value)
 {
     m_level_max = value;
 

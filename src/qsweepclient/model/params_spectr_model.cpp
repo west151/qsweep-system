@@ -87,6 +87,14 @@ void params_spectr_model::clear_result_by_index(const int &index)
     endRemoveRows();
 }
 
+void params_spectr_model::get_params_by_index(const int &index)
+{
+    if(index < 0 || index >= m_data.size())
+        return;
+
+    emit signal_params_from_model(m_data.at(index));
+}
+
 void params_spectr_model::add_result(const params_spectr &data)
 {
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());

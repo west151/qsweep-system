@@ -15,6 +15,33 @@ SpectrSurfaceForm {
         }
     }
 
+    Connections {
+        target: userInterface
+        onSendLnaGainChanged:{
+            console.log("userInterface.lnaGain = ", userInterface.lnaGain);
+
+            for(var i = 0; i < lnaGainModel.count; ++i)
+                if(lnaGainModel.get(i).value === userInterface.lnaGain)
+                    cbx_lna_gain.currentIndex = i
+        }
+
+        onSendVgaGainChanged:{
+            console.log("userInterface.vgaGain = ", userInterface.vgaGain);
+
+            for(var i = 0; i < vgaGainModel.count; ++i)
+                if(vgaGainModel.get(i).value === userInterface.vgaGain)
+                    cbx_vga_gain.currentIndex = i
+        }
+
+        onSendFFTBinWidthChanged:{
+            console.log("userInterface.fftBinWidth = ", userInterface.fftBinWidth);
+
+            for(var i = 0; i < fftSizeModel.count; ++i)
+                if(fftSizeModel.get(i).value === userInterface.fftBinWidth)
+                    cbx_fft_size.currentIndex = i
+        }
+    }
+
     button_params.onClicked: {
         idLoader.setSource("DialogParamsSpectr.qml")
     }
@@ -42,56 +69,59 @@ SpectrSurfaceForm {
 
     cbx_fft_size {
         currentIndex: 2
+        textRole: "key"
         model: ListModel {
             id: fftSizeModel
-            ListElement { text: "500000" }
-            ListElement { text: "250000" }
-            ListElement { text: "125000" }
-            ListElement { text: "100000" }
-            ListElement { text: "50000" }
-            ListElement { text: "25000" }
+            ListElement { key: "500000 Hz"; value: 500000 }
+            ListElement { key: "250000 Hz"; value: 250000 }
+            ListElement { key: "125000 Hz"; value: 125000 }
+            ListElement { key: "100000 Hz"; value: 100000 }
+            ListElement { key: "50000 Hz"; value: 50000 }
+            ListElement { key: "25000 Hz"; value: 25000 }
         }
 
         onActivated: {
-            console.log("cbx_fft_size index:", cbx_fft_size.currentText)
-            userInterface.fftBinWidth = cbx_fft_size.currentText
+            console.log("cbx_fft_size index:", cbx_fft_size.currentText, fftSizeModel.get(cbx_fft_size.currentIndex).value)
+            userInterface.fftBinWidth = fftSizeModel.get(cbx_fft_size.currentIndex).value
         }
     }
 
     // RX VGA (baseband) gain, 0-62dB, 2dB steps
     cbx_vga_gain {
         currentIndex: 10
+        textRole: "key"
         inputMethodHints: Qt.ImhDigitsOnly
         model: ListModel {
             id: vgaGainModel
             Component.onCompleted: {
                 for (var i = 0; i <= 62; i=i+2) {
-                    vgaGainModel.append({"text":i})
+                    vgaGainModel.append({"key":i+" dB", "value":i})
                 }
             }
         }
 
         onActivated: {
-            console.log("cbx_vga_gain index:", cbx_vga_gain.currentText)
-            userInterface.vgaGain = cbx_vga_gain.currentText
+            console.log("cbx_vga_gain index:", cbx_vga_gain.currentText, vgaGainModel.get(cbx_vga_gain.currentIndex).value)
+            userInterface.vgaGain = vgaGainModel.get(cbx_vga_gain.currentIndex).value
         }
     }
 
     // RX LNA (IF) gain, 0-40dB, 8dB steps
     cbx_lna_gain{
         currentIndex: 4
+        textRole: "key"
         model: ListModel {
             id: lnaGainModel
-            ListElement { text: "0" }
-            ListElement { text: "8" }
-            ListElement { text: "16" }
-            ListElement { text: "24" }
-            ListElement { text: "32" }
-            ListElement { text: "40" }
+            ListElement { key: "0 dB"; value: 0 }
+            ListElement { key: "8 dB"; value: 8 }
+            ListElement { key: "16 dB"; value: 16 }
+            ListElement { key: "24 dB"; value: 24 }
+            ListElement { key: "32 dB"; value: 32 }
+            ListElement { key: "40 dB"; value: 40 }
         }
         onActivated: {
-            console.log("cbx_lna_gain index:", cbx_lna_gain.currentText)
-            userInterface.lnaGain = cbx_lna_gain.currentText
+            console.log("cbx_lna_gain index:", cbx_lna_gain.currentText, lnaGainModel.get(cbx_lna_gain.currentIndex).value)
+            userInterface.lnaGain = lnaGainModel.get(cbx_lna_gain.currentIndex).value // cbx_lna_gain.currentText
         }
     }
 
@@ -99,9 +129,9 @@ SpectrSurfaceForm {
     button_start.onClicked: {
         userInterface.frequencyMin = in_freq_min.text
         userInterface.frequencyMax = in_freq_max.text
-        userInterface.lnaGain = cbx_lna_gain.currentText
-        userInterface.vgaGain = cbx_vga_gain.currentText
-        userInterface.fftBinWidth = cbx_fft_size.currentText
+        userInterface.lnaGain = lnaGainModel.get(cbx_lna_gain.currentIndex).value
+        userInterface.vgaGain = vgaGainModel.get(cbx_vga_gain.currentIndex).value
+        userInterface.fftBinWidth = fftSizeModel.get(cbx_fft_size.currentIndex).value
         userInterface.oneShot = false
         userInterface.onRequestSweepSpectr(true)
     }
@@ -114,9 +144,9 @@ SpectrSurfaceForm {
     button_save.onClicked: {
         userInterface.frequencyMin = in_freq_min.text
         userInterface.frequencyMax = in_freq_max.text
-        userInterface.lnaGain = cbx_lna_gain.currentText
-        userInterface.vgaGain = cbx_vga_gain.currentText
-        userInterface.fftBinWidth = cbx_fft_size.currentText
+        userInterface.lnaGain = lnaGainModel.get(cbx_lna_gain.currentIndex).value
+        userInterface.vgaGain = vgaGainModel.get(cbx_vga_gain.currentIndex).value
+        userInterface.fftBinWidth = fftSizeModel.get(cbx_fft_size.currentIndex).value
         userInterface.on_save_params_spectr("test")
     }
 }
