@@ -22,8 +22,7 @@ ParamsSpectrForm {
         Item {
             id: mainItem
             width: listViewParamsSpectr.width
-            height: idTextInfo.height + 20
-
+            height: idGridParams.height + 20
             // text params
             Rectangle{
                 id: paramsRectangle
@@ -31,7 +30,6 @@ ParamsSpectrForm {
                 y: 5
                 width: mainItem.width - 10
                 height: mainItem.height - 10
-                //border.color: "black"
                 color: "yellow"
 
                 MouseArea {
@@ -41,23 +39,136 @@ ParamsSpectrForm {
                     }
                 }
 
-                Row {
-                    id: idRow
-                    //x: paramsApply.width + 5
+                Grid {
+                    id: idGridParams
+                    width: mainItem.width
                     anchors.verticalCenter: parent.verticalCenter
+                    x: 5
+                    columns: 5
+                    rows: 2
+                    spacing: 2
 
-                    Text {
-                        id: idTextInfo
-                        width: mainItem.width
-                        text: "min:" + freq_min + " max:" + freq_max
-                              + " lna:" + lna_gain
-                              + " vga:" + vga_gain
-                              + " fft width:" + fft_bin_width
-                        wrapMode: Text.WordWrap
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pointSize: 13
+                    // columns 1.1
+                    Rectangle {
+                        Text {
+                            id: idTextMinFreq
+                            text: "min freq"
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextMinFreq.width + 10
+                        height: idTextMinFreq.height
                     }
-                    spacing: 10
+                    // columns 2.1
+                    Rectangle {
+                        Text {
+                            id: idTextMaxFreq
+                            text: "max freq"
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextMaxFreq.width + 10
+                        height: idTextMaxFreq.height
+                    }
+                    // columns 3.1
+                    Rectangle {
+                        Text {
+                            id: idTextLNA
+                            text: "lna"
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextLNA.width + 10
+                        height: idTextLNA.height
+                    }
+                    // columns 4.1
+                    Rectangle {
+                        Text {
+                            id: idTextVGA
+                            text: "vga"
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextVGA.width + 10
+                        height: idTextVGA.height
+                    }
+                    // columns 5.1
+                    Rectangle {
+                        Text {
+                            id: idTextFFT
+                            text: "fft width"
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextFFT.width + 10
+                        height: idTextFFT.height
+                    }
+
+                    // columns 1.2
+                    Rectangle {
+                        Text {
+                            id: idMinFreq
+                            text: freq_min
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextMinFreq.width + 10
+                        height: idTextMinFreq.height
+                    }
+                    // columns 2.2
+                    Rectangle {
+                        Text {
+                            id: idMaxFreq
+                            text: freq_max
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextMaxFreq.width + 10
+                        height: idTextMaxFreq.height
+                    }
+                    // columns 3.2
+                    Rectangle {
+                        Text {
+                            id: idLNA
+                            text: lna_gain
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextLNA.width + 10
+                        height: idTextLNA.height
+                    }
+                    // columns 4.2
+                    Rectangle {
+                        Text {
+                            id: idVGA
+                            text: vga_gain
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextVGA.width + 10
+                        height: idTextVGA.height
+                    }
+                    // columns 5.2
+                    Rectangle {
+                        Text {
+                            id: idFFT
+                            text: fft_bin_width
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pointSize: 13
+                        }
+                        width: idTextFFT.width + 10
+                        height: idTextFFT.height
+                    }
                 }
 
                 Rectangle{
