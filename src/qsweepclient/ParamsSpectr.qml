@@ -31,6 +31,7 @@ ParamsSpectrForm {
                 width: mainItem.width - 10
                 height: mainItem.height - 10
                 color: "yellow"
+                opacity: 0.5
 
                 MouseArea {
                     anchors.fill: paramsRectangle
