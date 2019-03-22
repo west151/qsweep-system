@@ -1,10 +1,10 @@
-#include "qsweeptopic.h"
+#include "sweep_topic.h"
 
-QSweepTopic::QSweepTopic(QObject *parent) : QObject(parent)
+sweep_topic::sweep_topic(QObject *parent) : QObject(parent)
 {
 }
 
-QString QSweepTopic::sweepTopic(const Topic value) const
+QString sweep_topic::sweep_topic_by_type(const Topic value) const
 {
     switch (value) {
     case TOPIC_RESOURCE_ID:
@@ -28,7 +28,7 @@ QString QSweepTopic::sweepTopic(const Topic value) const
     return {};
 }
 
-QSweepTopic::Topic QSweepTopic::sweepTopic(const QString &value)
+sweep_topic::Topic sweep_topic::sweep_topic_by_str(const QString &value)
 {
     if(value == topic_resource_id)
         return TOPIC_RESOURCE_ID;
@@ -54,12 +54,12 @@ QSweepTopic::Topic QSweepTopic::sweepTopic(const QString &value)
     return TOPIC_UNKNOWN;
 }
 
-void QSweepTopic::setId(const QString &value)
+void sweep_topic::set_id(const QString &value)
 {
     topic_id = value;
 }
 
-QString QSweepTopic::id() const
+QString sweep_topic::id() const
 {
     return topic_id;
 }

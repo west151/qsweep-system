@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 #include <QMap>
 
 #include "params_spectr.h"

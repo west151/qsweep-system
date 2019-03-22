@@ -14,7 +14,7 @@
 #include "model/params_spectr_model.h"
 
 class UserInterface;
-class QSweepTopic;
+class sweep_topic;
 class SystemMonitorInterface;
 class StateSweepClient;
 class SweepClientSettings;
@@ -54,15 +54,15 @@ private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
-    QSweepTopic* ptrSweepTopic {Q_NULLPTR};
+    sweep_topic* ptrSweepTopic {Q_NULLPTR};
     HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
     MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
     params_spectr_model* ptr_params_spectr_model {Q_NULLPTR};
 
     SystemMonitorInterface *ptrSystemMonitorInterface {Q_NULLPTR};
     StateSweepClient *ptrStateSweepClient {Q_NULLPTR};
-    QTime *m_timerReceive {Q_NULLPTR};
-    qint32 m_sizeDatacReceive;
+    QTime *m_timer_receive {Q_NULLPTR};
+    qint32 m_size_data_receive;
 
     // settings
     SweepClientSettings* ptrSweepClientSettings {Q_NULLPTR};

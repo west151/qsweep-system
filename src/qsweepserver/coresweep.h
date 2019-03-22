@@ -12,7 +12,7 @@
 
 class HackrfInfo;
 class SweepWorker;
-class QSweepTopic;
+class sweep_topic;
 class QTimer;
 
 class CoreSweep : public QObject
@@ -38,7 +38,7 @@ private:
     QPointer<QThread> ptrSweepThread;
 
     QMqttClient* ptrMqttClient {Q_NULLPTR};
-    QSweepTopic* ptrSweepTopic {Q_NULLPTR};
+    sweep_topic* ptrSweepTopic {Q_NULLPTR};
     SweepServerSettings* ptrSweepServerSettings {Q_NULLPTR};
 
     QTimer* ptrTimer {Q_NULLPTR};

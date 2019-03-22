@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class QSweepTopic : public QObject
+class sweep_topic : public QObject
 {
     Q_OBJECT
 public:
@@ -18,12 +18,12 @@ public:
         TOPIC_SYSTEM_MONITOR
     };
 
-    explicit QSweepTopic(QObject *parent = nullptr);
+    explicit sweep_topic(QObject *parent = nullptr);
 
-    QString sweepTopic(const Topic value = TOPIC_UNKNOWN) const;
-    Topic sweepTopic(const QString &value = "");
+    QString sweep_topic_by_type(const Topic value = TOPIC_UNKNOWN) const;
+    Topic sweep_topic_by_str(const QString &value = "");
 
-    void setId(const QString &);
+    void set_id(const QString &);
     QString id()const;
 
 private:

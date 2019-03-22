@@ -1,5 +1,7 @@
 #include "db_local_state.h"
 #include <QDir>
+#include <QSqlRecord>
+#include <QSqlError>
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>

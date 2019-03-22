@@ -19,9 +19,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    qsweepwrite.cpp
+    qsweepwrite.cpp \
+    core_sweep_write.cpp \
+    sweep_write_settings.cpp \
+    database/db_manager.cpp \
+    database/db_writer.cpp \
+    database/db_reader.cpp \
+    provider/mqtt_provider.cpp
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+unix: target.path = /opt/qsweepwrite/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    core_sweep_write.h \
+    sweep_write_settings.h \
+    database/db_manager.h \
+    database/db_writer.h \
+    database/db_reader.h \
+    provider/mqtt_provider.h

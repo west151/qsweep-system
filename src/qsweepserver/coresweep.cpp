@@ -7,7 +7,7 @@
 
 #include "hackrfinfo.h"
 #include "sweepworker.h"
-#include "qsweeptopic.h"
+#include "sweep_topic.h"
 
 #include "sweep_message.h"
 #include "params_spectr.h"
@@ -36,23 +36,23 @@ void CoreSweep::slot_publish_message(const QByteArray &value)
         if(send_data.is_valid())
         {
             if(send_data.type() == type_message::DATA_SDR_INFO)
-                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_INFO), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_INFO), value);
 
             if(send_data.type() == type_message::DATA_MESSAGE_LOG)
-                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_MESSAGE_LOG), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_MESSAGE_LOG), value);
 
             if(send_data.type() == type_message::DATA_SYSTEM_MONITOR)
-                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_SYSTEM_MONITOR), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_SYSTEM_MONITOR), value);
 
             if(send_data.type() == type_message::DATA_SPECTR)
-                ptrMqttClient->publish(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_POWER_SPECTR), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR), value);
         }
     }
 }
 
 void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
-    if(ptrSweepTopic->sweepTopic(topic.name()) == QSweepTopic::TOPIC_CTRL)
+    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_CTRL)
     {
         const sweep_message ctrl_message(message, false);
 
@@ -160,7 +160,7 @@ void CoreSweep::initialization()
 {    
     m_run_sweep_worker = false;
 
-    ptrSweepTopic = new QSweepTopic(this);
+    ptrSweepTopic = new sweep_topic(this);
 
     ptrSweepWorker = new SweepWorker;
     ptrSweepThread = new QThread;
@@ -263,7 +263,7 @@ void CoreSweep::updateLogStateChange()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweepTopic(QSweepTopic::TOPIC_CTRL), 0);
+        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), 0);
 
         if (!subscription)
         {
