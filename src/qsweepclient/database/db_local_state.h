@@ -21,7 +21,6 @@ signals:
 public slots:
     void slot_open_db(const QString &);
     void slot_write_params_spectr(const QVector<params_spectr> &);
-    void slot_update_params_spectr(const QVector<params_spectr> &);
     void slot_remove_params_spectr(const QString &id_params);
     void slot_read_params_spectr();
     void slot_close_db();

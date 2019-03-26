@@ -6,7 +6,9 @@
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
 
-class sweep_topic;
+#include "sweep_topic.h"
+
+class sweep_write_settings;
 
 class mqtt_provider : public QObject
 {
@@ -14,13 +16,36 @@ class mqtt_provider : public QObject
 public:
     explicit mqtt_provider(QObject *parent = nullptr);
 
-signals:
+    void initialization();
+    void set_configuration(const sweep_write_settings &);
 
-public slots:
+    void launching();
+    void stopping();
+
+signals:
+    void signal_state_connected();
+    void signal_state_disconnected();
+
+private slots:
+    void slot_publish_message(const QByteArray &);
+    void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
 private:
     QMqttClient* ptr_mqtt_client {Q_NULLPTR};
     sweep_topic* ptr_sweep_topic {Q_NULLPTR};
+    sweep_write_settings *ptr_sweep_write_settings {Q_NULLPTR};
+
+    QList<sweep_topic::topic> m_subscribe_topic;
+
+    void update_state_change();
+    void broker_disconnected();
+    void ping_received();
+    void connecting();
+
+    void unsubscribe_broker();
+    void subscribe_broker();
+
+    void error_changed(QMqttClient::ClientError error);
 };
 
 #endif // MQTT_PROVIDER_H

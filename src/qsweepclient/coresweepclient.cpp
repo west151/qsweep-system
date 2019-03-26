@@ -98,7 +98,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 void CoreSweepClient::onDisconnectFromHost()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected){
-        ptrMqttClient->unsubscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_DATA));
+        //ptrMqttClient->unsubscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_DATA));
         ptrMqttClient->disconnectFromHost();
     }
 }

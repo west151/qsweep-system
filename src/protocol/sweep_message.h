@@ -9,6 +9,7 @@ enum class type_message: qint32 {
     CTRL_INFO,
     DATA_SDR_INFO,
     CTRL_SPECTR,
+    CTRL_DB,
     DATA_SPECTR,
     DATA_MESSAGE_LOG,
     DATA_SYSTEM_MONITOR

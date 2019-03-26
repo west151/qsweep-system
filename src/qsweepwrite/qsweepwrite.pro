@@ -25,7 +25,8 @@ SOURCES += \
     database/db_manager.cpp \
     database/db_writer.cpp \
     database/db_reader.cpp \
-    provider/mqtt_provider.cpp
+    provider/mqtt_provider.cpp \
+    database/db_cleaner.cpp
 
 # Default rules for deployment.
 unix: target.path = /opt/qsweepwrite/bin
@@ -37,4 +38,5 @@ HEADERS += \
     database/db_manager.h \
     database/db_writer.h \
     database/db_reader.h \
-    provider/mqtt_provider.h
+    provider/mqtt_provider.h \
+    database/db_cleaner.h

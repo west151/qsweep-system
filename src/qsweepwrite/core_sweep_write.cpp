@@ -3,7 +3,7 @@
 #include <QFileInfo>
 #include <QDir>
 
-#include "sweep_write_settings.h"
+#include "provider/mqtt_provider.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -15,6 +15,7 @@ core_sweep_write::core_sweep_write(const QString &file, QObject *parent) : QObje
     if(is_settings)
     {
         initialization();
+        launching();
     } else {
         qCritical("Error: Read settings.");
     }
@@ -22,12 +23,14 @@ core_sweep_write::core_sweep_write(const QString &file, QObject *parent) : QObje
 
 void core_sweep_write::initialization()
 {
-
+    ptr_mqtt_provider = new mqtt_provider(this);
+    ptr_mqtt_provider->initialization();
+    ptr_mqtt_provider->set_configuration(m_sweep_write_settings);
 }
 
 void core_sweep_write::launching()
 {
-
+    ptr_mqtt_provider->launching();
 }
 
 bool core_sweep_write::save_settings(const QString &file)
@@ -45,8 +48,8 @@ bool core_sweep_write::save_settings(const QString &file)
 
         if(file.open(QIODevice::ReadWrite | QIODevice::Text)) {
             if(fileExists){
-                if(ptr_sweep_write_settings)
-                    file.write(ptr_sweep_write_settings->exportToJson());
+                if(m_sweep_write_settings.is_valid())
+                    file.write(m_sweep_write_settings.exportToJson());
             }else{
                 const auto defaultSettings = sweep_write_settings();
                 file.write(defaultSettings.exportToJson(false, false));
@@ -79,10 +82,11 @@ bool core_sweep_write::read_settings(const QString &file)
 
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                ptr_sweep_write_settings = new sweep_write_settings(file.readAll(), false);
+                const auto settings = sweep_write_settings(file.readAll(), false);
+                m_sweep_write_settings = settings;
                 file.close();
 
-                is_read = ptr_sweep_write_settings->is_valid();
+                is_read = m_sweep_write_settings.is_valid();
 
             }else{
                 qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));

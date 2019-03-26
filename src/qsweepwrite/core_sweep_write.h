@@ -3,7 +3,9 @@
 
 #include <QObject>
 
-class sweep_write_settings;
+#include "sweep_write_settings.h"
+
+class mqtt_provider;
 
 class core_sweep_write : public QObject
 {
@@ -16,7 +18,8 @@ signals:
 public slots:
 
 private:
-    sweep_write_settings *ptr_sweep_write_settings {Q_NULLPTR};
+    sweep_write_settings m_sweep_write_settings;
+    mqtt_provider *ptr_mqtt_provider {Q_NULLPTR};
 
     void initialization();
     void launching();

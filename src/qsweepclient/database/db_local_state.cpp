@@ -133,11 +133,6 @@ void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &valu
     }
 }
 
-void db_local_state::slot_update_params_spectr(const QVector<params_spectr> &value)
-{
-    Q_UNUSED(value)
-}
-
 void db_local_state::slot_remove_params_spectr(const QString &id_params)
 {
     if((!id_params.isEmpty())&&(m_dbase.isOpen()))
