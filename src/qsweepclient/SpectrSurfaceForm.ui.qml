@@ -5,6 +5,7 @@ Item {
     id: item_main
     width: 800
     height: 600
+    property alias check_box_db_write: check_box_db_write
     property alias button_save: button_save
     property alias button_params: button_params
     property alias check_box_max_spectr: check_box_max_spectr
@@ -149,6 +150,13 @@ Item {
             height: 40
             text: qsTr("Save")
             checked: false
+        }
+
+        CheckBox {
+            id: check_box_db_write
+            x: 8
+            y: 296
+            text: qsTr("spectr write")
         }
 
     }

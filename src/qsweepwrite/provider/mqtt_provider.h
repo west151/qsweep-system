@@ -30,20 +30,23 @@ private slots:
     void slot_publish_message(const QByteArray &);
     void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
+    void slot_state_connected();
+
 private:
     QMqttClient* ptr_mqtt_client {Q_NULLPTR};
     sweep_topic* ptr_sweep_topic {Q_NULLPTR};
     sweep_write_settings *ptr_sweep_write_settings {Q_NULLPTR};
 
-    QList<sweep_topic::topic> m_subscribe_topic;
+    QList<sweep_topic::topic> m_subscribe_data;
+    QList<sweep_topic::topic> m_subscribe_ctrl;
 
     void update_state_change();
     void broker_disconnected();
     void ping_received();
     void connecting();
 
-    void unsubscribe_broker();
-    void subscribe_broker();
+    void unsubscribe_broker(const QStringList &);
+    void subscribe_broker(const QStringList &);
 
     void error_changed(QMqttClient::ClientError error);
 };

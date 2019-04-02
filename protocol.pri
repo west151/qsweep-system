@@ -5,7 +5,8 @@ SOURCES += \
     $$PWD/src/protocol/data_log.cpp \
     $$PWD/src/protocol/system_monitor.cpp \
     $$PWD/src/protocol/params_spectr.cpp \
-    $$PWD/src/protocol/sweep_topic.cpp
+    $$PWD/src/protocol/sweep_topic.cpp \
+    $$PWD/src/protocol/broker_ctrl.cpp
 
 HEADERS += \
     $$PWD/src/protocol/constkeys.h \
@@ -15,7 +16,8 @@ HEADERS += \
     $$PWD/src/protocol/data_log.h \
     $$PWD/src/protocol/system_monitor.h \
     $$PWD/src/protocol/params_spectr.h \
-    $$PWD/src/protocol/sweep_topic.h
+    $$PWD/src/protocol/sweep_topic.h \
+    $$PWD/src/protocol/broker_ctrl.h
 
 
 INCLUDEPATH += \

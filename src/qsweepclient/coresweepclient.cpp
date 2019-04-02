@@ -372,11 +372,14 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
 
                 if(send_data.type() == type_message::CTRL_SPECTR)
                     ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), send_data.export_json());
+
+                if(send_data.type() == type_message::CTRL_DB)
+                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_DB_CTRL), send_data.export_json());
             }
 
-            //#ifdef QT_DEBUG
-            //            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << result << value.export_json();
-            //#endif
+//#ifdef QT_DEBUG
+//            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << send_data.export_json();
+//#endif
         }
     }
 }

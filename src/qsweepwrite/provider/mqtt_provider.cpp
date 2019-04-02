@@ -1,12 +1,14 @@
 #include "mqtt_provider.h"
 #include "sweep_write_settings.h"
+#include "sweep_message.h"
+#include "broker_ctrl.h"
 
 #include <QDateTime>
 
 mqtt_provider::mqtt_provider(QObject *parent) : QObject(parent)
 {
-    m_subscribe_topic.append(sweep_topic::TOPIC_POWER_SPECTR);
-    m_subscribe_topic.append(sweep_topic::TOPIC_DB_CTRL);
+    m_subscribe_data.append(sweep_topic::TOPIC_POWER_SPECTR);
+    m_subscribe_ctrl.append(sweep_topic::TOPIC_DB_CTRL);
 }
 
 void mqtt_provider::initialization()
@@ -27,6 +29,9 @@ void mqtt_provider::initialization()
             this, &mqtt_provider::error_changed);
 
     ptr_sweep_topic = new sweep_topic(this);
+
+    connect(this, &mqtt_provider::signal_state_connected,
+            this, &mqtt_provider::slot_state_connected);
 }
 
 void mqtt_provider::set_configuration(const sweep_write_settings &settings)
@@ -70,7 +75,51 @@ void mqtt_provider::slot_publish_message(const QByteArray &)
 
 void mqtt_provider::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_DB_CTRL)
+    {
+        const sweep_message data_received(message, false);
 
+        if(data_received.is_valid())
+        {
+            if(data_received.type() == type_message::CTRL_DB)
+            {
+                const broker_ctrl broker_ctrl_data(data_received.data_message(), false);
+
+                if(broker_ctrl_data.ctrl_type()==broker_ctrl_type::subscribe)
+                    subscribe_broker(broker_ctrl_data.topic_list());
+
+                if(broker_ctrl_data.ctrl_type()==broker_ctrl_type::unsubscribe)
+                    unsubscribe_broker(broker_ctrl_data.topic_list());
+
+#ifdef QT_DEBUG
+                qDebug().noquote() << "broker_ctrl"
+                                   << broker_ctrl_data.ctrl_type()
+                                   << broker_ctrl_data.topic_list();
+#endif
+            }
+        }
+    }
+}
+
+void mqtt_provider::slot_state_connected()
+{
+    if(m_subscribe_ctrl.size()>0)
+    {
+        for (int i=0; i<m_subscribe_ctrl.size(); ++i)
+        {
+            auto subscription = ptr_mqtt_client->subscribe(ptr_sweep_topic->sweep_topic_by_type(m_subscribe_ctrl.at(i)));
+            if (!subscription)
+            {
+#ifdef QT_DEBUG
+                qDebug() << "Could not subscribe. Is there a valid connection?";
+#endif
+            }else{
+#ifdef QT_DEBUG
+                qDebug() << "subscribe:" << ptr_sweep_topic->sweep_topic_by_type(m_subscribe_ctrl.at(i));
+#endif
+            }
+        }
+    }
 }
 
 void mqtt_provider::update_state_change()
@@ -80,7 +129,7 @@ void mqtt_provider::update_state_change()
             + QLatin1String(": State Change ")
             + QString::number(ptr_mqtt_client->state());
 
-    qDebug() << Q_FUNC_INFO << content;
+    qDebug().noquote() << content;
 #endif
 
     // Subscribers topic
@@ -116,14 +165,20 @@ void mqtt_provider::connecting()
 #endif
 }
 
-void mqtt_provider::unsubscribe_broker()
+void mqtt_provider::unsubscribe_broker(const QStringList &list_topic)
 {
-
+    if (ptr_mqtt_client->state() == QMqttClient::Connected)
+        if(!list_topic.isEmpty())
+            for(int i=0; i<list_topic.size(); ++i)
+                ptr_mqtt_client->unsubscribe(list_topic.at(i));
 }
 
-void mqtt_provider::subscribe_broker()
+void mqtt_provider::subscribe_broker(const QStringList &list_topic)
 {
-
+    if (ptr_mqtt_client->state() == QMqttClient::Connected)
+        if(!list_topic.isEmpty())
+            for(int i=0; i<list_topic.size(); ++i)
+                ptr_mqtt_client->subscribe(list_topic.at(i));
 }
 
 void mqtt_provider::error_changed(QMqttClient::ClientError error)

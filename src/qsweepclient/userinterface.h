@@ -53,6 +53,7 @@ public:
     Q_INVOKABLE void onRequestSweepSpectr(const bool &start = true);
     Q_INVOKABLE void onClearMaxPowerSpectr();
     Q_INVOKABLE void on_spectr_max_calc(const bool &);
+    Q_INVOKABLE void on_spectr_db_write(const bool &);
     Q_INVOKABLE void on_read_params_spectr();
     Q_INVOKABLE void on_save_params_spectr(const QString &);
 

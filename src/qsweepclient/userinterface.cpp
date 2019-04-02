@@ -4,6 +4,8 @@
 
 #include "sweep_message.h"
 #include "params_spectr.h"
+#include "broker_ctrl.h"
+#include "sweep_topic.h"
 
 UserInterface::UserInterface(QObject *parent) : QObject(parent),
     m_freqMin(2300),
@@ -170,6 +172,27 @@ void UserInterface::onClearMaxPowerSpectr()
 void UserInterface::on_spectr_max_calc(const bool &value)
 {
     emit signal_spectr_max_calc(value);
+}
+
+void UserInterface::on_spectr_db_write(const bool &value)
+{
+    sweep_message ctrl_msg;
+    ctrl_msg.set_type(type_message::CTRL_DB);
+
+    broker_ctrl db_ctrl;
+    sweep_topic topic;
+    QStringList list_topic(topic.sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR));
+
+    if(value)
+        db_ctrl.set_ctrl_type(broker_ctrl_type::subscribe);
+    else
+        db_ctrl.set_ctrl_type(broker_ctrl_type::unsubscribe);
+
+    db_ctrl.set_topic_list(list_topic);
+
+    ctrl_msg.set_data_message(db_ctrl.export_json());
+
+    emit signal_sweep_message(ctrl_msg.export_json());
 }
 
 void UserInterface::on_read_params_spectr()

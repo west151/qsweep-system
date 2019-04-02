@@ -4,6 +4,7 @@
 #include <QDir>
 
 #include "provider/mqtt_provider.h"
+#include "database/db_manager.h"
 
 static const QString config_suffix(QString(".conf"));
 
@@ -23,9 +24,17 @@ core_sweep_write::core_sweep_write(const QString &file, QObject *parent) : QObje
 
 void core_sweep_write::initialization()
 {
+    // mqtt provider
     ptr_mqtt_provider = new mqtt_provider(this);
-    ptr_mqtt_provider->initialization();
     ptr_mqtt_provider->set_configuration(m_sweep_write_settings);
+    ptr_mqtt_provider->initialization();    
+
+    // database manager
+    ptr_db_manager = new db_manager(this);
+    ptr_db_manager->set_configuration(m_sweep_write_settings);
+    ptr_db_manager->initialization();
+
+    // connect signals and slots
 }
 
 void core_sweep_write::launching()

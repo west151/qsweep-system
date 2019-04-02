@@ -348,6 +348,13 @@ void surface_spectr::slot_size_changed()
 
         update();
     }
+
+    m_spectr_item_list.value("spectr_rt")->clear_data();
+
+    if(is_spectr_max_calc)
+        m_spectr_item_list.value("spectr_max")->clear_data();
+
+    update();
 }
 
 QPoint surface_spectr::spectr_size() const

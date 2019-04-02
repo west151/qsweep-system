@@ -8,6 +8,9 @@ static const QString DT_FORMAT = QStringLiteral("hh:mm:ss.zzz dd.MM.yyyy");
 static const QString DATA_KEY = QStringLiteral("data");
 static const QString DT_KEY = QStringLiteral("dt");
 
+static const QString BROKER_CTRL_TYPE_KEY = QStringLiteral("broker_ctrl_type");
+static const QString TOPIC_LIST_KEY = QStringLiteral("topic_list");
+
 static const QString INDEX_KEY = QStringLiteral("index");
 static const QString SERIAL_NUMBERS_KEY = QStringLiteral("serial");
 static const QString BOARD_ID_KEY = QStringLiteral("board_id");
@@ -27,9 +30,6 @@ static const QString VGA_GAIN_KEY = QStringLiteral("vga_gain");
 static const QString ONE_SHOT_KEY = QStringLiteral("one_shot");
 static const QString START_SPECTR_KEY = QStringLiteral("start_spectr");
 static const QString DESCR_KEY = QStringLiteral("descr");
-
-static const QString TYPE_REQUEST_KEY = QStringLiteral("TypeRequest");
-static const QString DT_REQUEST_KEY = QStringLiteral("DateTimeRequest");
 
 static const QString POWERS_KEY = QStringLiteral("powers");
 static const QString FFT_SIZE_KEY = QStringLiteral("fft_size");

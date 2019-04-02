@@ -50,6 +50,10 @@ SpectrSurfaceForm {
         userInterface.on_spectr_max_calc(check_box_max_spectr.checked)
     }
 
+    check_box_db_write.onClicked: {
+        userInterface.on_spectr_db_write(check_box_db_write.checked)
+    }
+
     in_freq_min{
         //validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
         validator : IntValidator{bottom: 30; top: 6000;}

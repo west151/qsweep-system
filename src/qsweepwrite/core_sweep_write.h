@@ -6,6 +6,7 @@
 #include "sweep_write_settings.h"
 
 class mqtt_provider;
+class db_manager;
 
 class core_sweep_write : public QObject
 {
@@ -20,6 +21,7 @@ public slots:
 private:
     sweep_write_settings m_sweep_write_settings;
     mqtt_provider *ptr_mqtt_provider {Q_NULLPTR};
+    db_manager *ptr_db_manager {Q_NULLPTR};
 
     void initialization();
     void launching();
