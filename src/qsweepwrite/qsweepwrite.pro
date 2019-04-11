@@ -23,10 +23,13 @@ SOURCES += \
     core_sweep_write.cpp \
     sweep_write_settings.cpp \
     database/db_manager.cpp \
-    database/db_writer.cpp \
-    database/db_reader.cpp \
     provider/mqtt_provider.cpp \
-    database/db_cleaner.cpp
+    database/db_cleaner.cpp \
+    database/db_path_monitor.cpp \
+    database/db_system_worker.cpp \
+    database/db_reader_worker.cpp \
+    database/db_writer_worker.cpp \
+    database/db_state_workers.cpp
 
 # Default rules for deployment.
 unix: target.path = /opt/qsweepwrite/bin
@@ -36,7 +39,11 @@ HEADERS += \
     core_sweep_write.h \
     sweep_write_settings.h \
     database/db_manager.h \
-    database/db_writer.h \
-    database/db_reader.h \
     provider/mqtt_provider.h \
-    database/db_cleaner.h
+    database/db_cleaner.h \
+    database/db_path_monitor.h \
+    database/db_const.h \
+    database/db_system_worker.h \
+    database/db_reader_worker.h \
+    database/db_writer_worker.h \
+    database/db_state_workers.h

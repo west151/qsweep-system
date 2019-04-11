@@ -35,6 +35,8 @@ void core_sweep_write::initialization()
     ptr_db_manager->initialization();
 
     // connect signals and slots
+    connect(ptr_mqtt_provider, &mqtt_provider::signal_received_data,
+            ptr_db_manager, &db_manager::slot_received_data);
 }
 
 void core_sweep_write::launching()

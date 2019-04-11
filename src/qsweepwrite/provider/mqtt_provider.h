@@ -26,6 +26,8 @@ signals:
     void signal_state_connected();
     void signal_state_disconnected();
 
+    void signal_received_data(const QByteArray &);
+
 private slots:
     void slot_publish_message(const QByteArray &);
     void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());

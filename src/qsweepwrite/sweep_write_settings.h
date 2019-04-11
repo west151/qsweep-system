@@ -29,6 +29,12 @@ public:
     void set_db_path(const QString &);
     QString db_path()const;
 
+    void set_db_chunk(const qint32 &);
+    qint32 db_chunk()const;
+
+    void set_db_chunk_size_mb(const qint32 &);
+    qint32 db_chunk_size_mb()const;
+
     QByteArray exportToJson(const bool binary = false, const bool isCompact = true) const;
 
 private:

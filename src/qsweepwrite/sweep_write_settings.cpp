@@ -7,6 +7,8 @@ static const QString HOST_BROKER_KEY = QStringLiteral("host_broker");
 static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
 static const QString DELAYED_LAUNCH_KEY = QStringLiteral("delayed_launch");
 static const QString DB_PATH_KEY = QStringLiteral("db_path");
+static const QString DB_CHUNK_KEY = QStringLiteral("db_chunk");
+static const QString DB_CHUNK_SIZE_MB_KEY = QStringLiteral("db_chunk_size_mb");
 
 class sweep_write_settings_data : public QSharedData {
 public:
@@ -17,6 +19,8 @@ public:
         m_port_broker = 1883;
         m_delayed_launch = 1000;
         m_db_path = "";
+        m_db_chunk = 1;
+        m_db_chunk_size_mb = 100;
     }
     sweep_write_settings_data(const sweep_write_settings_data &other) : QSharedData(other)
     {
@@ -25,6 +29,8 @@ public:
         m_port_broker = other.m_port_broker;
         m_delayed_launch = other.m_delayed_launch;
         m_db_path = other.m_db_path;
+        m_db_chunk = other.m_db_chunk;
+        m_db_chunk_size_mb = other.m_db_chunk_size_mb;
     }
 
     ~sweep_write_settings_data() {}
@@ -36,6 +42,9 @@ public:
     QString m_host_broker;
     // database sqlite
     QString m_db_path;
+    // database chunk count
+    qint32 m_db_chunk;
+    qint32 m_db_chunk_size_mb;
 };
 
 sweep_write_settings::sweep_write_settings() : data(new sweep_write_settings_data)
@@ -59,6 +68,8 @@ sweep_write_settings::sweep_write_settings(const QByteArray &json, const bool bi
     data->m_port_broker = jsonObject.value(PORT_BROKER_KEY).toString().toUShort();
     data->m_delayed_launch = jsonObject.value(DELAYED_LAUNCH_KEY).toInt(1000);
     data->m_db_path = jsonObject.value(DB_PATH_KEY).toString();
+    data->m_db_chunk = jsonObject.value(DB_CHUNK_KEY).toInt(1);
+    data->m_db_chunk_size_mb = jsonObject.value(DB_CHUNK_SIZE_MB_KEY).toInt(100);
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -123,6 +134,26 @@ QString sweep_write_settings::db_path() const
     return data->m_db_path;
 }
 
+void sweep_write_settings::set_db_chunk(const qint32 &value)
+{
+    data->m_db_chunk = value;
+}
+
+qint32 sweep_write_settings::db_chunk() const
+{
+    return data->m_db_chunk;
+}
+
+void sweep_write_settings::set_db_chunk_size_mb(const qint32 &value)
+{
+    data->m_db_chunk_size_mb = value;
+}
+
+qint32 sweep_write_settings::db_chunk_size_mb() const
+{
+    return data->m_db_chunk_size_mb;
+}
+
 QByteArray sweep_write_settings::exportToJson(const bool binary, const bool isCompact) const
 {
     QJsonObject jsonObject;
@@ -130,6 +161,8 @@ QByteArray sweep_write_settings::exportToJson(const bool binary, const bool isCo
     jsonObject.insert(PORT_BROKER_KEY, QString::number(data->m_port_broker));
     jsonObject.insert(DELAYED_LAUNCH_KEY, data->m_delayed_launch);
     jsonObject.insert(DB_PATH_KEY, data->m_db_path);
+    jsonObject.insert(DB_CHUNK_KEY, data->m_db_chunk);
+    jsonObject.insert(DB_CHUNK_SIZE_MB_KEY, data->m_db_chunk_size_mb);
 
     QJsonDocument doc(jsonObject);
 
