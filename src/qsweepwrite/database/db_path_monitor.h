@@ -13,13 +13,15 @@ public:
 
     void set_configuration(const sweep_write_settings &);
 
-    void initialization();
-    void launching();
-    void stopping();
+public slots:
+    void slot_initialization();
+    void slot_launching();
+    void slot_stopping();
 
 signals:
-
-public slots:
+    void signal_is_initialization(const bool &);
+    void signal_is_launching(const bool &);
+    void signal_is_stopping(const bool &);
 
 private:
     sweep_write_settings m_settings;
