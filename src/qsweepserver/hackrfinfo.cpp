@@ -40,7 +40,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
     for (int i = 0; i < list->devicecount; i++)
     {
         sweep_message answer_data;
-        answer_data.set_type(type_message::DATA_SDR_INFO);
+        answer_data.set_type(type_message::data_sdr_info);
         sdr_info hackrf_info;
 
         hackrf_info.set_index_board(i);

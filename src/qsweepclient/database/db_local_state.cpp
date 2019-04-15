@@ -15,7 +15,7 @@ static const QString visual_settings_table = "visual_settings_tbl";
 // SQLITE data type
 static const QString sqlite_type_numeric(QString("NUMERIC"));
 static const QString sqlite_type_integer(QString("INTEGER"));
-static const QString sqlite_type_integer_pk(QString("NTEGER PRIMARY KEY"));
+static const QString sqlite_type_integer_pk(QString("INTEGER PRIMARY KEY"));
 static const QString sqlite_type_char(QString("CHAR(%1)"));
 static const QString sqlite_type_varchar(QString("VARCHAR(%1)"));
 static const QString sqlite_type_floatnone(QString("FLOATNONE"));

@@ -35,16 +35,16 @@ void CoreSweep::slot_publish_message(const QByteArray &value)
 
         if(send_data.is_valid())
         {
-            if(send_data.type() == type_message::DATA_SDR_INFO)
+            if(send_data.type() == type_message::data_sdr_info)
                 ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_INFO), value);
 
-            if(send_data.type() == type_message::DATA_MESSAGE_LOG)
+            if(send_data.type() == type_message::data_message_log)
                 ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_MESSAGE_LOG), value);
 
-            if(send_data.type() == type_message::DATA_SYSTEM_MONITOR)
+            if(send_data.type() == type_message::data_system_monitor)
                 ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_SYSTEM_MONITOR), value);
 
-            if(send_data.type() == type_message::DATA_SPECTR)
+            if(send_data.type() == type_message::data_spectr)
                 ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR), value);
         }
     }
@@ -59,11 +59,11 @@ void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopi
         if(ctrl_message.is_valid())
         {
             // sdr info
-            if(ctrl_message.type() == type_message::CTRL_INFO)
+            if(ctrl_message.type() == type_message::ctrl_info)
                 emit signal_run_hackrf_info(message);
 
             // start/stop spectr
-            if(ctrl_message.type() == type_message::CTRL_SPECTR)
+            if(ctrl_message.type() == type_message::ctrl_spectr)
             {
                 const params_spectr params_spectr_data(ctrl_message.data_message(), false);
 

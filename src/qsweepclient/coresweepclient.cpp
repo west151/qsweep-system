@@ -367,13 +367,13 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
 
             if(send_data.is_valid())
             {
-                if(send_data.type() == type_message::CTRL_INFO)
+                if(send_data.type() == type_message::ctrl_info)
                     ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), send_data.export_json());
 
-                if(send_data.type() == type_message::CTRL_SPECTR)
+                if(send_data.type() == type_message::ctrl_spectr)
                     ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), send_data.export_json());
 
-                if(send_data.type() == type_message::CTRL_DB)
+                if(send_data.type() == type_message::ctrl_db)
                     ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_DB_CTRL), send_data.export_json());
             }
 
@@ -393,7 +393,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
 
         if(data_received.is_valid())
         {
-            if(data_received.type() == type_message::DATA_SDR_INFO)
+            if(data_received.type() == type_message::data_sdr_info)
             {
                 const sdr_info sdr_info_data(data_received.data_message(), false);
                 emit signal_sdr_info(sdr_info_data);
@@ -408,7 +408,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
 
         if(data_received.is_valid())
         {
-            if(data_received.type() == type_message::DATA_MESSAGE_LOG)
+            if(data_received.type() == type_message::data_message_log)
             {
                 const data_log data_log_data(data_received.data_message(), false);
                 emit signal_data_log(data_log_data);
@@ -423,7 +423,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
 
         if(data_received.is_valid())
         {
-            if(data_received.type() == type_message::DATA_SYSTEM_MONITOR)
+            if(data_received.type() == type_message::data_system_monitor)
             {
                 const system_monitor data_system_monitor(data_received.data_message(), false);
                 emit signal_system_monitor(data_system_monitor);
@@ -438,7 +438,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
 
         if(data_received.is_valid())
         {
-            if(data_received.type() == type_message::DATA_SPECTR)
+            if(data_received.type() == type_message::data_spectr)
             {
                 const data_spectr powers(data_received.data_message());
 

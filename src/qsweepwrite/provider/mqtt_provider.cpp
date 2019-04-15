@@ -80,8 +80,8 @@ void mqtt_provider::slot_message_received(const QByteArray &message, const QMqtt
         const sweep_message data_received(message, false);
 
         if(data_received.is_valid())
-        {
-            if(data_received.type() == type_message::CTRL_DB)
+        {            
+            if(data_received.type() == type_message::ctrl_db)
             {
                 const broker_ctrl broker_ctrl_data(data_received.data_message(), false);
 

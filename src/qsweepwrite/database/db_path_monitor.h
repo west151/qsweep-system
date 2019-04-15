@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "sweep_write_settings.h"
+#include "db_state_workers.h"
 
 class db_path_monitor : public QObject
 {
@@ -19,9 +20,7 @@ public slots:
     void slot_stopping();
 
 signals:
-    void signal_is_initialization(const bool &);
-    void signal_is_launching(const bool &);
-    void signal_is_stopping(const bool &);
+    void signal_update_state_workers(const state_workers_type &type);
 
 private:
     sweep_write_settings m_settings;

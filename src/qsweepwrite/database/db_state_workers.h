@@ -11,6 +11,8 @@ enum state_workers_type: qint32 {
     stopping
 };
 
+Q_DECLARE_METATYPE(state_workers_type)
+
 class db_state_workers : public QObject
 {
     Q_OBJECT
@@ -29,6 +31,10 @@ public slots:
 
 private:
    QMap<QString, state_workers_type> m_workers_state;
+
+   void is_all_initialization();
+   void is_all_launching();
+   void is_all_stopping();
 };
 
 #endif // DB_STATE_WORKERS_H

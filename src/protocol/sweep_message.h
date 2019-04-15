@@ -5,14 +5,14 @@
 #include <QMetaType>
 
 enum class type_message: qint32 {
-    UNKNOWN = 0,
-    CTRL_INFO,
-    DATA_SDR_INFO,
-    CTRL_SPECTR,
-    CTRL_DB,
-    DATA_SPECTR,
-    DATA_MESSAGE_LOG,
-    DATA_SYSTEM_MONITOR
+    unknown = 0,
+    ctrl_info,
+    data_sdr_info,
+    ctrl_spectr,
+    ctrl_db,
+    data_spectr,
+    data_message_log,
+    data_system_monitor
 };
 
 class sweep_message_data;

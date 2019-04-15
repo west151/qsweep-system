@@ -13,7 +13,7 @@ public:
         m_valid = false;
         m_id = QUuid::createUuid().toString().mid(1, 8);
         m_data.clear();
-        m_type = type_message::UNKNOWN;
+        m_type = type_message::unknown;
     }
     sweep_message_data(const sweep_message_data &other) : QSharedData(other)
     {

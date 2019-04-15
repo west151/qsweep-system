@@ -67,7 +67,7 @@ void SweepWorker::onDataPowerSpectrCallbacks(const power_spectr &power, const bo
 //        });
 
         sweep_message send_data;
-        send_data.set_type(type_message::DATA_SPECTR);
+        send_data.set_type(type_message::data_spectr);
 
         data_spectr spectr;
         spectr.set_spectr(m_powerSpectrBuffer);
@@ -229,7 +229,7 @@ void SweepWorker::sweepWorkerMessagelog(const QString &value)
     message.set_text_message(value);
 
     sweep_message send_data;
-    send_data.set_type(type_message::DATA_MESSAGE_LOG);
+    send_data.set_type(type_message::data_message_log);
     send_data.set_data_message(message.export_json());
 
     emit signal_sweep_message(send_data.export_json());

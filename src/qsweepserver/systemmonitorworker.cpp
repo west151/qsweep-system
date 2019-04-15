@@ -19,7 +19,7 @@ void SystemMonitorWorker::runSystemMonitorWorker()
 {
     system_monitor monitor_data;
     sweep_message send_data;
-    send_data.set_type(type_message::DATA_SYSTEM_MONITOR);
+    send_data.set_type(type_message::data_system_monitor);
 
     monitor_data.set_host_name(QSysInfo::machineHostName());    // Hostname
     monitor_data.set_current_cpu_architecture(QSysInfo::currentCpuArchitecture());

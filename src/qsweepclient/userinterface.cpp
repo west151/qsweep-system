@@ -140,14 +140,14 @@ quint32 UserInterface::fftBinWidth() const
 void UserInterface::onRequestSweepInfo()
 {
     sweep_message ctrl_info;
-    ctrl_info.set_type(type_message::CTRL_INFO);
+    ctrl_info.set_type(type_message::ctrl_info);
     emit signal_sweep_message(ctrl_info.export_json());
 }
 
 void UserInterface::onRequestSweepSpectr(const bool &start)
 {
     sweep_message ctrl_spectr;
-    ctrl_spectr.set_type(type_message::CTRL_SPECTR);
+    ctrl_spectr.set_type(type_message::ctrl_spectr);
 
     params_spectr params_spectr_data;
 
@@ -177,7 +177,7 @@ void UserInterface::on_spectr_max_calc(const bool &value)
 void UserInterface::on_spectr_db_write(const bool &value)
 {
     sweep_message ctrl_msg;
-    ctrl_msg.set_type(type_message::CTRL_DB);
+    ctrl_msg.set_type(type_message::ctrl_db);
 
     broker_ctrl db_ctrl;
     sweep_topic topic;

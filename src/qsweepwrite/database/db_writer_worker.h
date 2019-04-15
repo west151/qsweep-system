@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 
 #include "sweep_write_settings.h"
+#include "db_state_workers.h"
 
 class db_writer_worker : public QObject
 {
@@ -21,15 +22,23 @@ public slots:
     void slot_stopping();
 
 signals:
-    void signal_is_initialization(const bool &);
-    void signal_is_launching(const bool &);
-    void signal_is_stopping(const bool &);
+    void signal_update_state_workers(const state_workers_type &type);
 
 private:
     QSqlDatabase m_dbase;
     QString m_str_error_dbase;
+    QMap <QString, bool> m_init_db_status;
+    QMap <QString, qint64> m_db_size;
 
     sweep_write_settings m_settings;
+
+    void open_db(const QString &);
+    bool start_transaction();
+    bool commit_transaction();
+    void set_pragma(const QString &, const QString &);
+    bool is_table_name_resolve(const QString &);
+    void update_last_error(QSqlQuery* query);
+    void close_db();
 };
 
 #endif // DB_WRITER_WORKER_H

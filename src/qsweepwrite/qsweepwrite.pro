@@ -26,7 +26,6 @@ SOURCES += \
     provider/mqtt_provider.cpp \
     database/db_cleaner.cpp \
     database/db_path_monitor.cpp \
-    database/db_system_worker.cpp \
     database/db_reader_worker.cpp \
     database/db_writer_worker.cpp \
     database/db_state_workers.cpp
@@ -43,7 +42,6 @@ HEADERS += \
     database/db_cleaner.h \
     database/db_path_monitor.h \
     database/db_const.h \
-    database/db_system_worker.h \
     database/db_reader_worker.h \
     database/db_writer_worker.h \
     database/db_state_workers.h
