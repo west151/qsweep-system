@@ -1,6 +1,9 @@
 #include "db_manager.h"
 
 #include <QThread>
+#include <QTimer>
+
+#include "sweep_message.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -10,7 +13,8 @@ db_manager::db_manager(QObject *parent) : QObject(parent)
 {
     is_ready = false;
 
-    qRegisterMetaType<state_workers_type>();
+    qRegisterMetaType<state_workers>();
+    qRegisterMetaType<state_db>();
 
     ptr_db_state_workers = new db_state_workers(this);
 
@@ -23,6 +27,11 @@ db_manager::db_manager(QObject *parent) : QObject(parent)
     // is all stopping
     connect(ptr_db_state_workers, &db_state_workers::signal_all_stopping,
             this, &db_manager::slot_is_all_stopping_workers);
+
+    auto timer = new QTimer();
+    connect(timer, SIGNAL(timeout()),
+            this, SLOT(slot_test_received_data()));
+    timer->start(500);
 }
 
 void db_manager::set_configuration(const sweep_write_settings &settings)
@@ -33,8 +42,6 @@ void db_manager::set_configuration(const sweep_write_settings &settings)
 void db_manager::initialization()
 {
     create_db_writer_worker(ptr_db_state_workers);
-
-    create_db_path_monitor_worker(ptr_db_state_workers);
 
     emit signal_initialization_workers();
 }
@@ -54,7 +61,7 @@ void db_manager::slot_is_all_initialization_workers()
     is_ready = false;
 
 #ifdef QT_DEBUG
-    qDebug().noquote() << tr("all initialization workers");
+    qDebug() << tr("all initialization workers");
 #endif
 
     emit signal_launching_workers();
@@ -65,9 +72,7 @@ void db_manager::slot_is_all_launching_workers()
     is_ready = true;
 
 #ifdef QT_DEBUG
-    qDebug().noquote() << tr("---------------------");
-    qDebug().noquote() << tr("all launching workers");
-    qDebug().noquote() << tr("---------------------");
+    qDebug() << tr("all launching workers");
 #endif
 }
 
@@ -82,12 +87,40 @@ void db_manager::slot_is_all_stopping_workers()
 
 void db_manager::slot_received_data(const QByteArray &rc_data)
 {
-    Q_UNUSED(rc_data)
-
     if(is_ready)
-    {
+        emit signal_send_data_to_write(rc_data);
+}
 
+void db_manager::slot_test_received_data()
+{
+    sweep_message send_data;
+    send_data.set_type(type_message::data_spectr);
+
+    QVector<power_spectr> powers;
+
+    for(int q=0; q<40; ++q)
+    {
+        power_spectr p1;
+        p1.m_date_time = QDateTime::currentDateTimeUtc();
+        p1.m_fft_bin_width = 250000;
+        p1.m_fft_size = 100;
+        p1.m_frequency_min = 100000000;
+        p1.m_frequency_max = 200000000;
+
+        for(int i=0; i<100; ++i){
+            qreal value = rm.generateDouble()*-100;
+            p1.m_power.append(value);
+        }
+
+        powers.append(p1);
     }
+
+    data_spectr spectr;
+    spectr.set_spectr(powers);
+
+    send_data.set_data_message(spectr.export_json());
+
+    slot_received_data(send_data.export_json());
 }
 
 void db_manager::create_db_writer_worker(db_state_workers *state)
@@ -113,34 +146,17 @@ void db_manager::create_db_writer_worker(db_state_workers *state)
     // state workers
     connect(ptr_db_writer_worker, &db_writer_worker::signal_update_state_workers,
             state, &db_state_workers::slot_update_state_workers);
+    // monitor db file size
+    connect(ptr_db_writer_worker, &db_writer_worker::signal_file_size,
+            state, &db_state_workers::slot_file_size);
+    // send data to write db
+    connect(this, &db_manager::signal_send_data_to_write,
+            ptr_db_writer_worker, &db_writer_worker::slot_data_to_write);
 
     ptr_db_writer_thread->start();
 }
 
-void db_manager::create_db_path_monitor_worker(db_state_workers *state)
+void db_manager::create_db_cleaner_worker(db_state_workers *state)
 {
-    // db path monitor
-    ptr_db_path_monitor_worker = new db_path_monitor;
-    ptr_db_path_monitor_worker->set_configuration(m_settings);
 
-    // add "db_path_monitor" to state monitor
-    state->add_name_workers(ptr_db_path_monitor_worker->metaObject()->className());
-
-    ptr_db_path_monitor_thread = new QThread;
-    ptr_db_path_monitor_worker->moveToThread(ptr_db_path_monitor_thread);
-
-    // initialization
-    connect(this, &db_manager::signal_initialization_workers,
-            ptr_db_path_monitor_worker, &db_path_monitor::slot_initialization);
-    // launching
-    connect(this, &db_manager::signal_launching_workers,
-            ptr_db_path_monitor_worker, &db_path_monitor::slot_launching);
-    // stopping
-    connect(this, &db_manager::signal_stopping_workers,
-            ptr_db_path_monitor_worker, &db_path_monitor::slot_stopping);
-    // state workers
-    connect(ptr_db_path_monitor_worker, &db_path_monitor::signal_update_state_workers,
-            state, &db_state_workers::slot_update_state_workers);
-
-    ptr_db_path_monitor_thread->start();
 }

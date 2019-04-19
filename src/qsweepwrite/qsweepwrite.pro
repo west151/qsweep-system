@@ -19,13 +19,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    database/db_cleaner_workers.cpp \
+    database/db_const.cpp \
+    database/db_custom_workers.cpp \
     qsweepwrite.cpp \
     core_sweep_write.cpp \
     sweep_write_settings.cpp \
     database/db_manager.cpp \
     provider/mqtt_provider.cpp \
-    database/db_cleaner.cpp \
-    database/db_path_monitor.cpp \
     database/db_reader_worker.cpp \
     database/db_writer_worker.cpp \
     database/db_state_workers.cpp
@@ -36,11 +37,11 @@ unix: target.path = /opt/qsweepwrite/bin
 
 HEADERS += \
     core_sweep_write.h \
+    database/db_cleaner_workers.h \
+    database/db_custom_workers.h \
     sweep_write_settings.h \
     database/db_manager.h \
     provider/mqtt_provider.h \
-    database/db_cleaner.h \
-    database/db_path_monitor.h \
     database/db_const.h \
     database/db_reader_worker.h \
     database/db_writer_worker.h \

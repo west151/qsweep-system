@@ -3,6 +3,9 @@
 
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QFileInfo>
+
+#include "sweep_message.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -27,41 +30,65 @@ void db_writer_worker::slot_initialization()
     if (!dir.exists())
         dir.mkpath(".");
 
-    QStringList list_file(list_of_all_chunk_files(m_settings.db_path(), m_settings.db_chunk()));
+    QStringList list_file(list_of_all_chunk_files(m_settings.db_path(), m_settings.db_file_count()));
 
     if(dir.exists())
     {
         for(int i=0; i<list_file.size(); ++i)
         {
             const QString tmp_db_name = list_file.at(i);
-            m_init_db_status.insert(tmp_db_name, false);
+            m_init_db_file_status.insert(tmp_db_name, false);
+            m_db_file_state.insert(tmp_db_name, state_db::file_unknown);
 
             // create or open (test)
             open_db(tmp_db_name);
 
-            m_init_db_status.insert(tmp_db_name, m_dbase.isOpen());
+            update_size_file(tmp_db_name);
+
+            m_init_db_file_status.insert(tmp_db_name, m_dbase.isOpen());
 
             close_db();
         }
 
-        qDebug() << m_init_db_status.values();
+        const auto is_state_list = m_init_db_file_status.values();
 
-        emit signal_update_state_workers(state_workers_type::initialization);
+        if(!is_state_list.contains(false))
+            emit signal_update_state_workers(state_workers::initialization);
+
+    }else {
+        qCritical() << "Can't find path:" << dir.absolutePath();
     }
 }
 
 void db_writer_worker::slot_launching()
 {
-    // to do
+    close_db();
 
-    emit signal_update_state_workers(state_workers_type::launching);
+    open_db(file_selection_for_writing());
+
+    if(m_dbase.isOpen())
+        emit signal_update_state_workers(state_workers::launching);
 }
 
 void db_writer_worker::slot_stopping()
 {
     // to do
 
-    emit signal_update_state_workers(state_workers_type::stopping);
+    emit signal_update_state_workers(state_workers::stopping);
+}
+
+void db_writer_worker::slot_data_to_write(const QByteArray &rc_data)
+{
+    const sweep_message data_received(rc_data, false);
+
+    if(data_received.is_valid())
+    {
+        if(data_received.type() == type_message::data_spectr)
+        {
+            const data_spectr rc_data_spectr(data_received.data_message(), false);
+            data_spectr_to_write(data_received.id_message(), rc_data_spectr);
+        }
+    }
 }
 
 void db_writer_worker::open_db(const QString &db_name)
@@ -70,9 +97,11 @@ void db_writer_worker::open_db(const QString &db_name)
 
     if(m_dbase.open())
     {
-#ifdef QT_DEBUG
-        qDebug() << "Open database:" << db_name;
-#endif
+        const auto list_table = table.keys();
+
+        for(int i=0; i<list_table.size(); i++)
+            if(!is_table_name_resolve(list_table.at(i)))
+                create_table(list_table.at(i));
 
         //PRAGMA page_size = bytes; // размер страницы БД; страница БД - это единица обмена между диском и кэшом, разумно сделать равным размеру кластера диска (у меня 4096)
         //PRAGMA cache_size = -kibibytes; // задать размер кэша соединения в килобайтах, по умолчанию он равен 2000 страниц БД
@@ -89,45 +118,6 @@ void db_writer_worker::open_db(const QString &db_name)
         qDebug() << "Error:" << m_dbase.lastError();
 #endif
     }
-
-
-//    m_dbase.setDatabaseName(full_path);
-
-//    if(m_dbase.open())
-//    {
-//#ifdef QT_DEBUG
-//        qDebug() << Q_FUNC_INFO << "Open database:" << full_path;
-//#endif
-//        const auto list_table = m_table.keys();
-
-//        for(int i=0; i<list_table.size(); i++)
-//            if(!is_table_name_resolve(list_table.at(i)))
-//                create_table(list_table.at(i));
-
-
-
-//        set_pragma("synchronous","0");
-
-////#ifdef QT_DEBUG
-////        // for test
-////        QVector<params_spectr> tmpVector;
-////        params_spectr data;
-////        data.set_frequency_min(2200000);
-////        data.set_frequency_max(2700000);
-////        data.set_lna_gain(32);
-////        data.set_vga_gain(20);
-////        data.set_descr(tr("describe"));
-
-////        tmpVector.append(data);
-////        slot_write_params_spectr(tmpVector);
-////#endif
-
-//    }else{
-//#ifdef QT_DEBUG
-//        qDebug() << Q_FUNC_INFO << "Can't database open:" << full_path;
-//        qDebug() << Q_FUNC_INFO << "error:" << m_dbase.lastError();
-//#endif
-    //    }
 }
 
 bool db_writer_worker::start_transaction()
@@ -184,6 +174,31 @@ bool db_writer_worker::is_table_name_resolve(const QString &table_name)
     return false;
 }
 
+bool db_writer_worker::create_table(const QString &table_name) const
+{
+    if(m_dbase.isOpen()&&(!table_name.isEmpty()))
+    {
+        QSqlQuery query(m_dbase);
+        QString sql = create_table_sql(table_name);
+
+        if(query.exec(sql)){
+#ifdef QT_DEBUG
+            qDebug() << "create table:" << table_name;
+#endif
+            return true;
+        } else {
+#ifdef QT_DEBUG
+            qDebug() << "can't create table:" << table_name;
+            qDebug() << tr("error:") << query.lastError().text();
+            qDebug() << tr("last query:") << query.lastQuery();
+#endif
+            return false;
+        }
+    }
+
+    return false;
+}
+
 void db_writer_worker::update_last_error(QSqlQuery *query)
 {
     if(query)
@@ -196,6 +211,74 @@ void db_writer_worker::update_last_error(QSqlQuery *query)
 #endif
 
     }
+}
+
+void db_writer_worker::data_spectr_to_write(const QString &id_messade, const data_spectr &data)
+{
+    if(m_dbase.isOpen()&&(m_db_file_state.value(m_dbase.databaseName()) == state_db::file_is_ready))
+    {
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+        query->prepare(insert_table_sql(spectr_data_table));
+
+        QByteArray ba(data.export_json());
+        query->bindValue(":params_id", id_messade);
+        query->bindValue(":data_spectr", ba);
+
+        bool on = query->exec();
+
+        if(on)
+        {
+            //qDebug() << "id_messade:" << id_messade;// << data.export_json();
+            update_size_file(m_dbase.databaseName());
+        }
+
+        if(!on)
+            update_last_error(query);
+    }
+
+
+    if(m_db_file_state.value(m_dbase.databaseName()) == state_db::file_is_full)
+    {
+        qDebug() << "file is full:" << m_dbase.databaseName();
+
+        QString db_file = file_selection_for_writing();
+
+        if(!db_file.isEmpty())
+        {
+            close_db();
+            open_db(file_selection_for_writing());
+        } else {
+            qDebug() << "all files are full:" << m_dbase.databaseName();
+        }
+    }
+}
+
+void db_writer_worker::update_size_file(const QString &db_name)
+{
+    qint64 size = 0;
+    QFileInfo info(db_name);
+
+    size = info.size();
+
+    m_db_file_size.insert(db_name, size);
+
+    if(size >= m_settings.db_file_size()*1024*1024)
+        m_db_file_state.insert(db_name, state_db::file_is_full);
+    else
+        m_db_file_state.insert(db_name, state_db::file_is_ready);
+
+    emit signal_file_size(db_name, size);
+}
+
+QString db_writer_worker::file_selection_for_writing() const
+{
+    const auto file_list = m_db_file_state.keys();
+
+    for(int i=0; i<file_list.size(); ++i)
+        if(m_db_file_state.value(file_list.at(i)) != state_db::file_is_full)
+            return file_list.at(i);
+
+    return "";
 }
 
 void db_writer_worker::close_db()

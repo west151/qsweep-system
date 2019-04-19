@@ -18,19 +18,19 @@ void db_reader_worker::slot_initialization()
 {
     // to do
 
-    emit signal_update_state_workers(state_workers_type::initialization);
+    emit signal_update_state_workers(state_workers::initialization);
 }
 
 void db_reader_worker::slot_launching()
 {
     // to do
 
-    emit signal_update_state_workers(state_workers_type::launching);
+    emit signal_update_state_workers(state_workers::launching);
 }
 
 void db_reader_worker::slot_stopping()
 {
     // to do
 
-    emit signal_update_state_workers(state_workers_type::stopping);
+    emit signal_update_state_workers(state_workers::stopping);
 }

@@ -22,7 +22,7 @@ public slots:
     void slot_stopping();
 
 signals:
-    void signal_update_state_workers(const state_workers_type &type);
+    void signal_update_state_workers(const state_workers &type);
 
 private:
     QSqlDatabase m_dbase;
