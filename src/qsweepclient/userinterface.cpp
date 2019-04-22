@@ -151,6 +151,7 @@ void UserInterface::onRequestSweepSpectr(const bool &start)
 
     params_spectr params_spectr_data;
 
+    params_spectr_data.set_id_params(ctrl_spectr.id_message());
     params_spectr_data.set_frequency_min(m_freqMin);
     params_spectr_data.set_frequency_max(m_freqMax);
     params_spectr_data.set_fft_bin_width(m_fftBinWidth);

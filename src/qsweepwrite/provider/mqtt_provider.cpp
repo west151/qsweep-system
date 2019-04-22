@@ -99,6 +99,15 @@ void mqtt_provider::slot_message_received(const QByteArray &message, const QMqtt
             }
         }
     }
+
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_POWER_SPECTR)
+    {
+        const sweep_message data_received(message, false);
+
+        if(data_received.is_valid())
+            if(data_received.type() == type_message::data_spectr)
+                emit signal_received_data(message);
+    }
 }
 
 void mqtt_provider::slot_state_connected()
@@ -177,8 +186,10 @@ void mqtt_provider::subscribe_broker(const QStringList &list_topic)
 {
     if (ptr_mqtt_client->state() == QMqttClient::Connected)
         if(!list_topic.isEmpty())
-            for(int i=0; i<list_topic.size(); ++i)
-                ptr_mqtt_client->subscribe(list_topic.at(i));
+            for(int i=0; i<list_topic.size(); ++i){
+                auto result_subscription = ptr_mqtt_client->subscribe(list_topic.at(i));
+                error_subscription(result_subscription->state());
+            }
 }
 
 void mqtt_provider::error_changed(QMqttClient::ClientError error)
@@ -218,3 +229,30 @@ void mqtt_provider::error_changed(QMqttClient::ClientError error)
         break;
     }
 }
+
+void mqtt_provider::error_subscription(const QMqttSubscription::SubscriptionState &error)
+{
+    qWarning("Mqtt client code: '%d'", error);
+
+    switch (error) {
+    case QMqttSubscription::Unsubscribed:
+        qCritical("The topic has been unsubscribed from");
+        break;
+    case QMqttSubscription::SubscriptionPending:
+        qCritical("A request for a subscription has been sent, but is has not been confirmed by the broker yet.");
+        break;
+    case QMqttSubscription::Subscribed:
+        qCritical("The subscription was successful and messages will be received.");
+        break;
+    case QMqttSubscription::UnsubscriptionPending:
+        qCritical("A request to unsubscribe from a topic has been sent, but it has not been confirmed by the broker yet.");
+        break;
+    case QMqttSubscription::Error:
+        qCritical("An error occured.");
+        break;
+    default:
+        qCritical("Unknown error.");
+        break;
+    }
+}
+

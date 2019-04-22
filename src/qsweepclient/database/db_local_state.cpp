@@ -114,7 +114,7 @@ void db_local_state::slot_write_params_spectr(const QVector<params_spectr> &valu
 
         for(int i=0; i<value.size(); ++i)
         {
-            query->bindValue(":id_params", value.at(i).id_params_spectr());
+            query->bindValue(":id_params", value.at(i).id_params());
             query->bindValue(":min_freq", value.at(i).frequency_min());
             query->bindValue(":max_freq", value.at(i).frequency_max());
             query->bindValue(":lna_gain", value.at(i).lna_gain());
@@ -191,7 +191,7 @@ void db_local_state::slot_read_params_spectr()
                 {
                     params_spectr data;
 
-                    data.set_id_params_spectr(query->value(sql_rec.indexOf("id_params")).toString());
+                    data.set_id_params(query->value(sql_rec.indexOf("id_params")).toString());
                     data.set_frequency_min(query->value(sql_rec.indexOf("min_freq")).toUInt());
                     data.set_frequency_max(query->value(sql_rec.indexOf("max_freq")).toUInt());
                     data.set_lna_gain(query->value(sql_rec.indexOf("lna_gain")).toUInt());

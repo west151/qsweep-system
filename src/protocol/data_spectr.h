@@ -30,6 +30,9 @@ public:
 
     bool is_valid() const;
 
+    void set_id_params(const QString &);
+    QString id_params()const;
+
     void set_spectr(const QVector<power_spectr> &);
     QVector<power_spectr> spectr()const;
 

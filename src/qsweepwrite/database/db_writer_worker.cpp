@@ -228,7 +228,7 @@ void db_writer_worker::data_spectr_to_write(const QString &id_messade, const dat
 
         if(on)
         {
-            //qDebug() << "id_messade:" << id_messade;// << data.export_json();
+            qDebug() << "id_params:" << data.id_params() << "id_messade:" << id_messade;// << data.export_json();
             update_size_file(m_dbase.databaseName());
         }
 

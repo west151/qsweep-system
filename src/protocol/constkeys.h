@@ -22,6 +22,7 @@ static const QString ID_KEY = QStringLiteral("id");
 static const QString TYPE_MESSAGE_KEY = QStringLiteral("type_msg");
 static const QString TEXT_MESSAGE_KEY = QStringLiteral("text_msg");
 
+static const QString ID_PARAMS_KEY = QStringLiteral("id_params");
 static const QString FREQUENCY_MIN_KEY = QStringLiteral("frequency_min");
 static const QString FREQUENCY_MAX_KEY = QStringLiteral("frequency_max");
 static const QString FFT_BIN_WIDTH_KEY = QStringLiteral("fft_bin_width");

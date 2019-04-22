@@ -17,8 +17,8 @@ public:
 
     bool is_valid() const;
 
-    void set_id_params_spectr(const QString &);
-    QString id_params_spectr()const;
+    void set_id_params(const QString &);
+    QString id_params()const;
 
     void set_one_shot(const bool &);
     bool one_shot()const;

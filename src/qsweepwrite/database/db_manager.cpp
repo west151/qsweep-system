@@ -28,10 +28,10 @@ db_manager::db_manager(QObject *parent) : QObject(parent)
     connect(ptr_db_state_workers, &db_state_workers::signal_all_stopping,
             this, &db_manager::slot_is_all_stopping_workers);
 
-    auto timer = new QTimer();
-    connect(timer, SIGNAL(timeout()),
-            this, SLOT(slot_test_received_data()));
-    timer->start(500);
+//    auto timer = new QTimer();
+//    connect(timer, SIGNAL(timeout()),
+//            this, SLOT(slot_test_received_data()));
+//    timer->start(500);
 }
 
 void db_manager::set_configuration(const sweep_write_settings &settings)

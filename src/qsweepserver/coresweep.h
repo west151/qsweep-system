@@ -33,6 +33,8 @@ private slots:
 
 private:
     bool m_run_sweep_worker;
+    QString m_id_params_spectr;
+
     HackrfInfo* ptrHackrfInfo {Q_NULLPTR};
     SweepWorker* ptrSweepWorker {Q_NULLPTR};
     QPointer<QThread> ptrSweepThread;

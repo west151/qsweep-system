@@ -13,16 +13,19 @@ public:
     {
         m_valid = false;
         m_powers.clear();
+        m_id_params.clear();
     }
     data_spectr_data(const data_spectr_data &other) : QSharedData(other)
     {
         m_valid = other.m_valid;
+        m_id_params = other.m_id_params;
         m_powers = other.m_powers;
     }
 
     ~data_spectr_data() {}
 
     bool m_valid;
+    QString m_id_params;
     QVector<power_spectr> m_powers;
 };
 
@@ -42,9 +45,9 @@ data_spectr::data_spectr(const QByteArray &json, const bool binary) : data(new d
     else
         doc = QJsonDocument::fromJson(json);
 
-    const QJsonObject jsonObject(doc.object());
+    const QJsonObject json_object(doc.object());
 
-    for(const QJsonValue &value: jsonObject.value(POWERS_KEY).toArray())
+    for(const QJsonValue &value: json_object.value(POWERS_KEY).toArray())
     {
         power_spectr powerSpectr;
         const QJsonObject objectPowerSpectr(value.toObject());
@@ -64,10 +67,11 @@ data_spectr::data_spectr(const QByteArray &json, const bool binary) : data(new d
         for(const auto &strItem : listValue){
             const auto value = static_cast<qreal>(strItem.trimmed().toFloat());
             powerSpectr.m_power.append(value);
-        }
-
-        data->m_powers.append(powerSpectr);
+        }        
+        data->m_powers.append(powerSpectr);       
     }
+
+    data->m_id_params = json_object.value(ID_PARAMS_KEY).toString();
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -92,6 +96,16 @@ bool data_spectr::is_valid() const
     return data->m_valid;
 }
 
+void data_spectr::set_id_params(const QString &value)
+{
+    data->m_id_params = value;
+}
+
+QString data_spectr::id_params() const
+{
+    return data->m_id_params;
+}
+
 void data_spectr::set_spectr(const QVector<power_spectr> &value)
 {
     data->m_powers = value;
@@ -104,7 +118,7 @@ QVector<power_spectr> data_spectr::spectr() const
 
 QByteArray data_spectr::export_json(const bool binary) const
 {
-    QJsonObject jsonObject;
+    QJsonObject json_object;
 
     if(data->m_powers.count())
     {
@@ -128,10 +142,12 @@ QByteArray data_spectr::export_json(const bool binary) const
 
             array.append(objectPowerSpectr);
         }
-        jsonObject.insert(POWERS_KEY, array);
+        json_object.insert(POWERS_KEY, array);
+
+        json_object.insert(ID_PARAMS_KEY, data->m_id_params);
     }
 
-    const QJsonDocument doc(jsonObject);
+    const QJsonDocument doc(json_object);
 
     if(binary)
         return doc.toBinaryData();

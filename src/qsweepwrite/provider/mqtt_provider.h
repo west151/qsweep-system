@@ -51,6 +51,7 @@ private:
     void subscribe_broker(const QStringList &);
 
     void error_changed(QMqttClient::ClientError error);
+    void error_subscription(const QMqttSubscription::SubscriptionState &);
 };
 
 #endif // MQTT_PROVIDER_H

@@ -45,7 +45,14 @@ void CoreSweep::slot_publish_message(const QByteArray &value)
                 ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_SYSTEM_MONITOR), value);
 
             if(send_data.type() == type_message::data_spectr)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR), value);
+            {
+                sweep_message send_data_spectr(value);
+                data_spectr spectr(send_data.data_message());
+                spectr.set_id_params(m_id_params_spectr);
+                send_data_spectr.set_data_message(spectr.export_json());
+
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR), send_data_spectr.export_json());
+            }
         }
     }
 }
@@ -67,7 +74,10 @@ void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopi
             {
                 const params_spectr params_spectr_data(ctrl_message.data_message(), false);
 
-                if(params_spectr_data.start_spectr()){
+                if(params_spectr_data.start_spectr())
+                {
+                    m_id_params_spectr = params_spectr_data.id_params();
+
                     if(!m_run_sweep_worker)
                         emit signal_run_spectr_worker(message);
 
