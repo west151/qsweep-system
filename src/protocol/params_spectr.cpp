@@ -190,7 +190,7 @@ QString params_spectr::descr() const
     return data->m_descr;
 }
 
-QByteArray params_spectr::export_json(const bool binary) const
+QByteArray params_spectr::to_json(const bool binary) const
 {
     QJsonObject json_object;
 

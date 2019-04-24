@@ -44,7 +44,7 @@ public:
     void set_descr(const QString &);
     QString descr()const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json(const bool binary = false) const;
 
 private:
     QSharedDataPointer<params_spectr_data> data;

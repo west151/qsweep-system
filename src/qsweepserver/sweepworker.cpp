@@ -5,6 +5,7 @@
 #include "sweep_message.h"
 #include "data_log.h"
 #include "params_spectr.h"
+//#include "cstring"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -35,6 +36,7 @@ float* window;
 time_t time_now;
 struct tm *fft_time;
 char time_str[50];
+char params_id_str[8];
 
 #if defined(__GNUC__)
 #include <unistd.h>
@@ -70,9 +72,10 @@ void SweepWorker::onDataPowerSpectrCallbacks(const power_spectr &power, const bo
         send_data.set_type(type_message::data_spectr);
 
         data_spectr spectr;
+        spectr.set_id_params(params_id_str);
         spectr.set_spectr(m_powerSpectrBuffer);
 
-        send_data.set_data_message(spectr.export_json());
+        send_data.set_data_message(spectr.to_json());
 
         emit signal_sweep_message(send_data.export_json());
 
@@ -243,6 +246,15 @@ void SweepWorker::slot_run_sweep_worker(const QByteArray &value)
     fft_bin_width = params_spectr_data.fft_bin_width(); // FFT bin width (frequency resolution) in Hz
     lna_gain = params_spectr_data.lna_gain();           // RX LNA (IF) gain, 0-40dB, 8dB steps
     vga_gain = params_spectr_data.vga_gain();           // RX VGA (baseband) gain, 0-62dB, 2dB steps
+    strncpy(params_id_str, qPrintable(params_spectr_data.id_params()), 7);
+
+    //qstrncpy(params_id_str, params_spectr_data.id_params(), 7);
+
+//    char c[100];
+//    QStrint s;
+//    strncpy(c, qPrintable(s), 99);
+
+    //char * qstrncpy ( char * dst, const char * src, uint len )?
 
     if (0 == num_ranges) {
         frequencies[0] = static_cast<uint16_t>(params_spectr_data.frequency_min());

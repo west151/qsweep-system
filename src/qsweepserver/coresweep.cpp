@@ -36,30 +36,23 @@ void CoreSweep::slot_publish_message(const QByteArray &value)
         if(send_data.is_valid())
         {
             if(send_data.type() == type_message::data_sdr_info)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_INFO), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_info), value);
 
             if(send_data.type() == type_message::data_message_log)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_MESSAGE_LOG), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_message_log), value);
 
             if(send_data.type() == type_message::data_system_monitor)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_SYSTEM_MONITOR), value);
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_system_monitor), value);
 
             if(send_data.type() == type_message::data_spectr)
-            {
-                sweep_message send_data_spectr(value);
-                data_spectr spectr(send_data.data_message());
-                spectr.set_id_params(m_id_params_spectr);
-                send_data_spectr.set_data_message(spectr.export_json());
-
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR), send_data_spectr.export_json());
-            }
+                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_power_spectr), value);
         }
     }
 }
 
 void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_CTRL)
+    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_ctrl)
     {
         const sweep_message ctrl_message(message, false);
 
@@ -85,8 +78,10 @@ void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopi
                         emit signal_stop_spectr_worker();
                         emit signal_run_spectr_worker(message);
                     }
-                }else
+                }else{
+                    m_id_params_spectr.clear();
                     emit signal_stop_spectr_worker();
+                }
             }
         }
     }
@@ -273,7 +268,7 @@ void CoreSweep::updateLogStateChange()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), 0);
+        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_ctrl), 0);
 
         if (!subscription)
         {

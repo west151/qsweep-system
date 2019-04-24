@@ -285,7 +285,7 @@ void CoreSweepClient::updateLogStateChange()
     // Subscribers topic
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_INFO));
+        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_info));
 
         if (!subscription)
         {
@@ -295,7 +295,7 @@ void CoreSweepClient::updateLogStateChange()
             return;
         }
 
-        auto subscription1 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_MESSAGE_LOG));
+        auto subscription1 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_message_log));
 
         if (!subscription1)
         {
@@ -305,7 +305,7 @@ void CoreSweepClient::updateLogStateChange()
             return;
         }
 
-        auto subscription2 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR));
+        auto subscription2 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_power_spectr));
 
         if (!subscription2)
         {
@@ -315,7 +315,7 @@ void CoreSweepClient::updateLogStateChange()
             return;
         }
 
-        auto subscription3 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_SYSTEM_MONITOR));
+        auto subscription3 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_system_monitor));
 
         if (!subscription3)
         {
@@ -368,13 +368,13 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
             if(send_data.is_valid())
             {
                 if(send_data.type() == type_message::ctrl_info)
-                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), send_data.export_json());
+                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
 
                 if(send_data.type() == type_message::ctrl_spectr)
-                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_CTRL), send_data.export_json());
+                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
 
                 if(send_data.type() == type_message::ctrl_db)
-                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_DB_CTRL), send_data.export_json());
+                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_db_ctrl), send_data.export_json());
             }
 
 //#ifdef QT_DEBUG
@@ -387,7 +387,7 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
 void CoreSweepClient::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
     // system info
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_INFO)
+    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_info)
     {
         const sweep_message data_received(message, false);
 
@@ -402,7 +402,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     }
 
     // message log
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_MESSAGE_LOG)
+    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_message_log)
     {
         const sweep_message data_received(message, false);
 
@@ -417,7 +417,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     }
 
     // system monitor
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_SYSTEM_MONITOR)
+    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_system_monitor)
     {
         const sweep_message data_received(message, false);
 
@@ -432,7 +432,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     }
 
     // power spectr
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_POWER_SPECTR)
+    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_power_spectr)
     {
         const sweep_message data_received(message, false);
 

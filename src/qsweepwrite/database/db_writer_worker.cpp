@@ -86,7 +86,13 @@ void db_writer_worker::slot_data_to_write(const QByteArray &rc_data)
         if(data_received.type() == type_message::data_spectr)
         {
             const data_spectr rc_data_spectr(data_received.data_message(), false);
-            data_spectr_to_write(data_received.id_message(), rc_data_spectr);
+            data_spectr_to_write(rc_data_spectr);
+        }
+
+        if(data_received.type() == type_message::ctrl_spectr)
+        {
+            const params_spectr rc_params_spectr_data(data_received.data_message(), false);
+            data_params_to_write(rc_params_spectr_data);
         }
     }
 }
@@ -213,22 +219,22 @@ void db_writer_worker::update_last_error(QSqlQuery *query)
     }
 }
 
-void db_writer_worker::data_spectr_to_write(const QString &id_messade, const data_spectr &data)
+void db_writer_worker::data_spectr_to_write(const data_spectr &data)
 {
     if(m_dbase.isOpen()&&(m_db_file_state.value(m_dbase.databaseName()) == state_db::file_is_ready))
     {
         QSqlQuery* query = new QSqlQuery(m_dbase);
         query->prepare(insert_table_sql(spectr_data_table));
 
-        QByteArray ba(data.export_json());
-        query->bindValue(":params_id", id_messade);
+        QByteArray ba(data.to_json());
+        query->bindValue(":params_id", data.id_params());
         query->bindValue(":data_spectr", ba);
 
         bool on = query->exec();
 
         if(on)
         {
-            qDebug() << "id_params:" << data.id_params() << "id_messade:" << id_messade;// << data.export_json();
+            qDebug() << "id_params:" << data.id_params(); // << data.export_json();
             update_size_file(m_dbase.databaseName());
         }
 
@@ -250,6 +256,27 @@ void db_writer_worker::data_spectr_to_write(const QString &id_messade, const dat
         } else {
             qDebug() << "all files are full:" << m_dbase.databaseName();
         }
+    }
+}
+
+void db_writer_worker::data_params_to_write(const params_spectr &data_params)
+{
+    if(m_dbase.isOpen()&&(m_db_file_state.value(m_dbase.databaseName()) == state_db::file_is_ready))
+    {
+        QSqlQuery* query = new QSqlQuery(m_dbase);
+        query->prepare(insert_table_sql(spectr_params_table));
+
+        QByteArray ba(data_params.to_json());
+        query->bindValue(":params_id", data_params.id_params());
+        query->bindValue(":data_params", ba);
+
+        bool on = query->exec();
+
+        if(on)
+            update_size_file(m_dbase.databaseName());
+
+        if(!on)
+            update_last_error(query);
     }
 }
 

@@ -7,8 +7,8 @@
 
 mqtt_provider::mqtt_provider(QObject *parent) : QObject(parent)
 {
-    m_subscribe_data.append(sweep_topic::TOPIC_POWER_SPECTR);
-    m_subscribe_ctrl.append(sweep_topic::TOPIC_DB_CTRL);
+    m_subscribe_data.append(sweep_topic::topic_ctrl);
+    m_subscribe_ctrl.append(sweep_topic::topic_db_ctrl);
 }
 
 void mqtt_provider::initialization()
@@ -75,7 +75,7 @@ void mqtt_provider::slot_publish_message(const QByteArray &)
 
 void mqtt_provider::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
-    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_DB_CTRL)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_db_ctrl)
     {
         const sweep_message data_received(message, false);
 
@@ -100,12 +100,21 @@ void mqtt_provider::slot_message_received(const QByteArray &message, const QMqtt
         }
     }
 
-    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::TOPIC_POWER_SPECTR)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_power_spectr)
     {
         const sweep_message data_received(message, false);
 
         if(data_received.is_valid())
             if(data_received.type() == type_message::data_spectr)
+                emit signal_received_data(message);
+    }
+
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_ctrl)
+    {
+        const sweep_message data_received(message, false);
+
+        if(data_received.is_valid())
+            if(data_received.type() == type_message::ctrl_spectr)
                 emit signal_received_data(message);
     }
 }
@@ -125,6 +134,24 @@ void mqtt_provider::slot_state_connected()
             }else{
 #ifdef QT_DEBUG
                 qDebug() << "subscribe:" << ptr_sweep_topic->sweep_topic_by_type(m_subscribe_ctrl.at(i));
+#endif
+            }
+        }
+    }
+
+    if(m_subscribe_data.size()>0)
+    {
+        for (int i=0; i<m_subscribe_data.size(); ++i)
+        {
+            auto subscription = ptr_mqtt_client->subscribe(ptr_sweep_topic->sweep_topic_by_type(m_subscribe_data.at(i)));
+            if (!subscription)
+            {
+#ifdef QT_DEBUG
+                qDebug() << "Could not subscribe. Is there a valid connection?";
+#endif
+            }else{
+#ifdef QT_DEBUG
+                qDebug() << "subscribe:" << ptr_sweep_topic->sweep_topic_by_type(m_subscribe_data.at(i));
 #endif
             }
         }

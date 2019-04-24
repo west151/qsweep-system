@@ -160,7 +160,7 @@ void UserInterface::onRequestSweepSpectr(const bool &start)
     params_spectr_data.set_one_shot(m_oneShot);
     params_spectr_data.set_start_spectr(start);
 
-    ctrl_spectr.set_data_message(params_spectr_data.export_json());
+    ctrl_spectr.set_data_message(params_spectr_data.to_json());
 
     emit signal_sweep_message(ctrl_spectr.export_json());
 }
@@ -182,7 +182,9 @@ void UserInterface::on_spectr_db_write(const bool &value)
 
     broker_ctrl db_ctrl;
     sweep_topic topic;
-    QStringList list_topic(topic.sweep_topic_by_type(sweep_topic::TOPIC_POWER_SPECTR));
+    QStringList list_topic;
+    list_topic.append(topic.sweep_topic_by_type(sweep_topic::topic_power_spectr));
+    list_topic.append(topic.sweep_topic_by_type(sweep_topic::topic_ctrl));
 
     if(value)
         db_ctrl.set_ctrl_type(broker_ctrl_type::subscribe);

@@ -8,6 +8,7 @@
 #include "sweep_write_settings.h"
 #include "db_state_workers.h"
 #include "data_spectr.h"
+#include "params_spectr.h"
 
 class db_writer_worker : public QObject
 {
@@ -31,6 +32,7 @@ signals:
 private:
     QSqlDatabase m_dbase;
     QString m_str_error_dbase;
+    params_spectr m_params_spectr_to_write;
 
     QMap <QString, bool> m_init_db_file_status;
     QMap <QString, qint64> m_db_file_size;
@@ -45,7 +47,8 @@ private:
     bool is_table_name_resolve(const QString &);
     bool create_table(const QString &)const;
     void update_last_error(QSqlQuery* query);    
-    void data_spectr_to_write(const QString &, const data_spectr &);
+    void data_spectr_to_write(const data_spectr &);
+    void data_params_to_write(const params_spectr &);
     void close_db();
 
     void update_size_file(const QString &);

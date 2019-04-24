@@ -36,7 +36,7 @@ public:
     void set_spectr(const QVector<power_spectr> &);
     QVector<power_spectr> spectr()const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json(const bool binary = false) const;
 
 private:
     QSharedDataPointer<data_spectr_data> data;

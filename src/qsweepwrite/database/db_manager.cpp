@@ -118,7 +118,7 @@ void db_manager::slot_test_received_data()
     data_spectr spectr;
     spectr.set_spectr(powers);
 
-    send_data.set_data_message(spectr.export_json());
+    send_data.set_data_message(spectr.to_json());
 
     slot_received_data(send_data.export_json());
 }

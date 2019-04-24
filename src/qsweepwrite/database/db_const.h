@@ -35,12 +35,7 @@ static const QMap<QString, QString> column_spectr_params
 {
     {"id_pk", sqlite_type_integer_pk},
     {"params_id", sqlite_type_char.arg(8)},
-    {"min_freq", sqlite_type_double},
-    {"max_freq", sqlite_type_double},
-    {"params_dt", sqlite_type_datetime},
-    {"lna_gain", sqlite_type_integer},
-    {"vga_gain", sqlite_type_integer},
-    {"fft_bin_width", sqlite_type_double}
+    {"data_params", sqlite_type_blob}
 };
 
 static const QMap<QString, QString> column_spectr_data

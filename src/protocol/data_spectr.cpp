@@ -116,7 +116,7 @@ QVector<power_spectr> data_spectr::spectr() const
     return data->m_powers;
 }
 
-QByteArray data_spectr::export_json(const bool binary) const
+QByteArray data_spectr::to_json(const bool binary) const
 {
     QJsonObject json_object;
 
