@@ -22,6 +22,7 @@ SOURCES += \
     database/db_cleaner_workers.cpp \
     database/db_const.cpp \
     database/db_custom_workers.cpp \
+    file_backup_workers.cpp \
     qsweepwrite.cpp \
     core_sweep_write.cpp \
     sweep_write_settings.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     core_sweep_write.h \
     database/db_cleaner_workers.h \
     database/db_custom_workers.h \
+    file_backup_workers.h \
     sweep_write_settings.h \
     database/db_manager.h \
     provider/mqtt_provider.h \

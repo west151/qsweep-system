@@ -9,6 +9,7 @@ static const QString DELAYED_LAUNCH_KEY = QStringLiteral("delayed_launch");
 static const QString DB_PATH_KEY = QStringLiteral("db_path");
 static const QString DB_FILE_COUNT_KEY = QStringLiteral("db_file_count");
 static const QString DB_FILE_SIZE_KEY = QStringLiteral("db_file_size");
+static const QString BACKUP_PATH_KEY = QStringLiteral("backup_path");
 
 class sweep_write_settings_data : public QSharedData {
 public:
@@ -21,6 +22,7 @@ public:
         m_db_path = "";
         m_db_file_count = 1;
         m_db_file_size = 100;
+        m_backup_path = "";
     }
     sweep_write_settings_data(const sweep_write_settings_data &other) : QSharedData(other)
     {
@@ -31,6 +33,7 @@ public:
         m_db_path = other.m_db_path;
         m_db_file_count = other.m_db_file_count;
         m_db_file_size = other.m_db_file_size;
+        m_backup_path = other.m_backup_path;
     }
 
     ~sweep_write_settings_data() {}
@@ -45,6 +48,8 @@ public:
     // database chunk count
     qint32 m_db_file_count;
     qint32 m_db_file_size;
+    // backup path
+    QString m_backup_path;
 };
 
 sweep_write_settings::sweep_write_settings() : data(new sweep_write_settings_data)
@@ -152,6 +157,16 @@ void sweep_write_settings::set_db_file_size(const qint32 &value)
 qint32 sweep_write_settings::db_file_size() const
 {
     return data->m_db_file_size;
+}
+
+void sweep_write_settings::set_backup_path(const QString &value)
+{
+    data->m_backup_path = value;
+}
+
+QString sweep_write_settings::backup_path() const
+{
+    return data->m_backup_path;
 }
 
 QByteArray sweep_write_settings::exportToJson(const bool binary, const bool isCompact) const

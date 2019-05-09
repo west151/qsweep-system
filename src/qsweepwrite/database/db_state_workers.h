@@ -19,7 +19,8 @@ enum state_db: qint32 {
     file_read,
     file_clean,
     file_is_full,
-    file_is_ready
+    file_is_ready,
+    file_is_backup
 };
 
 Q_DECLARE_METATYPE(state_db)

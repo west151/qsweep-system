@@ -10,6 +10,7 @@
 #include "db_reader_worker.h"
 #include "db_writer_worker.h"
 #include "db_cleaner_workers.h"
+#include "file_backup_workers.h"
 
 class db_manager : public QObject
 {
@@ -55,6 +56,11 @@ private:
     db_cleaner_workers *ptr_db_cleaner_workers {Q_NULLPTR};
     QPointer<QThread> ptr_db_cleaner_thread;
     void create_db_cleaner_worker(db_state_workers *state);
+
+    // db file backup
+    file_backup_workers *ptr_file_backup_workers {Q_NULLPTR};
+    QPointer<QThread> ptr_file_backup_thread;
+    void create_file_backup_worker(db_state_workers *state);
 
     // test
     QRandomGenerator rm;

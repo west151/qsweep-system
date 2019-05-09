@@ -37,6 +37,9 @@ public:
     void set_db_file_size(const qint32 &);
     qint32 db_file_size()const;
 
+    void set_backup_path(const QString &);
+    QString backup_path()const;
+
     QByteArray exportToJson(const bool binary = false, const bool isCompact = true) const;
 
 private:

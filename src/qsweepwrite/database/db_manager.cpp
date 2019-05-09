@@ -2,6 +2,7 @@
 
 #include <QThread>
 #include <QTimer>
+#include <QStorageInfo>
 
 #include "sweep_message.h"
 
@@ -41,9 +42,35 @@ void db_manager::set_configuration(const sweep_write_settings &settings)
 
 void db_manager::initialization()
 {
-    create_db_writer_worker(ptr_db_state_workers);
+    QStorageInfo storage(m_settings.db_path());
 
-    emit signal_initialization_workers();
+    if (storage.isValid() && storage.isReady())
+    {
+        // calc need free disk space (Mb)
+        qint64 need_size = m_settings.db_file_size()*m_settings.db_file_count();
+        qint64 available_size = storage.bytesAvailable()/1024/1024;
+
+#ifdef QT_DEBUG
+        qDebug() << tr("StorageInfo") << tr("name:") << storage.name();
+        qDebug() << tr("StorageInfo") << tr("file system type:") << storage.fileSystemType();
+        qDebug() << tr("StorageInfo") << tr("size:") << storage.bytesTotal()/1000/1000 << "MB";
+        qDebug() << tr("StorageInfo") << tr("available size:") << available_size << "MB";
+        qDebug() << tr("StorageInfo") << tr("need free disk space:") << need_size << "MB";
+#endif
+        if(available_size > need_size)
+        {
+            create_db_writer_worker(ptr_db_state_workers);
+
+            emit signal_initialization_workers();
+
+        }else{
+#ifdef QT_DEBUG
+            qCritical() << tr("StorageInfo")
+                        << tr("available size:") << available_size << "MB"
+                        << tr("need free disk space:") << need_size << "MB";
+#endif
+        }
+    }
 }
 
 void db_manager::launching()
@@ -159,4 +186,31 @@ void db_manager::create_db_writer_worker(db_state_workers *state)
 void db_manager::create_db_cleaner_worker(db_state_workers *state)
 {
 
+}
+
+void db_manager::create_file_backup_worker(db_state_workers *state)
+{
+    ptr_file_backup_workers = new file_backup_workers;
+    ptr_file_backup_workers->set_configuration(m_settings);
+
+    ptr_file_backup_thread = new QThread;
+    ptr_file_backup_workers->moveToThread(ptr_file_backup_thread);
+
+    // add "db_writer_worker" to state monitor
+    state->add_name_workers(ptr_file_backup_workers->metaObject()->className());
+
+    // initialization
+    connect(this, &db_manager::signal_initialization_workers,
+            ptr_file_backup_workers, &file_backup_workers::slot_initialization);
+    // launching
+    connect(this, &db_manager::signal_launching_workers,
+            ptr_file_backup_workers, &file_backup_workers::slot_launching);
+    // stopping
+    connect(this, &db_manager::signal_stopping_workers,
+            ptr_file_backup_workers, &file_backup_workers::slot_stopping);
+    // state workers
+    connect(ptr_file_backup_workers, &file_backup_workers::signal_update_state_workers,
+            state, &db_state_workers::slot_update_state_workers);
+
+    ptr_file_backup_thread->start();
 }
