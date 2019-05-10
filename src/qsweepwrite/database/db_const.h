@@ -57,6 +57,7 @@ QString list_column_and_type(const QString &table_name);
 QString list_column_prefix(const QString &table_name, const QString &prefix);
 QString create_table_sql(const QString &table_name);
 QString insert_table_sql(const QString &table_name);
+QString format_size(const qint64 &size);
 
 template<typename data_type>
 QByteArray toByteArray(data_type data) {

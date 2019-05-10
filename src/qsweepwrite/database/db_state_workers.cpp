@@ -1,5 +1,7 @@
 #include "db_state_workers.h"
 
+#include "db_const.h"
+
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
 #endif
@@ -38,7 +40,9 @@ void db_state_workers::slot_file_size(const QString &db_name, const qint64 &db_s
 {
     m_db_file_size.insert(db_name, db_size);
 
-    qDebug() << db_name << db_size << db_size/1024 << QString::number(db_size/1024.0/1024.0, 'g', 2);
+#ifdef QT_DEBUG
+        qDebug() << db_name << format_size(db_size) << "(" << db_size << ")";
+#endif
 }
 
 void db_state_workers::is_all_initialization()

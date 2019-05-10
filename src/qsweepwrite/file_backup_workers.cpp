@@ -18,7 +18,7 @@ void file_backup_workers::set_configuration(const sweep_write_settings &settings
 
 void file_backup_workers::slot_initialization()
 {
-    QDir dir(m_settings.db_path());
+    QDir dir(m_settings.backup_path());
 
     if (!dir.exists())
         dir.mkpath(".");

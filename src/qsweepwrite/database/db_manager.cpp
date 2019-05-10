@@ -61,6 +61,9 @@ void db_manager::initialization()
         {
             create_db_writer_worker(ptr_db_state_workers);
 
+            if(m_settings.data_backup())
+                create_file_backup_worker(ptr_db_state_workers);
+
             emit signal_initialization_workers();
 
         }else{

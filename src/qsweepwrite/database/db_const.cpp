@@ -102,3 +102,15 @@ QString insert_table_sql(const QString &table_name)
 
     return sql;
 }
+
+QString format_size(const qint64 &size)
+{
+    QStringList units = {"Bytes", "KB", "MB", "GB", "TB", "PB"};
+    int i;
+    double output_size = size;
+    for(i=0; i<units.size()-1; i++) {
+        if(output_size<1024) break;
+        output_size= output_size/1024;
+    }
+    return QString("%0 %1").arg(output_size, 0, 'f', 2).arg(units[i]);
+}
