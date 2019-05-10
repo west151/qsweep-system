@@ -114,3 +114,20 @@ QString format_size(const qint64 &size)
     }
     return QString("%0 %1").arg(output_size, 0, 'f', 2).arg(units[i]);
 }
+
+qint64 dir_size(const QString &dir_path)
+{
+    qint64 size = 0;
+    QDir dir(dir_path);
+    //calculate total size of current directories' files
+    QDir::Filters file_filters = QDir::Files|QDir::System|QDir::Hidden;
+    for(QString file_path : dir.entryList(file_filters)) {
+        QFileInfo fi(dir, file_path);
+        size+= fi.size();
+    }
+    //add size of child directories recursively
+    QDir::Filters dir_filters = QDir::Dirs|QDir::NoDotAndDotDot|QDir::System|QDir::Hidden;
+    for(QString child_dir_path : dir.entryList(dir_filters))
+        size+= dir_size(dir_path + QDir::separator() + child_dir_path);
+    return size;
+}
