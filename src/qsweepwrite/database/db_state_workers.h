@@ -8,7 +8,8 @@ enum state_workers: qint32 {
     unknown,
     initialization,
     launching,
-    stopping
+    stopping,
+    error
 };
 
 Q_DECLARE_METATYPE(state_workers)

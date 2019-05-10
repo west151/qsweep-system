@@ -40,6 +40,9 @@ public:
     void set_backup_path(const QString &);
     QString backup_path()const;
 
+    void set_data_backup(const bool &);
+    bool data_backup()const;
+
     QByteArray exportToJson(const bool binary = false, const bool isCompact = true) const;
 
 private:

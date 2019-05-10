@@ -10,6 +10,7 @@ static const QString DB_PATH_KEY = QStringLiteral("db_path");
 static const QString DB_FILE_COUNT_KEY = QStringLiteral("db_file_count");
 static const QString DB_FILE_SIZE_KEY = QStringLiteral("db_file_size");
 static const QString BACKUP_PATH_KEY = QStringLiteral("backup_path");
+static const QString DATA_BACKUP_KEY = QStringLiteral("data_backup");
 
 class sweep_write_settings_data : public QSharedData {
 public:
@@ -23,6 +24,7 @@ public:
         m_db_file_count = 1;
         m_db_file_size = 100;
         m_backup_path = "";
+        m_data_backup = false;
     }
     sweep_write_settings_data(const sweep_write_settings_data &other) : QSharedData(other)
     {
@@ -34,6 +36,7 @@ public:
         m_db_file_count = other.m_db_file_count;
         m_db_file_size = other.m_db_file_size;
         m_backup_path = other.m_backup_path;
+        m_data_backup = other.m_data_backup;
     }
 
     ~sweep_write_settings_data() {}
@@ -50,6 +53,7 @@ public:
     qint32 m_db_file_size;
     // backup path
     QString m_backup_path;
+    bool m_data_backup;
 };
 
 sweep_write_settings::sweep_write_settings() : data(new sweep_write_settings_data)
@@ -68,13 +72,15 @@ sweep_write_settings::sweep_write_settings(const QByteArray &json, const bool bi
     else
         doc = QJsonDocument::fromJson(json);
 
-    const QJsonObject jsonObject = doc.object();
-    data->m_host_broker = jsonObject.value(HOST_BROKER_KEY).toString();
-    data->m_port_broker = jsonObject.value(PORT_BROKER_KEY).toString().toUShort();
-    data->m_delayed_launch = jsonObject.value(DELAYED_LAUNCH_KEY).toInt(1000);
-    data->m_db_path = jsonObject.value(DB_PATH_KEY).toString();
-    data->m_db_file_count = jsonObject.value(DB_FILE_COUNT_KEY).toInt(1);
-    data->m_db_file_size = jsonObject.value(DB_FILE_SIZE_KEY).toInt(100);
+    const QJsonObject json_object = doc.object();
+    data->m_host_broker = json_object.value(HOST_BROKER_KEY).toString();
+    data->m_port_broker = json_object.value(PORT_BROKER_KEY).toString().toUShort();
+    data->m_delayed_launch = json_object.value(DELAYED_LAUNCH_KEY).toInt(1000);
+    data->m_db_path = json_object.value(DB_PATH_KEY).toString();
+    data->m_db_file_count = json_object.value(DB_FILE_COUNT_KEY).toInt(1);
+    data->m_db_file_size = json_object.value(DB_FILE_SIZE_KEY).toInt(100);
+    data->m_backup_path = json_object.value(BACKUP_PATH_KEY).toString();
+    data->m_data_backup = json_object.value(DATA_BACKUP_KEY).toBool();
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -169,17 +175,29 @@ QString sweep_write_settings::backup_path() const
     return data->m_backup_path;
 }
 
+void sweep_write_settings::set_data_backup(const bool &value)
+{
+    data->m_data_backup = value;
+}
+
+bool sweep_write_settings::data_backup() const
+{
+    return data->m_data_backup;
+}
+
 QByteArray sweep_write_settings::exportToJson(const bool binary, const bool isCompact) const
 {
-    QJsonObject jsonObject;
-    jsonObject.insert(HOST_BROKER_KEY, data->m_host_broker);
-    jsonObject.insert(PORT_BROKER_KEY, QString::number(data->m_port_broker));
-    jsonObject.insert(DELAYED_LAUNCH_KEY, data->m_delayed_launch);
-    jsonObject.insert(DB_PATH_KEY, data->m_db_path);
-    jsonObject.insert(DB_FILE_COUNT_KEY, data->m_db_file_count);
-    jsonObject.insert(DB_FILE_SIZE_KEY, data->m_db_file_size);
+    QJsonObject json_object;
+    json_object.insert(HOST_BROKER_KEY, data->m_host_broker);
+    json_object.insert(PORT_BROKER_KEY, QString::number(data->m_port_broker));
+    json_object.insert(DELAYED_LAUNCH_KEY, data->m_delayed_launch);
+    json_object.insert(DB_PATH_KEY, data->m_db_path);
+    json_object.insert(DB_FILE_COUNT_KEY, data->m_db_file_count);
+    json_object.insert(DB_FILE_SIZE_KEY, data->m_db_file_size);
+    json_object.insert(BACKUP_PATH_KEY, data->m_backup_path);
+    json_object.insert(DATA_BACKUP_KEY, data->m_data_backup);
 
-    QJsonDocument doc(jsonObject);
+    QJsonDocument doc(json_object);
 
     if(binary)
         return doc.toBinaryData();

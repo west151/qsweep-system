@@ -56,7 +56,9 @@ void db_writer_worker::slot_initialization()
             emit signal_update_state_workers(state_workers::initialization);
 
     }else {
+#ifdef QT_DEBUG
         qCritical() << "Can't find path:" << dir.absolutePath();
+#endif
     }
 }
 
