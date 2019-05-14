@@ -60,10 +60,10 @@ bool core_sweep_write::save_settings(const QString &file)
         if(file.open(QIODevice::ReadWrite | QIODevice::Text)) {
             if(fileExists){
                 if(m_sweep_write_settings.is_valid())
-                    file.write(m_sweep_write_settings.exportToJson());
+                    file.write(m_sweep_write_settings.to_json());
             }else{
                 const auto defaultSettings = sweep_write_settings();
-                file.write(defaultSettings.exportToJson(false, false));
+                file.write(defaultSettings.to_json(false, false));
             }
 
             file.close();

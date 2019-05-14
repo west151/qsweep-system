@@ -43,7 +43,10 @@ public:
     void set_data_backup(const bool &);
     bool data_backup()const;
 
-    QByteArray exportToJson(const bool binary = false, const bool isCompact = true) const;
+    void set_backup_compress_level(const int &);
+    int backup_compress_level()const;
+
+    QByteArray to_json(const bool binary = false, const bool isCompact = true) const;
 
 private:
     QSharedDataPointer<sweep_write_settings_data> data;

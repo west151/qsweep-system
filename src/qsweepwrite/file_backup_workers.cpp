@@ -1,6 +1,9 @@
 #include "file_backup_workers.h"
 
 #include <QDir>
+#include <QDateTime>
+
+#include "database/db_const.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>
@@ -8,7 +11,7 @@
 
 file_backup_workers::file_backup_workers(QObject *parent) : QObject(parent)
 {
-
+    is_ready = false;
 }
 
 void file_backup_workers::set_configuration(const sweep_write_settings &settings)
@@ -27,6 +30,11 @@ void file_backup_workers::slot_initialization()
     {
 
         emit signal_update_state_workers(state_workers::initialization);
+
+        is_ready = true;
+        // test
+        slot_file_backup("/home/gis1501/db_data/db_chunk_1.sqlite");
+
     }else {
 #ifdef QT_DEBUG
         qCritical() << "Can't find path:" << dir.absolutePath();
@@ -43,4 +51,35 @@ void file_backup_workers::slot_launching()
 void file_backup_workers::slot_stopping()
 {
     emit signal_update_state_workers(state_workers::stopping);
+}
+
+void file_backup_workers::slot_file_backup(const QString &file_name)
+{
+    if(is_ready)
+    {
+        QFileInfo in_file_info(file_name);
+        QString file_name_gen = QDateTime::currentDateTimeUtc().toString("ddMMyyyy_hhmmss");
+        file_name_gen.append(".backup");
+        QFileInfo out_file_info(m_settings.backup_path()+QDir::separator()+file_name_gen);
+
+        if(in_file_info.exists())
+        {
+
+#ifdef QT_DEBUG
+            qDebug() << "Input file name:" << in_file_info.filePath();
+            qDebug() << "Output file name:" << out_file_info.filePath();
+#endif
+            file_compress(in_file_info.filePath(), out_file_info.filePath(), m_settings.backup_compress_level());
+
+#ifdef QT_DEBUG
+            qDebug() << "File compressed:" << out_file_info.filePath();
+#endif
+            file_uncompressed(out_file_info.filePath(), m_settings.backup_path()+QDir::separator()+"uncompress.sqlite");
+
+#ifdef QT_DEBUG
+            qDebug() << "File uncompressed:" << out_file_info.filePath();
+#endif
+
+        }
+    }
 }

@@ -59,6 +59,8 @@ QString create_table_sql(const QString &table_name);
 QString insert_table_sql(const QString &table_name);
 QString format_size(const qint64 &size);
 qint64 dir_size(const QString &dir_path);
+bool file_compress(const QString &in_file, const QString &out_file, int compressionLevel = -1);
+bool file_uncompressed(const QString &in_file, const QString &out_file);
 
 template<typename data_type>
 QByteArray toByteArray(data_type data) {

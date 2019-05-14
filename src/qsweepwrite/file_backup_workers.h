@@ -19,12 +19,13 @@ public slots:
     void slot_launching();
     void slot_stopping();
 
+    void slot_file_backup(const QString &);
+
 signals:
     void signal_update_state_workers(const state_workers &);
 
-public slots:
-
 private:
+    bool is_ready;
     sweep_write_settings m_settings;
 };
 

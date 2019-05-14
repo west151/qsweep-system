@@ -131,3 +131,60 @@ qint64 dir_size(const QString &dir_path)
         size+= dir_size(dir_path + QDir::separator() + child_dir_path);
     return size;
 }
+
+bool file_compress(const QString &in_file, const QString &out_file, int compressionLevel)
+{
+    bool is_compressed(false);
+
+    if((!in_file.isEmpty())&&(!out_file.isEmpty()))
+    {
+        QFile in_file_read(in_file);
+        QFile out_file_write(out_file);
+
+        in_file_read.open(QIODevice::ReadOnly);
+        out_file_write.open(QIODevice::WriteOnly);
+
+        if(in_file_read.isOpen()&&out_file_write.isOpen())
+        {
+            QByteArray uncompressed_data = in_file_read.readAll();
+            QByteArray compressed_data = qCompress(uncompressed_data, compressionLevel);
+
+            out_file_write.write(compressed_data);
+        }
+
+        if(in_file_read.isOpen())
+            in_file_read.close();
+
+        if(out_file_write.isOpen())
+            out_file_write.close();
+    }
+
+    return is_compressed;
+}
+
+bool file_uncompressed(const QString &in_file, const QString &out_file)
+{
+    bool is_uncompressed(false);
+
+    QFile in_file_read(in_file);
+    QFile out_file_write(out_file);
+
+    in_file_read.open(QIODevice::ReadOnly);
+    out_file_write.open(QIODevice::WriteOnly);
+
+    if(in_file_read.isOpen()&&out_file_write.isOpen())
+    {
+        QByteArray compressed_data = in_file_read.readAll();
+        QByteArray uncompressed_data = qUncompress(compressed_data);
+
+        out_file_write.write(uncompressed_data);
+    }
+
+    if(in_file_read.isOpen())
+        in_file_read.close();
+
+    if(out_file_write.isOpen())
+        out_file_write.close();
+
+    return is_uncompressed;
+}

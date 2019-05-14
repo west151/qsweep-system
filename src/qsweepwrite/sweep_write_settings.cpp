@@ -11,6 +11,7 @@ static const QString DB_FILE_COUNT_KEY = QStringLiteral("db_file_count");
 static const QString DB_FILE_SIZE_KEY = QStringLiteral("db_file_size");
 static const QString BACKUP_PATH_KEY = QStringLiteral("backup_path");
 static const QString DATA_BACKUP_KEY = QStringLiteral("data_backup");
+static const QString BACKUP_COMPRESS_LEVEL_KEY = QStringLiteral("backup_compress_level");
 
 class sweep_write_settings_data : public QSharedData {
 public:
@@ -25,6 +26,7 @@ public:
         m_db_file_size = 100;
         m_backup_path = "";
         m_data_backup = false;
+        m_compress_level = -1;
     }
     sweep_write_settings_data(const sweep_write_settings_data &other) : QSharedData(other)
     {
@@ -37,6 +39,7 @@ public:
         m_db_file_size = other.m_db_file_size;
         m_backup_path = other.m_backup_path;
         m_data_backup = other.m_data_backup;
+        m_compress_level = other.m_compress_level;
     }
 
     ~sweep_write_settings_data() {}
@@ -54,6 +57,7 @@ public:
     // backup path
     QString m_backup_path;
     bool m_data_backup;
+    int m_compress_level;
 };
 
 sweep_write_settings::sweep_write_settings() : data(new sweep_write_settings_data)
@@ -81,6 +85,7 @@ sweep_write_settings::sweep_write_settings(const QByteArray &json, const bool bi
     data->m_db_file_size = json_object.value(DB_FILE_SIZE_KEY).toInt(100);
     data->m_backup_path = json_object.value(BACKUP_PATH_KEY).toString();
     data->m_data_backup = json_object.value(DATA_BACKUP_KEY).toBool();
+    data->m_compress_level = json_object.value(BACKUP_COMPRESS_LEVEL_KEY).toInt(-1);
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -185,7 +190,17 @@ bool sweep_write_settings::data_backup() const
     return data->m_data_backup;
 }
 
-QByteArray sweep_write_settings::exportToJson(const bool binary, const bool isCompact) const
+void sweep_write_settings::set_backup_compress_level(const int &level)
+{
+    data->m_compress_level = level;
+}
+
+int sweep_write_settings::backup_compress_level() const
+{
+    return data->m_compress_level;
+}
+
+QByteArray sweep_write_settings::to_json(const bool binary, const bool isCompact) const
 {
     QJsonObject json_object;
     json_object.insert(HOST_BROKER_KEY, data->m_host_broker);
@@ -196,6 +211,7 @@ QByteArray sweep_write_settings::exportToJson(const bool binary, const bool isCo
     json_object.insert(DB_FILE_SIZE_KEY, data->m_db_file_size);
     json_object.insert(BACKUP_PATH_KEY, data->m_backup_path);
     json_object.insert(DATA_BACKUP_KEY, data->m_data_backup);
+    json_object.insert(BACKUP_COMPRESS_LEVEL_KEY, data->m_compress_level);
 
     QJsonDocument doc(json_object);
 
