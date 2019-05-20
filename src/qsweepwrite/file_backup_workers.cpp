@@ -11,6 +11,8 @@
 
 file_backup_workers::file_backup_workers(QObject *parent) : QObject(parent)
 {
+    setObjectName(this->metaObject()->className());
+
     is_ready = false;
 }
 
@@ -28,12 +30,9 @@ void file_backup_workers::slot_initialization()
 
     if(dir.exists())
     {
+        is_ready = true;
 
         emit signal_update_state_workers(state_workers::initialization);
-
-        is_ready = true;
-        // test
-        slot_file_backup("/home/gis1501/db_data/db_chunk_1.sqlite");
 
     }else {
 #ifdef QT_DEBUG

@@ -59,7 +59,10 @@ void db_manager::initialization()
 #endif
         if(available_size > need_size)
         {
+            // db writer
             create_db_writer_worker(ptr_db_state_workers);
+            // db cleaner
+            create_db_cleaner_worker(ptr_db_state_workers);
 
             if(m_settings.data_backup())
                 create_file_backup_worker(ptr_db_state_workers);
@@ -178,7 +181,11 @@ void db_manager::create_db_writer_worker(db_state_workers *state)
             state, &db_state_workers::slot_update_state_workers);
     // monitor db file size
     connect(ptr_db_writer_worker, &db_writer_worker::signal_file_size,
-            state, &db_state_workers::slot_file_size);
+            state, &db_state_workers::slot_db_size);
+    // monitor state db (file)
+    connect(ptr_db_writer_worker, &db_writer_worker::signal_state_db,
+            state, &db_state_workers::slot_state_db);
+
     // send data to write db
     connect(this, &db_manager::signal_send_data_to_write,
             ptr_db_writer_worker, &db_writer_worker::slot_data_to_write);
@@ -188,7 +195,30 @@ void db_manager::create_db_writer_worker(db_state_workers *state)
 
 void db_manager::create_db_cleaner_worker(db_state_workers *state)
 {
+    ptr_db_cleaner_workers = new db_cleaner_workers;
+    ptr_db_cleaner_workers->set_configuration(m_settings);
 
+    // add "db_cleaner_workers" to state monitor
+    state->add_name_workers(ptr_db_cleaner_workers->metaObject()->className());
+
+    // initialization
+    connect(this, &db_manager::signal_initialization_workers,
+            ptr_db_cleaner_workers, &db_cleaner_workers::slot_initialization);
+    // launching
+    connect(this, &db_manager::signal_launching_workers,
+            ptr_db_cleaner_workers, &db_cleaner_workers::slot_launching);
+    // stopping
+    connect(this, &db_manager::signal_stopping_workers,
+            ptr_db_cleaner_workers, &db_cleaner_workers::slot_stopping);
+
+    // state workers
+    connect(ptr_db_cleaner_workers, &db_cleaner_workers::signal_update_state_workers,
+            state, &db_state_workers::slot_update_state_workers);
+
+    ptr_db_cleaner_thread = new QThread;
+    ptr_db_cleaner_workers->moveToThread(ptr_db_cleaner_thread);
+
+    ptr_db_cleaner_thread->start();
 }
 
 void db_manager::create_file_backup_worker(db_state_workers *state)
@@ -199,7 +229,7 @@ void db_manager::create_file_backup_worker(db_state_workers *state)
     ptr_file_backup_thread = new QThread;
     ptr_file_backup_workers->moveToThread(ptr_file_backup_thread);
 
-    // add "db_writer_worker" to state monitor
+    // add "file_backup_workers" to state monitor
     state->add_name_workers(ptr_file_backup_workers->metaObject()->className());
 
     // initialization

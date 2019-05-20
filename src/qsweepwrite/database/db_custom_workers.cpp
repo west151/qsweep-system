@@ -24,6 +24,21 @@ void db_custom_workers::set_database(const QString &driver, const QString &write
     m_dbase = QSqlDatabase::addDatabase(driver, write);
 }
 
+void db_custom_workers::slot_initialization()
+{
+    emit signal_update_state_workers(state_workers::initialization);
+}
+
+void db_custom_workers::slot_launching()
+{
+    emit signal_update_state_workers(state_workers::launching);
+}
+
+void db_custom_workers::slot_stopping()
+{
+    emit signal_update_state_workers(state_workers::stopping);
+}
+
 void db_custom_workers::open_db(const QString &db_name)
 {
     m_dbase.setDatabaseName(db_name);

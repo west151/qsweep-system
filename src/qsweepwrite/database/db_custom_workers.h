@@ -7,6 +7,7 @@
 #include <QSqlQuery>
 
 #include "sweep_write_settings.h"
+#include "db_state_workers.h"
 
 class db_custom_workers : public QObject
 {
@@ -18,8 +19,12 @@ public:
     void set_database(const QString &driver, const QString &write);
 
 signals:
+    void signal_update_state_workers(const state_workers &type);
 
 public slots:
+    virtual void slot_initialization();
+    virtual void slot_launching();
+    virtual void slot_stopping();
 
 private:
     QSqlDatabase m_dbase;

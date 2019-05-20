@@ -36,12 +36,21 @@ void db_state_workers::slot_update_state_workers(const state_workers &type)
     }
 }
 
-void db_state_workers::slot_file_size(const QString &db_name, const qint64 &db_size)
+void db_state_workers::slot_db_size(const QString &db_name, const qint64 &db_size)
 {
     m_db_file_size.insert(db_name, db_size);
 
 #ifdef QT_DEBUG
         qDebug() << db_name << format_size(db_size) << "(" << db_size << ")";
+#endif
+}
+
+void db_state_workers::slot_state_db(const QString &db_name, const state_db &state)
+{
+    m_state_db.insert(db_name, state);
+
+#ifdef QT_DEBUG
+        qDebug() << db_name << "(" << state << ")";
 #endif
 }
 

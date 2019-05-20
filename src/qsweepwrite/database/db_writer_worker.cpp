@@ -38,7 +38,9 @@ void db_writer_worker::slot_initialization()
         {
             const QString tmp_db_name = list_file.at(i);
             m_init_db_file_status.insert(tmp_db_name, false);
+
             m_db_file_state.insert(tmp_db_name, state_db::file_unknown);
+            emit signal_state_db(tmp_db_name, state_db::file_unknown);
 
             // create or open (test)
             open_db(tmp_db_name);
@@ -292,9 +294,15 @@ void db_writer_worker::update_size_file(const QString &db_name)
     m_db_file_size.insert(db_name, size);
 
     if(size >= m_settings.db_file_size()*1024*1024)
+    {
         m_db_file_state.insert(db_name, state_db::file_is_full);
+        emit signal_state_db(db_name, state_db::file_is_full);
+    }
     else
+    {
         m_db_file_state.insert(db_name, state_db::file_is_ready);
+        emit signal_state_db(db_name, state_db::file_is_ready);
+    }
 
     emit signal_file_size(db_name, size);
 }
