@@ -55,6 +55,7 @@ void mqtt_provider::launching()
         {
             ptr_mqtt_client->setHostname(ptr_sweep_write_settings->host_broker());
             ptr_mqtt_client->setPort(ptr_sweep_write_settings->port_broker());
+            ptr_mqtt_client->setClientId("qsweep_writer");
 
             if (ptr_mqtt_client->state() == QMqttClient::Disconnected)
                 ptr_mqtt_client->connectToHost();

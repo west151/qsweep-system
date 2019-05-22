@@ -45,11 +45,15 @@ void db_writer_worker::slot_initialization()
             // create or open (test)
             open_db(tmp_db_name);
 
+            // clear data
+            //clean_file_db(tmp_db_name);
+
             update_size_file(tmp_db_name);
 
             m_init_db_file_status.insert(tmp_db_name, m_dbase.isOpen());
 
-            close_db();
+            if(m_dbase.isOpen())
+                close_db();
         }
 
         const auto is_state_list = m_init_db_file_status.values();
@@ -107,20 +111,22 @@ void db_writer_worker::open_db(const QString &db_name)
 
     if(m_dbase.open())
     {
-        const auto list_table = table.keys();
-
-        for(int i=0; i<list_table.size(); i++)
-            if(!is_table_name_resolve(list_table.at(i)))
-                create_table(list_table.at(i));
-
         //PRAGMA page_size = bytes; // размер страницы БД; страница БД - это единица обмена между диском и кэшом, разумно сделать равным размеру кластера диска (у меня 4096)
         //PRAGMA cache_size = -kibibytes; // задать размер кэша соединения в килобайтах, по умолчанию он равен 2000 страниц БД
         //PRAGMA encoding = "UTF-8";  // тип данных БД, всегда используйте UTF-8
         //PRAGMA foreign_keys = 1; // включить поддержку foreign keys, по умолчанию - ОТКЛЮЧЕНА
         //PRAGMA journal_mode = DELETE | TRUNCATE | PERSIST | MEMORY | WAL | OFF;  // задать тип журнала, см. далее
         //PRAGMA synchronous = 0 | OFF | 1 | NORMAL | 2 | FULL; // тип синхронизации транзакции, см. далее
+        //PRAGMA schema.auto_vacuum = 0 | NONE | 1 | FULL | 2 | INCREMENTAL;
 
         set_pragma("synchronous", "0");
+        set_pragma("auto_vacuum", "1");
+
+        const auto list_table = table.keys();
+
+        for(int i=0; i<list_table.size(); i++)
+            if(!is_table_name_resolve(list_table.at(i)))
+                create_table(list_table.at(i));
 
     }else{
 #ifdef QT_DEBUG
@@ -251,11 +257,12 @@ void db_writer_worker::data_spectr_to_write(const data_spectr &data)
     {
         qDebug() << "file is full:" << m_dbase.databaseName();
 
+        close_db();
+
         QString db_file = file_selection_for_writing();
 
         if(!db_file.isEmpty())
-        {
-            close_db();
+        {            
             open_db(file_selection_for_writing());
         } else {
             qDebug() << "all files are full:" << m_dbase.databaseName();
@@ -296,10 +303,13 @@ void db_writer_worker::update_size_file(const QString &db_name)
     if(size >= m_settings.db_file_size()*1024*1024)
     {
         m_db_file_state.insert(db_name, state_db::file_is_full);
+
+        if(m_dbase.isOpen())
+            close_db();
+
         emit signal_state_db(db_name, state_db::file_is_full);
-    }
-    else
-    {
+
+    }else{
         m_db_file_state.insert(db_name, state_db::file_is_ready);
         emit signal_state_db(db_name, state_db::file_is_ready);
     }
@@ -316,6 +326,49 @@ QString db_writer_worker::file_selection_for_writing() const
             return file_list.at(i);
 
     return "";
+}
+
+void db_writer_worker::clean_file_db(const QString &file_name)
+{
+    QFileInfo file_db(file_name);
+
+    if(file_db.exists())
+    {
+        open_db(file_name);
+
+        if(m_dbase.isOpen())
+        {
+            const auto list_table = table.keys();
+
+            QTime start_time;
+            start_time.start();
+
+#ifdef QT_DEBUG
+            qDebug() << "start clean database:" << start_time.toString();
+            qDebug() << "database:" << file_name;
+#endif
+
+            for(int i=0; i<list_table.size(); ++i)
+            {
+                if(is_table_name_resolve(list_table.at(i)))
+                {
+#ifdef QT_DEBUG
+                    qDebug() << "delete from table:" << list_table.at(i);
+#endif
+                    QSqlQuery* query_delete = new QSqlQuery(m_dbase);
+                    if(!query_delete->exec(delete_table_sql(list_table.at(i))))
+                        update_last_error(query_delete);
+                }
+            }
+
+            close_db();
+
+#ifdef QT_DEBUG
+            qDebug() << "stop clean database:" << start_time.currentTime().toString()
+                     << QString("Time elapsed: %1 ms").arg(start_time.elapsed());
+#endif
+        }
+    }
 }
 
 void db_writer_worker::close_db()

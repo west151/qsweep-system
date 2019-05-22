@@ -54,6 +54,7 @@ private:
 
     void update_size_file(const QString &);
     QString file_selection_for_writing()const;
+    void clean_file_db(const QString &);
 };
 
 #endif // DB_WRITER_WORKER_H

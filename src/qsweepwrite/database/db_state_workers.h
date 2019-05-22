@@ -39,6 +39,7 @@ signals:
     void signal_all_launching();
     void signal_all_stopping();
     void signal_start_cleaner(const QString &);
+    void signal_file_to_backup(const QString &);
 
 public slots:
     void slot_update_state_workers(const state_workers &type);

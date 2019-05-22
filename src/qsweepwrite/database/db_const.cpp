@@ -103,6 +103,21 @@ QString insert_table_sql(const QString &table_name)
     return sql;
 }
 
+QString delete_table_sql(const QString &table_name)
+{
+    QString sql;
+
+    QStringList str_delete_table;
+
+    str_delete_table << "DELETE FROM"
+                     << table_name
+                     << ";";
+
+    sql.append(str_delete_table.join(" "));
+
+    return sql;
+}
+
 QString format_size(const qint64 &size)
 {
     QStringList units = {"Bytes", "KB", "MB", "GB", "TB", "PB"};
@@ -188,3 +203,5 @@ bool file_uncompressed(const QString &in_file, const QString &out_file)
 
     return is_uncompressed;
 }
+
+

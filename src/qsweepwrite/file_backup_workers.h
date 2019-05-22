@@ -23,6 +23,7 @@ public slots:
 
 signals:
     void signal_update_state_workers(const state_workers &);
+    void signal_state_db(const QString &, const state_db &);
 
 private:
     bool is_ready;

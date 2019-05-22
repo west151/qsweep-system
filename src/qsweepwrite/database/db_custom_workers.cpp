@@ -55,6 +55,11 @@ void db_custom_workers::open_db(const QString &db_name)
     }
 }
 
+bool db_custom_workers::is_open_db() const
+{
+    return m_dbase.isOpen();
+}
+
 void db_custom_workers::close_db()
 {
     if(m_dbase.isOpen())
@@ -113,6 +118,17 @@ bool db_custom_workers::is_table_name_resolve(const QString &table_name)
         return false;
     }
     return false;
+}
+
+void db_custom_workers::update_size_file(const QString &db_name)
+{
+    QFileInfo info(db_name);
+    qint64 size = info.size();
+
+    emit signal_file_size(db_name, size);
+
+    // void signal_state_db(const QString &, const state_db &);
+    // emit signal_state_db(db_name, state_db::file_is_full);
 }
 
 void db_custom_workers::set_pragma(const QString &param, const QString &value)

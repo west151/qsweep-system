@@ -63,22 +63,16 @@ void file_backup_workers::slot_file_backup(const QString &file_name)
 
         if(in_file_info.exists())
         {
-
 #ifdef QT_DEBUG
             qDebug() << "Input file name:" << in_file_info.filePath();
             qDebug() << "Output file name:" << out_file_info.filePath();
 #endif
             file_compress(in_file_info.filePath(), out_file_info.filePath(), m_settings.backup_compress_level());
 
-#ifdef QT_DEBUG
-            qDebug() << "File compressed:" << out_file_info.filePath();
-#endif
-            file_uncompressed(out_file_info.filePath(), m_settings.backup_path()+QDir::separator()+"uncompress.sqlite");
+            if(out_file_info.exists())
+                emit signal_state_db(file_name, state_db::file_is_backup);
 
-#ifdef QT_DEBUG
-            qDebug() << "File uncompressed:" << out_file_info.filePath();
-#endif
-
+            //void signal_state_db(const QString &, const state_db &);
         }
     }
 }

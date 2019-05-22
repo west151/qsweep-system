@@ -10,9 +10,8 @@ public:
     explicit db_cleaner_workers(QObject *parent = nullptr);
 
 public slots:
-//    void slot_initialization();
-//    void slot_launching();
-//    void slot_stopping();
+    void slot_clean_db(const QString &);
+
 };
 
 #endif // DB_CLEANER_WORKERS_H

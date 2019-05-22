@@ -49,9 +49,13 @@ void db_state_workers::slot_state_db(const QString &db_name, const state_db &sta
 {
     m_state_db.insert(db_name, state);
 
-#ifdef QT_DEBUG
-        qDebug() << db_name << "(" << state << ")";
-#endif
+    // file backup
+    if((state==state_db::file_is_full)&&(m_state_db.contains(db_name)))
+        emit signal_file_to_backup(db_name);
+
+    // file data clean
+    if((state==state_db::file_is_backup)&&(m_state_db.contains(db_name)))
+        emit signal_start_cleaner(db_name);
 }
 
 void db_state_workers::is_all_initialization()
@@ -78,6 +82,17 @@ void db_state_workers::is_all_launching()
 
     if(counter==list_state.size())
         emit signal_all_launching();
+
+//    // for test
+//    if(counter==list_state.size())
+//    {
+//        const auto list_file_is_full = m_state_db.keys(state_db::file_is_full);
+
+//#ifdef QT_DEBUG
+//        qDebug() << "File is full:" << list_file_is_full;
+//#endif
+//        emit signal_start_cleaner(list_file_is_full.first());
+//    }
 }
 
 void db_state_workers::is_all_stopping()

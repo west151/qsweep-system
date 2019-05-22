@@ -214,6 +214,9 @@ void db_manager::create_db_cleaner_worker(db_state_workers *state)
     // state workers
     connect(ptr_db_cleaner_workers, &db_cleaner_workers::signal_update_state_workers,
             state, &db_state_workers::slot_update_state_workers);
+    // delete table
+    connect(state, &db_state_workers::signal_start_cleaner,
+            ptr_db_cleaner_workers, &db_cleaner_workers::slot_clean_db);
 
     ptr_db_cleaner_thread = new QThread;
     ptr_db_cleaner_workers->moveToThread(ptr_db_cleaner_thread);
@@ -241,9 +244,17 @@ void db_manager::create_file_backup_worker(db_state_workers *state)
     // stopping
     connect(this, &db_manager::signal_stopping_workers,
             ptr_file_backup_workers, &file_backup_workers::slot_stopping);
+
     // state workers
     connect(ptr_file_backup_workers, &file_backup_workers::signal_update_state_workers,
             state, &db_state_workers::slot_update_state_workers);
+
+    connect(state, &db_state_workers::signal_file_to_backup,
+            ptr_file_backup_workers, &file_backup_workers::slot_file_backup);
+
+    // state file db
+    connect(ptr_file_backup_workers, &file_backup_workers::signal_state_db,
+            state, &db_state_workers::slot_state_db);
 
     ptr_file_backup_thread->start();
 }

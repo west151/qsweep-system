@@ -39,6 +39,7 @@ signals:
     void signal_stopping_workers();
 
     void signal_send_data_to_write(const QByteArray &);
+    void signal_clean_db(const QString &);
 
 private:
     bool is_ready;

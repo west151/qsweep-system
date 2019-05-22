@@ -10,6 +10,7 @@ static const QString database_driver = "QSQLITE";
 
 static const QString connection_write = "data_write";
 static const QString connection_read = "data_read";
+static const QString connection_delete = "data_delete";
 static const QString connection_system = "ctrl_system";
 
 // spectr result table name
@@ -57,6 +58,7 @@ QString list_column_and_type(const QString &table_name);
 QString list_column_prefix(const QString &table_name, const QString &prefix);
 QString create_table_sql(const QString &table_name);
 QString insert_table_sql(const QString &table_name);
+QString delete_table_sql(const QString &table_name);
 QString format_size(const qint64 &size);
 qint64 dir_size(const QString &dir_path);
 bool file_compress(const QString &in_file, const QString &out_file, int compressionLevel = -1);
