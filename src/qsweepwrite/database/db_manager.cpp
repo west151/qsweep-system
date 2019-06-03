@@ -42,6 +42,21 @@ void db_manager::set_configuration(const sweep_write_settings &settings)
 
 void db_manager::initialization()
 {
+    QDir dir(m_settings.db_path());
+
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    if (dir.exists())
+    {
+        // remove all files
+        dir.setNameFilters(QStringList() << "*.*");
+        dir.setFilter(QDir::Files);
+
+        for(const QString &dirFile: dir.entryList())
+            dir.remove(dirFile);
+    }
+
     QStorageInfo storage(m_settings.db_path());
 
     if (storage.isValid() && storage.isReady())
@@ -185,6 +200,9 @@ void db_manager::create_db_writer_worker(db_state_workers *state)
     // monitor state db (file)
     connect(ptr_db_writer_worker, &db_writer_worker::signal_state_db,
             state, &db_state_workers::slot_state_db);
+    // state file is ready
+    connect(state, &db_state_workers::signal_file_is_ready,
+            ptr_db_writer_worker, &db_writer_worker::slot_file_is_ready);
 
     // send data to write db
     connect(this, &db_manager::signal_send_data_to_write,
@@ -217,6 +235,9 @@ void db_manager::create_db_cleaner_worker(db_state_workers *state)
     // delete table
     connect(state, &db_state_workers::signal_start_cleaner,
             ptr_db_cleaner_workers, &db_cleaner_workers::slot_clean_db);
+    //
+    connect(ptr_db_cleaner_workers, &db_cleaner_workers::signal_state_db,
+            state, &db_state_workers::slot_state_db);
 
     ptr_db_cleaner_thread = new QThread;
     ptr_db_cleaner_workers->moveToThread(ptr_db_cleaner_thread);

@@ -40,6 +40,7 @@ signals:
     void signal_all_stopping();
     void signal_start_cleaner(const QString &);
     void signal_file_to_backup(const QString &);
+    void signal_file_is_ready(const QString &);
 
 public slots:
     void slot_update_state_workers(const state_workers &type);
@@ -47,13 +48,14 @@ public slots:
     void slot_state_db(const QString &, const state_db &);
 
 private:
-   QMap<QString, state_workers> m_workers_state;
-   QMap <QString, qint64> m_db_file_size;
-   QMap <QString, state_db> m_state_db;
+    QTime *m_timer_writed {Q_NULLPTR};
+    QMap<QString, state_workers> m_workers_state;
+    QMap <QString, qint64> m_db_file_size;
+    QMap <QString, state_db> m_state_db;
 
-   void is_all_initialization();
-   void is_all_launching();
-   void is_all_stopping();
+    void is_all_initialization();
+    void is_all_launching();
+    void is_all_stopping();
 };
 
 #endif // DB_STATE_WORKERS_H

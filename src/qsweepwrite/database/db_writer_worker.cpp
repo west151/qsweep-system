@@ -30,10 +30,10 @@ void db_writer_worker::slot_initialization()
     if (!dir.exists())
         dir.mkpath(".");
 
-    QStringList list_file(list_of_all_chunk_files(m_settings.db_path(), m_settings.db_file_count()));
-
     if(dir.exists())
     {
+        QStringList list_file(list_of_all_chunk_files(m_settings.db_path(), m_settings.db_file_count()));
+
         for(int i=0; i<list_file.size(); ++i)
         {
             const QString tmp_db_name = list_file.at(i);
@@ -102,6 +102,22 @@ void db_writer_worker::slot_data_to_write(const QByteArray &rc_data)
             const params_spectr rc_params_spectr_data(data_received.data_message(), false);
             data_params_to_write(rc_params_spectr_data);
         }
+    }
+}
+
+void db_writer_worker::slot_file_is_ready(const QString &db_name)
+{
+    if(m_db_file_state.value(db_name)!=state_db::file_is_ready)
+    {
+
+        m_db_file_state.insert(db_name, state_db::file_is_ready);
+
+#ifdef QT_DEBUG
+        qInfo() << tr("----------------------------------------");
+        qInfo() << tr("file is ready:") << db_name;
+        qInfo() << tr("files update state:") << m_db_file_state.values();
+        qInfo() << tr("----------------------------------------");
+#endif
     }
 }
 
@@ -244,7 +260,7 @@ void db_writer_worker::data_spectr_to_write(const data_spectr &data)
 
         if(on)
         {
-            qDebug() << "id_params:" << data.id_params(); // << data.export_json();
+            //qDebug() << "id_params:" << data.id_params(); // << data.export_json();
             update_size_file(m_dbase.databaseName());
         }
 

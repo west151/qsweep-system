@@ -75,6 +75,8 @@ void db_cleaner_workers::slot_clean_db(const QString &file_name)
             qDebug() << "stop clean database:" << start_time.currentTime().toString()
                      << QString("Time elapsed: %1 ms").arg(start_time.elapsed());
 #endif
+
+            emit signal_state_db(file_name, state_db::file_is_ready);
         }
     }
 }

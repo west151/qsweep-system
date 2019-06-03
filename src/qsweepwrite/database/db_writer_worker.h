@@ -24,6 +24,7 @@ public slots:
     void slot_stopping();
 
     void slot_data_to_write(const QByteArray &);
+    void slot_file_is_ready(const QString &);
 
 signals:
     void signal_update_state_workers(const state_workers &);

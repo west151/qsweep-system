@@ -1,5 +1,7 @@
 #include "db_state_workers.h"
 
+#include <QTime>
+
 #include "db_const.h"
 
 #ifdef QT_DEBUG
@@ -8,6 +10,7 @@
 
 db_state_workers::db_state_workers(QObject *parent) : QObject(parent)
 {
+    m_timer_writed = new QTime;
 }
 
 void db_state_workers::add_name_workers(const QString &name)
@@ -40,9 +43,16 @@ void db_state_workers::slot_db_size(const QString &db_name, const qint64 &db_siz
 {
     m_db_file_size.insert(db_name, db_size);
 
+    if(m_timer_writed->elapsed()>=5000)
+    {
+
 #ifdef QT_DEBUG
-        qDebug() << db_name << format_size(db_size) << "(" << db_size << ")";
+        qDebug() << db_name << format_size(db_size) << "(" << db_size << ")"
+                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timer_writed->elapsed()).arg(m_timer_writed->elapsed()/1000);
 #endif
+
+        m_timer_writed->restart();
+    }
 }
 
 void db_state_workers::slot_state_db(const QString &db_name, const state_db &state)
@@ -56,6 +66,10 @@ void db_state_workers::slot_state_db(const QString &db_name, const state_db &sta
     // file data clean
     if((state==state_db::file_is_backup)&&(m_state_db.contains(db_name)))
         emit signal_start_cleaner(db_name);
+
+    // file is ready
+    if((state==state_db::file_is_ready)&&(m_state_db.contains(db_name)))
+        emit signal_file_is_ready(db_name);
 }
 
 void db_state_workers::is_all_initialization()
@@ -81,7 +95,10 @@ void db_state_workers::is_all_launching()
             counter++;
 
     if(counter==list_state.size())
+    {
+        m_timer_writed->start();
         emit signal_all_launching();
+    }
 
 //    // for test
 //    if(counter==list_state.size())
