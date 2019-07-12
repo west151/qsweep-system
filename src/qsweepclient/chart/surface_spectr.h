@@ -29,6 +29,17 @@ public:
     void add_spectr_item(const QString &, const QColor &color);
     void remove_spectr_item(const QString &);
 
+    void mousePressEvent(QMouseEvent* event) override
+    {
+        QQuickItem::mousePressEvent(event);
+        qDebug() << Q_FUNC_INFO  << event->pos();
+    }
+
+    void hoverMoveEvent(QHoverEvent* event) override {
+        QQuickItem::hoverMoveEvent(event);
+        qDebug() << Q_FUNC_INFO  << event->pos();
+    }
+
 public slots:
     void slot_power_spectr(const QDateTime &, const quint64 &, const quint64 &, const QVector<qreal> &spectr);
     void slot_sensitivity_waterfall(const qreal &);
@@ -92,6 +103,7 @@ private:
     QImage m_image_waterfall;
     QList<QRgb> m_colors_waterfall;
     qreal m_sensitivity_waterfall;
+    qint32 m_ticket_segment_waterfall;
 
     QPen m_ticket_pen;
     QPen m_grid_pen;

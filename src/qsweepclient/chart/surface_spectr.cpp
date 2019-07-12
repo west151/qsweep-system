@@ -11,6 +11,10 @@
 
 surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 {
+    setAcceptHoverEvents(true);
+    setAcceptedMouseButtons(Qt::AllButtons);
+    setFlag(ItemAcceptsInputMethod, true);
+
     m_ticket_pen.setColor(Qt::white);
     m_ticket_pen.setStyle(Qt::SolidLine);
 
@@ -20,6 +24,7 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     is_spectr_max_calc = false;
     m_ticket_segment = 4;
     m_ticket_segment_frequency = 7;
+    m_ticket_segment_waterfall = 4;
 
     // background
     m_color_background = QColor(Qt::black);
@@ -389,6 +394,7 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
     QFontMetrics font_metrics(painter->font());
     int max_text_height = font_metrics.ascent()/2;
 
+    //*******************************************************************************
     // level scale
     // min ticket
     QLine min_line(QPoint(m_surface_point.x()-5, spectr_size().y() + m_surface_point.y()),
@@ -428,6 +434,7 @@ void surface_spectr::spectr_surface_paint(QPainter *painter)
         painter->drawLine(grid_line);
     }
 
+    //*******************************************************************************
     // freq scale
     // min freq ticket
     QLine freq_min_line(QPoint(m_surface_point.x(), spectr_size().y() + m_surface_point.y() + 5),
@@ -504,4 +511,25 @@ void surface_spectr::waterfall_surface_paint(QPainter *painter)
                                    {waterfall_point().x(), waterfall_point().y()}});
 
     painter->drawPolygon(spectr_polygon);
+
+    // start ticket (time)
+    QLine start_line(QPoint(waterfall_point().x()-5, waterfall_point().y()), waterfall_point());
+    painter->drawLine(start_line);
+
+    // end ticket (time)
+    QLine end_line(QPoint(waterfall_point().x()-5, waterfall_size().y() + waterfall_point().y()),
+                   QPoint(waterfall_point().x(), waterfall_size().y() + waterfall_point().y()));
+    painter->drawLine(end_line);
+
+    qreal step_y = waterfall_size().y()/m_ticket_segment_waterfall;
+
+    for(int i=1; i<m_ticket_segment_waterfall; ++i)
+    {
+        painter->setPen(m_color_axis);
+        int y = static_cast<int>(waterfall_point().y()+step_y*i);
+        // time ticked
+        QLine line(QPoint(waterfall_point().x()-5, y),
+                   QPoint(waterfall_point().x(), y));
+        painter->drawLine(line);
+    }
 }
