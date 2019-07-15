@@ -25,6 +25,7 @@ class system_monitor;
 class ta_spectr;
 class data_spectr;
 class db_local_state;
+class ranges_template;
 
 class CoreSweepClient : public QObject
 {
@@ -45,6 +46,7 @@ signals:
     void signal_system_monitor(const system_monitor &);
     void signal_data_spectr(const data_spectr &);
     void signal_open_db(const QString &);
+    void signal_ranges_template(const ranges_template &);
 
 private slots:
     void slot_publish_message(const QByteArray &);
@@ -76,8 +78,9 @@ private:
     QPointer<QThread> ptr_db_local_thread;
 
     void initialization();
-    bool readSettings(const QString &);
-    bool saveSettings(const QString &);
+    bool read_settings(const QString &);
+    bool save_settings(const QString &);
+    bool read_template(const QString &);
     void launching();
 
     void updateLogStateChange();

@@ -15,6 +15,7 @@
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
 #include "settings/sweepclientsettings.h"
+#include "template/ranges_template.h"
 
 #include "sweep_message.h"
 #include "sdr_info.h"
@@ -24,7 +25,9 @@
 #include "spectr/ta_spectr.h"
 #include "database/db_local_state.h"
 
-static const QString config_suffix(QString(".conf"));
+static const QString str_config_suffix(QString(".conf"));
+static const QString str_path_template(QString("template"));
+static const QString str_template_suffix(QString(".template"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrSweepTopic(new sweep_topic(this)),
@@ -35,6 +38,7 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
 
     qRegisterMetaType<data_spectr>();
     qRegisterMetaType<QVector<params_spectr> >();
+    qRegisterMetaType<ranges_template>();
 }
 
 int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
@@ -48,9 +52,12 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     initialization();
 
-    if(readSettings(app.applicationFilePath()))
+    QString file_path = app.applicationFilePath();
+
+    if(read_settings(file_path))
     {
         launching();
+        read_template(file_path);   // template
     }
 
     ptrEngine = new QQmlApplicationEngine(this);
@@ -176,14 +183,14 @@ void CoreSweepClient::initialization()
     ptr_db_local_thread->start();
 }
 
-bool CoreSweepClient::readSettings(const QString &file)
+bool CoreSweepClient::read_settings(const QString &file)
 {
     bool isRead(false);
 
     if(!file.isEmpty())
     {
         QFileInfo info(file);
-        const QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+        const QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+str_config_suffix);
         QFileInfo config(fileConfig);
 
         if(config.exists())
@@ -212,21 +219,21 @@ bool CoreSweepClient::readSettings(const QString &file)
             qCritical("File '%s' does not exist!", qUtf8Printable(config.fileName()));
 
             fprintf(stderr, "Create new file settings: %s\n", qUtf8Printable(fileConfig));
-            saveSettings(fileConfig);
+            save_settings(fileConfig);
         }
     }
 
     return isRead;
 }
 
-bool CoreSweepClient::saveSettings(const QString &file)
+bool CoreSweepClient::save_settings(const QString &file)
 {
     bool isSave(false);
 
     if(!file.isEmpty())
     {
         const QFileInfo info(file);
-        const QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+config_suffix);
+        const QString fileConfig(info.absolutePath()+QDir::separator()+info.baseName()+str_config_suffix);
         QFileInfo config(fileConfig);
         bool fileExists = config.exists();
 
@@ -250,6 +257,20 @@ bool CoreSweepClient::saveSettings(const QString &file)
     }
 
     return isSave;
+}
+
+bool CoreSweepClient::read_template(const QString &file)
+{
+    if(!file.isEmpty())
+    {
+        const QFileInfo info(file);
+        const QDir directory(info.absolutePath() + QDir::separator() + str_path_template);
+        QStringList file_list = directory.entryList(QStringList() << "*" + str_template_suffix, QDir::Files);
+
+#ifdef QT_DEBUG
+    qDebug() << Q_FUNC_INFO << file_list;
+#endif
+    }
 }
 
 void CoreSweepClient::launching()

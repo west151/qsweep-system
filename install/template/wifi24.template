@@ -1,0 +1,10 @@
+{
+    "name" : "wi-fi 2.4",
+    "descr": "",
+    "freq_ranges" : [ 
+        {
+           "beg_freq" : 2402000000,
+           "end_freq" : 2480000000
+        }
+     ]
+}
