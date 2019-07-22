@@ -5,6 +5,7 @@ include(../../protocol.pri)
 
 HEADERS += \
     coresweepclient.h \
+    model/ranges_template_model.h \
     template/ranges_template.h \
     userinterface.h \
     model/messagelogmodel.h \
@@ -20,6 +21,7 @@ HEADERS += \
 
 SOURCES += \
     coresweepclient.cpp \
+    model/ranges_template_model.cpp \
     template/ranges_template.cpp \
     userinterface.cpp \
     qsweepclient.cpp \

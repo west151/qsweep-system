@@ -63,8 +63,8 @@ ranges_template::ranges_template(const QByteArray &json, const bool binary) : da
         QPair<quint64, quint64> freq_range;
         const QJsonObject range_json(value.toObject());
 
-        freq_range.first = json_object.value(BEG_FREQ_KEY).toString().toULongLong();
-        freq_range.second = json_object.value(END_FREQ_KEY).toString().toULongLong();
+        freq_range.first = range_json.value(BEG_FREQ_KEY).toString().toULongLong();
+        freq_range.second = range_json.value(END_FREQ_KEY).toString().toULongLong();
 
         data->freq_ranges.append(freq_range);
     }

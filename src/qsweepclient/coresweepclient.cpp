@@ -259,18 +259,44 @@ bool CoreSweepClient::save_settings(const QString &file)
     return isSave;
 }
 
-bool CoreSweepClient::read_template(const QString &file)
+bool CoreSweepClient::read_template(const QString &path)
 {
-    if(!file.isEmpty())
+    bool result(false);
+
+    if(!path.isEmpty())
     {
-        const QFileInfo info(file);
+        const QFileInfo info(path);
         const QDir directory(info.absolutePath() + QDir::separator() + str_path_template);
         QStringList file_list = directory.entryList(QStringList() << "*" + str_template_suffix, QDir::Files);
 
+        for(int i=0; i<file_list.size(); ++i)
+        {
+            QString file = info.absolutePath()
+                    + QDir::separator()
+                    + str_path_template
+                    + QDir::separator()
+                    + file_list.at(i);
+
+            QFile file_renge(file);
+
+            if(file_renge.open(QIODevice::ReadOnly | QIODevice::Text))
+            {
 #ifdef QT_DEBUG
-    qDebug() << Q_FUNC_INFO << file_list;
+                qDebug() << Q_FUNC_INFO << file;
 #endif
+                const ranges_template range(file_renge.readAll(), false);
+                file_renge.close();
+
+                if(range.is_valid())
+                    emit signal_ranges_template(range);
+
+            }else{
+                qCritical("Can't file open ('%s').", qUtf8Printable(file_renge.fileName()));
+                qCritical("Error: '%s'", qUtf8Printable(file_renge.errorString()));
+            }
+        }
     }
+    return result;
 }
 
 void CoreSweepClient::launching()
