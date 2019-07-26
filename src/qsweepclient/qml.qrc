@@ -11,5 +11,8 @@
         <file>ParamsSpectr.qml</file>
         <file>ParamsSpectrForm.ui.qml</file>
         <file>DialogParamsSpectr.qml</file>
+        <file>DialogSDRInfo.qml</file>
+        <file>SDRInfo.qml</file>
+        <file>SDRInfoForm.ui.qml</file>
     </qresource>
 </RCC>

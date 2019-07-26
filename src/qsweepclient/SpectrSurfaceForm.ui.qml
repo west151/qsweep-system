@@ -5,6 +5,7 @@ Item {
     id: item_main
     width: 800
     height: 600
+    property alias button_sdr_info: button_sdr_info
     property alias button_show_hint: button_show_hint
     property alias check_box_freq_hint: check_box_freq_hint
     property alias check_box_db_write: check_box_db_write
@@ -175,6 +176,15 @@ Item {
             width: 30
             height: 30
             text: qsTr("...")
+        }
+
+        Button {
+            id: button_sdr_info
+            x: 8
+            y: 379
+            width: 141
+            height: 40
+            text: "SDR Info"
         }
 
     }
