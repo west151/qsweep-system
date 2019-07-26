@@ -66,7 +66,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
 
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
-    context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
+    context->setContextProperty("hackrfInfoModel", ptr_hackrf_info_model);
     context->setContextProperty("messageLogModel", ptr_message_log_model);
     context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
     context->setContextProperty("stateSweepClient", ptrStateSweepClient);
@@ -146,9 +146,9 @@ void CoreSweepClient::initialization()
             ptrStateSweepClient, &StateSweepClient::onDisconnect);
 
     // Hackrf Info Model
-    ptrHackrfInfoModel = new HackrfInfoModel(this);
+    ptr_hackrf_info_model = new hackrf_info_model(this);
     connect(this, &CoreSweepClient::signal_sdr_info,
-            ptrHackrfInfoModel, &HackrfInfoModel::add_result);
+            ptr_hackrf_info_model, &hackrf_info_model::add_result);
 
     // Message Log Model
     ptr_message_log_model = new message_log_model(this);

@@ -1,11 +1,11 @@
-#include "hackrfinfomodel.h"
+#include "hackrf_info_model.h"
 
-HackrfInfoModel::HackrfInfoModel(QObject *parent): QAbstractListModel(parent)
+hackrf_info_model::hackrf_info_model(QObject *parent): QAbstractListModel(parent)
 {
     m_data.clear();
 }
 
-QVariant HackrfInfoModel::data(const QModelIndex &index, int role) const
+QVariant hackrf_info_model::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -30,7 +30,7 @@ QVariant HackrfInfoModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-int HackrfInfoModel::rowCount(const QModelIndex &parent) const
+int hackrf_info_model::rowCount(const QModelIndex &parent) const
 {
     if (parent.isValid())
         return 0;
@@ -39,7 +39,7 @@ int HackrfInfoModel::rowCount(const QModelIndex &parent) const
 
 }
 
-QHash<int, QByteArray> HackrfInfoModel::roleNames() const
+QHash<int, QByteArray> hackrf_info_model::roleNames() const
 {
     QHash<int,QByteArray> roles;
 
@@ -53,7 +53,7 @@ QHash<int, QByteArray> HackrfInfoModel::roleNames() const
     return roles;
 }
 
-void HackrfInfoModel::clearResult()
+void hackrf_info_model::clear_result()
 {
     if (m_data.size() > 0) {
         beginRemoveRows(QModelIndex(), 0, m_data.size() - 1);
@@ -62,7 +62,7 @@ void HackrfInfoModel::clearResult()
     }
 }
 
-void HackrfInfoModel::add_result(const sdr_info &data)
+void hackrf_info_model::add_result(const sdr_info &data)
 {
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     m_data.append(data);

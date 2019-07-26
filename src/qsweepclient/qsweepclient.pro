@@ -5,11 +5,11 @@ include(../../protocol.pri)
 
 HEADERS += \
     coresweepclient.h \
+    model/hackrf_info_model.h \
     model/message_log_model.h \
     model/ranges_template_model.h \
     template/ranges_template.h \
     userinterface.h \
-    model/hackrfinfomodel.h \
     settings/sweepclientsettings.h \
     systemmonitorinterface.h \
     statesweepclient.h \
@@ -21,12 +21,12 @@ HEADERS += \
 
 SOURCES += \
     coresweepclient.cpp \
+    model/hackrf_info_model.cpp \
     model/message_log_model.cpp \
     model/ranges_template_model.cpp \
     template/ranges_template.cpp \
     userinterface.cpp \
     qsweepclient.cpp \
-    model/hackrfinfomodel.cpp \
     settings/sweepclientsettings.cpp \
     systemmonitorinterface.cpp \
     statesweepclient.cpp \

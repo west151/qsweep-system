@@ -1,10 +1,10 @@
-#ifndef HACKRFINFOMODEL_H
-#define HACKRFINFOMODEL_H
+#ifndef HACKRF_INFO_MODEL_H
+#define HACKRF_INFO_MODEL_H
 
 #include <QtCore/qabstractitemmodel.h>
 #include "sdr_info.h"
 
-class HackrfInfoModel : public QAbstractListModel
+class hackrf_info_model : public QAbstractListModel
 {
     Q_OBJECT
 public:
@@ -17,17 +17,17 @@ public:
         DATAROLE_HACKRF_VERSION
     };
 
-    explicit HackrfInfoModel(QObject* parent = nullptr);
+    explicit hackrf_info_model(QObject* parent = nullptr);
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QHash< int, QByteArray > roleNames() const Q_DECL_OVERRIDE;
 
-    void clearResult();
+    void clear_result();
     void add_result(const sdr_info &);
 
 private:
     QList<sdr_info> m_data;
 };
 
-#endif // HACKRFINFOMODEL_H
+#endif // HACKRF_INFO_MODEL_H

@@ -9,7 +9,7 @@
 #include <QTime>
 #include <QPointer>
 
-#include "model/hackrfinfomodel.h"
+#include "model/hackrf_info_model.h"
 #include "model/message_log_model.h"
 #include "model/params_spectr_model.h"
 #include "model/ranges_template_model.h"
@@ -58,7 +58,7 @@ private:
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     sweep_topic* ptr_sweep_topic {Q_NULLPTR};
-    HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
+    hackrf_info_model* ptr_hackrf_info_model {Q_NULLPTR};
     message_log_model* ptr_message_log_model {Q_NULLPTR};
     params_spectr_model* ptr_params_spectr_model {Q_NULLPTR};
     ranges_template_model* ptr_ranges_template_model {Q_NULLPTR};
