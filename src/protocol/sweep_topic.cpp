@@ -21,6 +21,8 @@ QString sweep_topic::sweep_topic_by_type(const topic value) const
         return str_topic_id + str_topic_system_monitor;
     case topic_db_ctrl:
         return str_topic_id + str_topic_db_ctrl;
+    case topic_process_status:
+        return str_topic_id + str_topic_process_status;
     default:
         break;
     }
@@ -50,6 +52,9 @@ sweep_topic::topic sweep_topic::sweep_topic_by_str(const QString &value)
 
     if(value == str_topic_id + str_topic_db_ctrl)
         return topic_db_ctrl;
+
+    if(value == str_topic_id + str_topic_process_status)
+        return topic_process_status;
 
     return topic_unknown;
 }

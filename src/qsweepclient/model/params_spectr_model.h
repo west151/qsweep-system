@@ -1,7 +1,7 @@
 #ifndef PARAMS_SPECTR_MODEL_H
 #define PARAMS_SPECTR_MODEL_H
 
-#include <QtCore/qabstractitemmodel.h>
+#include <QAbstractListModel>
 #include "params_spectr.h"
 
 class params_spectr_model : public QAbstractListModel

@@ -1,13 +1,13 @@
-#include "messagelogmodel.h"
+#include "message_log_model.h"
 #include <QtCore/QDateTime>
 
-MessageLogModel::MessageLogModel(QObject *parent): QAbstractListModel(parent)
+message_log_model::message_log_model(QObject *parent): QAbstractListModel(parent)
 {
      m_data.clear();
      m_maxSize = 20;
 }
 
-QHash<int, QByteArray> MessageLogModel::roleNames() const
+QHash<int, QByteArray> message_log_model::roleNames() const
 {
     QHash<int,QByteArray> roles;
 
@@ -18,7 +18,7 @@ QHash<int, QByteArray> MessageLogModel::roleNames() const
     return roles;
 }
 
-int MessageLogModel::rowCount(const QModelIndex &parent) const
+int message_log_model::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid())
         return m_data.size();
@@ -26,7 +26,7 @@ int MessageLogModel::rowCount(const QModelIndex &parent) const
         return 0;
 }
 
-void MessageLogModel::clearResult()
+void message_log_model::clear_result()
 {
     if (m_data.size() > 0) {
         beginRemoveRows(QModelIndex(), 0, m_data.size() - 1);
@@ -35,22 +35,22 @@ void MessageLogModel::clearResult()
     }
 }
 
-void MessageLogModel::add_result(const data_log &data)
+void message_log_model::add_result(const data_log &data)
 {
     if(m_data.size() >= m_maxSize)
-        clearResult();
+        clear_result();
 
     beginInsertRows(QModelIndex(), m_data.size(), m_data.size());
     m_data << data;
     endInsertRows();
 }
 
-void MessageLogModel::setMaxSize(const qint32 &value)
+void message_log_model::set_max_size(const qint32 &value)
 {
     m_maxSize = value;
 }
 
-QVariant MessageLogModel::data(const QModelIndex &index, int role) const
+QVariant message_log_model::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();

@@ -15,7 +15,8 @@ public:
         topic_db_ctrl,
         topic_info,
         topic_power_spectr,
-        topic_system_monitor
+        topic_system_monitor,
+        topic_process_status
     };
 
     explicit sweep_topic(QObject *parent = nullptr);
@@ -37,6 +38,8 @@ private:
     QString str_topic_info = QLatin1String("/info");
     QString str_topic_spectr = QLatin1String("/spectr");
     QString str_topic_system_monitor = QLatin1String("/system/monitor");
+    // process status
+    QString str_topic_process_status = QLatin1String("/process/status");
 };
 
 #endif // QSWEEPTOPIC_H

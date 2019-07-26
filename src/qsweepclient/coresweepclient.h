@@ -10,8 +10,9 @@
 #include <QPointer>
 
 #include "model/hackrfinfomodel.h"
-#include "model/messagelogmodel.h"
+#include "model/message_log_model.h"
 #include "model/params_spectr_model.h"
+#include "model/ranges_template_model.h"
 
 class UserInterface;
 class sweep_topic;
@@ -56,10 +57,11 @@ private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
     UserInterface* ptrUserInterface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
-    sweep_topic* ptrSweepTopic {Q_NULLPTR};
+    sweep_topic* ptr_sweep_topic {Q_NULLPTR};
     HackrfInfoModel* ptrHackrfInfoModel {Q_NULLPTR};
-    MessageLogModel* ptrMessageLogModel {Q_NULLPTR};
+    message_log_model* ptr_message_log_model {Q_NULLPTR};
     params_spectr_model* ptr_params_spectr_model {Q_NULLPTR};
+    ranges_template_model* ptr_ranges_template_model {Q_NULLPTR};
 
     SystemMonitorInterface *ptrSystemMonitorInterface {Q_NULLPTR};
     StateSweepClient *ptrStateSweepClient {Q_NULLPTR};

@@ -30,7 +30,7 @@ static const QString str_path_template(QString("template"));
 static const QString str_template_suffix(QString(".template"));
 
 CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
-    ptrSweepTopic(new sweep_topic(this)),
+    ptr_sweep_topic(new sweep_topic(this)),
     ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
     ptrStateSweepClient(new StateSweepClient(this))
 {
@@ -67,10 +67,11 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QQmlContext *context = ptrEngine->rootContext();
     context->setContextProperty("userInterface", ptrUserInterface);
     context->setContextProperty("hackrfInfoModel", ptrHackrfInfoModel);
-    context->setContextProperty("messageLogModel", ptrMessageLogModel);
+    context->setContextProperty("messageLogModel", ptr_message_log_model);
     context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
     context->setContextProperty("stateSweepClient", ptrStateSweepClient);
     context->setContextProperty("paramsSpectrModel", ptr_params_spectr_model);
+    context->setContextProperty("rangesTemplateModel", ptr_ranges_template_model);
 
     ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
 
@@ -150,9 +151,9 @@ void CoreSweepClient::initialization()
             ptrHackrfInfoModel, &HackrfInfoModel::add_result);
 
     // Message Log Model
-    ptrMessageLogModel = new MessageLogModel(this);
+    ptr_message_log_model = new message_log_model(this);
     connect(this, &CoreSweepClient::signal_data_log,
-            ptrMessageLogModel, &MessageLogModel::add_result);
+            ptr_message_log_model, &message_log_model::add_result);
 
     // database local
     ptr_db_local_state_worker = new db_local_state;
@@ -181,6 +182,12 @@ void CoreSweepClient::initialization()
             ptr_db_local_state_worker, &db_local_state::slot_remove_params_spectr);
 
     ptr_db_local_thread->start();
+
+    // ranges template model
+    ptr_ranges_template_model = new ranges_template_model(this);
+
+    connect(this, &CoreSweepClient::signal_ranges_template,
+            ptr_ranges_template_model, &ranges_template_model::add_result);
 }
 
 bool CoreSweepClient::read_settings(const QString &file)
@@ -207,7 +214,7 @@ bool CoreSweepClient::read_settings(const QString &file)
 
                 ptrUserInterface->onSweepClientSettings(settings);
                 // MessageLogModel
-                ptrMessageLogModel->setMaxSize(ptrSweepClientSettings->maxSizeMessageLog());
+                ptr_message_log_model->set_max_size(ptrSweepClientSettings->maxSizeMessageLog());
 
 
                 return isRead;
@@ -332,7 +339,7 @@ void CoreSweepClient::updateLogStateChange()
     // Subscribers topic
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_info));
+        auto subscription = ptrMqttClient->subscribe(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_info));
 
         if (!subscription)
         {
@@ -342,7 +349,7 @@ void CoreSweepClient::updateLogStateChange()
             return;
         }
 
-        auto subscription1 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_message_log));
+        auto subscription1 = ptrMqttClient->subscribe(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_message_log));
 
         if (!subscription1)
         {
@@ -352,7 +359,7 @@ void CoreSweepClient::updateLogStateChange()
             return;
         }
 
-        auto subscription2 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_power_spectr));
+        auto subscription2 = ptrMqttClient->subscribe(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_power_spectr));
 
         if (!subscription2)
         {
@@ -362,7 +369,7 @@ void CoreSweepClient::updateLogStateChange()
             return;
         }
 
-        auto subscription3 = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_system_monitor));
+        auto subscription3 = ptrMqttClient->subscribe(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_system_monitor));
 
         if (!subscription3)
         {
@@ -415,13 +422,13 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
             if(send_data.is_valid())
             {
                 if(send_data.type() == type_message::ctrl_info)
-                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
+                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
 
                 if(send_data.type() == type_message::ctrl_spectr)
-                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
+                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
 
                 if(send_data.type() == type_message::ctrl_db)
-                    ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_db_ctrl), send_data.export_json());
+                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_db_ctrl), send_data.export_json());
             }
 
 //#ifdef QT_DEBUG
@@ -434,7 +441,7 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
 void CoreSweepClient::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
     // system info
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_info)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_info)
     {
         const sweep_message data_received(message, false);
 
@@ -449,7 +456,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     }
 
     // message log
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_message_log)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_message_log)
     {
         const sweep_message data_received(message, false);
 
@@ -464,7 +471,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     }
 
     // system monitor
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_system_monitor)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_system_monitor)
     {
         const sweep_message data_received(message, false);
 
@@ -479,7 +486,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     }
 
     // power spectr
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_power_spectr)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_power_spectr)
     {
         const sweep_message data_received(message, false);
 

@@ -1,7 +1,7 @@
 #ifndef RANGES_TEMPLATE_MODEL_H
 #define RANGES_TEMPLATE_MODEL_H
 
-#include <QtCore/qabstractitemmodel.h>
+#include <QAbstractListModel>
 #include "template/ranges_template.h"
 
 class ranges_template_model : public QAbstractListModel
