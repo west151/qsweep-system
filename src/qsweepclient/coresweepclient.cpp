@@ -14,7 +14,7 @@
 #include "chart/surface_spectr.h"
 #include "systemmonitorinterface.h"
 #include "statesweepclient.h"
-#include "settings/sweepclientsettings.h"
+#include "settings/client_settings.h"
 #include "template/ranges_template.h"
 
 #include "sweep_message.h"
@@ -206,15 +206,15 @@ bool CoreSweepClient::read_settings(const QString &file)
 
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                const SweepClientSettings settings(file.readAll(), false); // !!!!!!!!!!!!!!!
-                ptrSweepClientSettings = new SweepClientSettings(settings);
+                const client_settings settings(file.readAll(), false); // !!!!!!!!!!!!!!!
+                ptr_client_settings = new client_settings(settings);
                 file.close();
 
-                isRead = ptrSweepClientSettings->isValid();
+                isRead = ptr_client_settings->is_valid();
 
                 ptrUserInterface->onSweepClientSettings(settings);
                 // MessageLogModel
-                ptr_message_log_model->set_max_size(ptrSweepClientSettings->maxSizeMessageLog());
+                ptr_message_log_model->set_max_size(ptr_client_settings->max_size_message_log());
 
 
                 return isRead;
@@ -248,11 +248,11 @@ bool CoreSweepClient::save_settings(const QString &file)
 
         if(file.open(QIODevice::ReadWrite | QIODevice::Text)) {
             if(fileExists){
-                if(ptrSweepClientSettings)
-                    file.write(ptrSweepClientSettings->exportToJson());
+                if(ptr_client_settings)
+                    file.write(ptr_client_settings->to_json());
             }else{
-                const auto defaultSettings = SweepClientSettings();
-                file.write(defaultSettings.exportToJson(false, false));
+                const auto defaultSettings = client_settings();
+                file.write(defaultSettings.to_json(false, false));
             }
 
             file.close();
@@ -311,8 +311,8 @@ void CoreSweepClient::launching()
     // connect to mqtt broker
     if(ptrMqttClient)
     {
-        ptrMqttClient->setHostname(ptrUserInterface->sweepClientSettings().hostBroker());
-        ptrMqttClient->setPort(ptrUserInterface->sweepClientSettings().portBroker());
+        ptrMqttClient->setHostname(ptrUserInterface->sweepClientSettings().host_broker());
+        ptrMqttClient->setPort(ptrUserInterface->sweepClientSettings().port_broker());
 
         if (ptrMqttClient->state() == QMqttClient::Disconnected)
             ptrMqttClient->connectToHost();

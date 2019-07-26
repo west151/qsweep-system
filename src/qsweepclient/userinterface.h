@@ -2,7 +2,7 @@
 #define USERINTERFACE_H
 
 #include <QObject>
-#include "settings/sweepclientsettings.h"
+#include "settings/client_settings.h"
 
 class params_spectr;
 
@@ -25,8 +25,8 @@ public:
     explicit UserInterface(QObject *parent = nullptr);
 
     // mqtt broker params
-    void onSweepClientSettings(const SweepClientSettings &);
-    SweepClientSettings sweepClientSettings()const;
+    void onSweepClientSettings(const client_settings &);
+    client_settings sweepClientSettings()const;
     void onPingReceived();
     quint32 pingReceivedCount()const;
 
@@ -91,7 +91,7 @@ private:
     bool m_oneShot;
 
     // mqtt broker params
-    SweepClientSettings m_sweepClientSettings;
+    client_settings m_client_settings;
     quint32 m_pingReceivedCount;
 };
 

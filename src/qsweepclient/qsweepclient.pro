@@ -8,9 +8,9 @@ HEADERS += \
     model/hackrf_info_model.h \
     model/message_log_model.h \
     model/ranges_template_model.h \
+    settings/client_settings.h \
     template/ranges_template.h \
     userinterface.h \
-    settings/sweepclientsettings.h \
     systemmonitorinterface.h \
     statesweepclient.h \
     chart/surface_spectr.h \
@@ -24,10 +24,10 @@ SOURCES += \
     model/hackrf_info_model.cpp \
     model/message_log_model.cpp \
     model/ranges_template_model.cpp \
+    settings/client_settings.cpp \
     template/ranges_template.cpp \
     userinterface.cpp \
     qsweepclient.cpp \
-    settings/sweepclientsettings.cpp \
     systemmonitorinterface.cpp \
     statesweepclient.cpp \
     chart/surface_spectr.cpp \

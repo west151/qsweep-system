@@ -19,14 +19,14 @@ UserInterface::UserInterface(QObject *parent) : QObject(parent),
 
 }
 
-void UserInterface::onSweepClientSettings(const SweepClientSettings &value)
+void UserInterface::onSweepClientSettings(const client_settings &value)
 {
-    m_sweepClientSettings = value;
+    m_client_settings = value;
 }
 
-SweepClientSettings UserInterface::sweepClientSettings() const
+client_settings UserInterface::sweepClientSettings() const
 {
-    return m_sweepClientSettings;
+    return m_client_settings;
 }
 
 void UserInterface::onPingReceived()
@@ -43,26 +43,26 @@ quint32 UserInterface::pingReceivedCount() const
 
 void UserInterface::setHostBroker(const QString &value)
 {
-    m_sweepClientSettings.setHostBroker(value);
+    m_client_settings.set_host_broker(value);
 
     emit hostBrokerChanged();
 }
 
 QString UserInterface::hostBroker() const
 {
-    return m_sweepClientSettings.hostBroker();
+    return m_client_settings.host_broker();
 }
 
 void UserInterface::setPortBroker(const quint16 &value)
 {
-    m_sweepClientSettings.setPortBroker(value);
+    m_client_settings.set_port_broker(value);
 
     emit portBrokerChanged();
 }
 
 quint16 UserInterface::portBroker() const
 {
-    return m_sweepClientSettings.portBroker();
+    return m_client_settings.port_broker();
 }
 
 void UserInterface::setFrequencyMin(const quint32 &value)

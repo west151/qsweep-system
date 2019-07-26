@@ -18,7 +18,7 @@ class UserInterface;
 class sweep_topic;
 class SystemMonitorInterface;
 class StateSweepClient;
-class SweepClientSettings;
+class client_settings;
 class sweep_message;
 class sdr_info;
 class data_log;
@@ -69,7 +69,7 @@ private:
     qint32 m_size_data_receive;
 
     // settings
-    SweepClientSettings* ptrSweepClientSettings {Q_NULLPTR};
+    client_settings* ptr_client_settings {Q_NULLPTR};
 
     // ta spectr
     ta_spectr* ptr_ta_spectr_worker {Q_NULLPTR};
