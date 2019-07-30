@@ -7,6 +7,7 @@ SpectrSurfaceForm {
     in_freq_min.text: userInterface.frequencyMin
     in_freq_max.text: userInterface.frequencyMax
 
+    // !!!!!!!!!!!!!!!!!!!!!!!!!
     Loader {
         id: idLoader
         onLoaded: {
@@ -44,6 +45,10 @@ SpectrSurfaceForm {
 
     button_params.onClicked: {
         idLoader.setSource("DialogParamsSpectr.qml")
+    }
+
+    button_sdr_info.onClicked: {
+        idLoader.setSource("DialogSDRInfo.qml")
     }
 
     check_box_max_spectr.onClicked: {

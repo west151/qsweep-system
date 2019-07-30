@@ -5,7 +5,6 @@ Item {
     id: item1
     width: 800
     height: 600
-    property alias listViewSDRInfo: listViewSDRInfo
     property alias listViewMessageLog: listViewMessageLog
     property alias textBufferMemory: textBufferMemory
     property alias textFreeMemory: textFreeMemory
@@ -94,7 +93,7 @@ Item {
         Frame {
             id: frameMessageLog
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 284
+            anchors.bottomMargin: 8
             anchors.right: parent.right
             anchors.rightMargin: 8
             anchors.left: parent.left
@@ -129,60 +128,6 @@ Item {
                     height: 40
                     Row {
                         id: row2
-                        Rectangle {
-                            width: 40
-                            height: 40
-                            color: colorCode
-                        }
-
-                        Text {
-                            text: name
-                            font.bold: true
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        spacing: 10
-                    }
-                }
-            }
-        }
-
-        Frame {
-            id: frameInfo
-            y: 306
-            height: 270
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
-
-            Text {
-                id: textLabelSDR
-                x: 157
-                text: qsTr("SDR Info")
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                font.pixelSize: 25
-            }
-
-            ListView {
-                id: listViewSDRInfo
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 0
-                anchors.top: parent.top
-                anchors.topMargin: 39
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row1
                         Rectangle {
                             width: 40
                             height: 40
