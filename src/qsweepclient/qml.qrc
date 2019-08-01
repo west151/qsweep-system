@@ -14,5 +14,8 @@
         <file>DialogSDRInfo.qml</file>
         <file>SDRInfo.qml</file>
         <file>SDRInfoForm.ui.qml</file>
+        <file>DialogFreqInfo.qml</file>
+        <file>FreqInfo.qml</file>
+        <file>FreqInfoForm.ui.qml</file>
     </qresource>
 </RCC>

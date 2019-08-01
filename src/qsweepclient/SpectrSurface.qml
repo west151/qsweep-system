@@ -51,6 +51,10 @@ SpectrSurfaceForm {
         idLoader.setSource("DialogSDRInfo.qml")
     }
 
+    button_freq_info.onClicked: {
+        idLoader.setSource("DialogFreqInfo.qml")
+    }
+
     check_box_max_spectr.onClicked: {
         userInterface.on_spectr_max_calc(check_box_max_spectr.checked)
     }

@@ -6,6 +6,7 @@
 #include <QRandomGenerator>
 
 #include "spectr_item.h"
+#include "template/ranges_template.h"
 
 class surface_spectr : public QQuickPaintedItem
 {
@@ -51,6 +52,9 @@ public slots:
     // level
     void slot_level_min(const qreal &);
     void slot_level_max(const qreal &);
+
+    void slot_add_ranges_template(const ranges_template &data);
+    void slot_remove_ranges_template(const ranges_template &data);
 
     // for test
     void slot_power_spectr_test();

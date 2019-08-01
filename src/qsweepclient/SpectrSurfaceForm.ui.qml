@@ -5,9 +5,8 @@ Item {
     id: item_main
     width: 800
     height: 600
+    property alias button_freq_info: button_freq_info
     property alias button_sdr_info: button_sdr_info
-    property alias button_show_hint: button_show_hint
-    property alias check_box_freq_hint: check_box_freq_hint
     property alias check_box_db_write: check_box_db_write
     property alias button_save: button_save
     property alias button_params: button_params
@@ -162,26 +161,19 @@ Item {
             text: qsTr("spectr write")
         }
 
-        CheckBox {
-            id: check_box_freq_hint
-            x: 8
-            y: 333
-            text: qsTr("freq hint")
-        }
-
         Button {
-            id: button_show_hint
-            x: 119
+            id: button_freq_info
+            x: 8
             y: 338
-            width: 30
-            height: 30
-            text: qsTr("...")
+            width: 141
+            height: 40
+            text: qsTr("Freq Info")
         }
 
         Button {
             id: button_sdr_info
             x: 8
-            y: 379
+            y: 384
             width: 141
             height: 40
             text: "SDR Info"
