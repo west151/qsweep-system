@@ -10,14 +10,14 @@ HEADERS += \
     model/ranges_template_model.h \
     settings/client_settings.h \
     template/ranges_template.h \
-    userinterface.h \
     systemmonitorinterface.h \
     statesweepclient.h \
     chart/surface_spectr.h \
     chart/spectr_item.h \
     spectr/ta_spectr.h \
     database/db_local_state.h \
-    model/params_spectr_model.h
+    model/params_spectr_model.h \
+    user_interface.h
 
 SOURCES += \
     coresweepclient.cpp \
@@ -26,7 +26,6 @@ SOURCES += \
     model/ranges_template_model.cpp \
     settings/client_settings.cpp \
     template/ranges_template.cpp \
-    userinterface.cpp \
     qsweepclient.cpp \
     systemmonitorinterface.cpp \
     statesweepclient.cpp \
@@ -34,7 +33,8 @@ SOURCES += \
     chart/spectr_item.cpp \
     spectr/ta_spectr.cpp \
     database/db_local_state.cpp \
-    model/params_spectr_model.cpp
+    model/params_spectr_model.cpp \
+    user_interface.cpp
 
 RESOURCES += qml.qrc
 

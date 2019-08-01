@@ -1,4 +1,4 @@
-#include "userinterface.h"
+#include "user_interface.h"
 
 #include <QVector>
 
@@ -7,7 +7,7 @@
 #include "broker_ctrl.h"
 #include "sweep_topic.h"
 
-UserInterface::UserInterface(QObject *parent) : QObject(parent),
+user_interface::user_interface(QObject *parent) : QObject(parent),
     m_freqMin(2300),
     m_freqMax(2700),
     m_lnaGain(32),
@@ -19,132 +19,132 @@ UserInterface::UserInterface(QObject *parent) : QObject(parent),
 
 }
 
-void UserInterface::onSweepClientSettings(const client_settings &value)
+void user_interface::onSweepClientSettings(const client_settings &value)
 {
     m_client_settings = value;
 }
 
-client_settings UserInterface::sweepClientSettings() const
+client_settings user_interface::sweepClientSettings() const
 {
     return m_client_settings;
 }
 
-void UserInterface::onPingReceived()
+void user_interface::onPingReceived()
 {
     m_pingReceivedCount = m_pingReceivedCount + 1;
 
     emit pingReceivedCountChanged();
 }
 
-quint32 UserInterface::pingReceivedCount() const
+quint32 user_interface::pingReceivedCount() const
 {
     return m_pingReceivedCount;
 }
 
-void UserInterface::setHostBroker(const QString &value)
+void user_interface::setHostBroker(const QString &value)
 {
     m_client_settings.set_host_broker(value);
 
     emit hostBrokerChanged();
 }
 
-QString UserInterface::hostBroker() const
+QString user_interface::hostBroker() const
 {
     return m_client_settings.host_broker();
 }
 
-void UserInterface::setPortBroker(const quint16 &value)
+void user_interface::setPortBroker(const quint16 &value)
 {
     m_client_settings.set_port_broker(value);
 
     emit portBrokerChanged();
 }
 
-quint16 UserInterface::portBroker() const
+quint16 user_interface::portBroker() const
 {
     return m_client_settings.port_broker();
 }
 
-void UserInterface::setFrequencyMin(const quint32 &value)
+void user_interface::setFrequencyMin(const quint32 &value)
 {
     m_freqMin = value;
 
     emit sendFrequencyMinChanged();
 }
 
-quint32 UserInterface::frequencyMin() const
+quint32 user_interface::frequencyMin() const
 {
     return m_freqMin;
 }
 
-void UserInterface::setFrequencyMax(const quint32 &value)
+void user_interface::setFrequencyMax(const quint32 &value)
 {
     m_freqMax = value;
 
     emit sendFrequencyMaxChanged();
 }
 
-quint32 UserInterface::frequencyMax() const
+quint32 user_interface::frequencyMax() const
 {
     return m_freqMax;
 }
 
-void UserInterface::setLnaGain(const quint32 &value)
+void user_interface::setLnaGain(const quint32 &value)
 {
     m_lnaGain = value;
 
     emit sendLnaGainChanged();
 }
 
-quint32 UserInterface::lnaGain() const
+quint32 user_interface::lnaGain() const
 {
     return m_lnaGain;
 }
 
-void UserInterface::setVgaGain(const quint32 &value)
+void user_interface::setVgaGain(const quint32 &value)
 {
     m_vgaGain = value;
 
     emit sendVgaGainChanged();
 }
 
-quint32 UserInterface::vgaGain() const
+quint32 user_interface::vgaGain() const
 {
     return m_vgaGain;
 }
 
-void UserInterface::setOneShot(const bool &value)
+void user_interface::setOneShot(const bool &value)
 {
     m_oneShot = value;
 
     emit sendOneShotChanged();
 }
 
-bool UserInterface::oneShot() const
+bool user_interface::oneShot() const
 {
     return m_oneShot;
 }
 
-void UserInterface::setFFTBinWidth(const quint32 &value)
+void user_interface::setFFTBinWidth(const quint32 &value)
 {
     m_fftBinWidth = value;
 
     emit sendFFTBinWidthChanged();
 }
 
-quint32 UserInterface::fftBinWidth() const
+quint32 user_interface::fftBinWidth() const
 {
     return m_fftBinWidth;
 }
 
-void UserInterface::onRequestSweepInfo()
+void user_interface::onRequestSweepInfo()
 {
     sweep_message ctrl_info;
     ctrl_info.set_type(type_message::ctrl_info);
     emit signal_sweep_message(ctrl_info.export_json());
 }
 
-void UserInterface::onRequestSweepSpectr(const bool &start)
+void user_interface::onRequestSweepSpectr(const bool &start)
 {
     sweep_message ctrl_spectr;
     ctrl_spectr.set_type(type_message::ctrl_spectr);
@@ -165,17 +165,17 @@ void UserInterface::onRequestSweepSpectr(const bool &start)
     emit signal_sweep_message(ctrl_spectr.export_json());
 }
 
-void UserInterface::onClearMaxPowerSpectr()
+void user_interface::onClearMaxPowerSpectr()
 {
     emit sendClearMaxPowerSpectr();
 }
 
-void UserInterface::on_spectr_max_calc(const bool &value)
+void user_interface::on_spectr_max_calc(const bool &value)
 {
     emit signal_spectr_max_calc(value);
 }
 
-void UserInterface::on_spectr_db_write(const bool &value)
+void user_interface::on_spectr_db_write(const bool &value)
 {
     sweep_message ctrl_msg;
     ctrl_msg.set_type(type_message::ctrl_db);
@@ -198,12 +198,12 @@ void UserInterface::on_spectr_db_write(const bool &value)
     emit signal_sweep_message(ctrl_msg.export_json());
 }
 
-void UserInterface::on_read_params_spectr()
+void user_interface::on_read_params_spectr()
 {
     emit signal_read_params_spectr();
 }
 
-void UserInterface::on_save_params_spectr(const QString &descr)
+void user_interface::on_save_params_spectr(const QString &descr)
 {
     QVector<params_spectr> tmpVector;
 
@@ -220,7 +220,7 @@ void UserInterface::on_save_params_spectr(const QString &descr)
     emit signal_save_params_spectr(tmpVector);
 }
 
-void UserInterface::slot_set_params_spectr(const params_spectr &data)
+void user_interface::slot_set_params_spectr(const params_spectr &data)
 {
     //
     onRequestSweepSpectr(false);

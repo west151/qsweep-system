@@ -10,7 +10,8 @@ class ranges_template_model : public QAbstractListModel
 public:
     enum DataRole {
         DATAROLE_NAME = Qt::UserRole + 1,
-        DATAROLE_DESCR
+        DATAROLE_DESCR,
+        DATAROLE_RANGES
     };
     explicit ranges_template_model(QObject* parent = nullptr);
 

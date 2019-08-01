@@ -9,7 +9,7 @@
 #include <QThread>
 #include <QStandardPaths>
 
-#include "userinterface.h"
+#include "user_interface.h"
 #include "sweep_topic.h"
 #include "chart/surface_spectr.h"
 #include "systemmonitorinterface.h"
@@ -65,7 +65,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     qmlRegisterType<surface_spectr>("surfacespectr", 1, 0, "SurfaceSpectr");
 
     QQmlContext *context = ptrEngine->rootContext();
-    context->setContextProperty("userInterface", ptrUserInterface);
+    context->setContextProperty("userInterface", ptr_user_interface);
     context->setContextProperty("hackrfInfoModel", ptr_hackrf_info_model);
     context->setContextProperty("messageLogModel", ptr_message_log_model);
     context->setContextProperty("systemMonitorInterface", ptrSystemMonitorInterface);
@@ -81,7 +81,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     QObject *qmlSurfaceSpectr = rootObject->findChild<QObject*>("objSurfaceSpectr");
     surface_spectr *surfaceSpectr = static_cast<surface_spectr *>(qmlSurfaceSpectr);
 
-    connect(ptrUserInterface, &UserInterface::signal_spectr_max_calc,
+    connect(ptr_user_interface, &user_interface::signal_spectr_max_calc,
             surfaceSpectr, &surface_spectr::slot_spectr_max_calc);
 
     // ta spectr
@@ -133,15 +133,15 @@ void CoreSweepClient::initialization()
             ptrSystemMonitorInterface, &SystemMonitorInterface::slot_system_monitor);
 
     // user interface
-    ptrUserInterface = new UserInterface(this);
-    connect(ptrUserInterface, &UserInterface::signal_sweep_message,
+    ptr_user_interface = new user_interface(this);
+    connect(ptr_user_interface, &user_interface::signal_sweep_message,
             this, &CoreSweepClient::slot_publish_message);
 
     // StateSweepClient
     connect(this, &CoreSweepClient::sendStateConnected,
             ptrStateSweepClient, &StateSweepClient::onConnect);
     connect(this, &CoreSweepClient::sendStateConnected,
-            ptrUserInterface, &UserInterface::onRequestSweepInfo);
+            ptr_user_interface, &user_interface::onRequestSweepInfo);
     connect(this, &CoreSweepClient::sendStateDisconnected,
             ptrStateSweepClient, &StateSweepClient::onDisconnect);
 
@@ -162,10 +162,10 @@ void CoreSweepClient::initialization()
 
     connect(this, &CoreSweepClient::signal_open_db,
             ptr_db_local_state_worker, &db_local_state::slot_open_db);
-    connect(ptrUserInterface, &UserInterface::signal_read_params_spectr,
+    connect(ptr_user_interface, &user_interface::signal_read_params_spectr,
             ptr_db_local_state_worker, &db_local_state::slot_read_params_spectr);
     // save params
-    connect(ptrUserInterface, &UserInterface::signal_save_params_spectr,
+    connect(ptr_user_interface, &user_interface::signal_save_params_spectr,
             ptr_db_local_state_worker, &db_local_state::slot_write_params_spectr);
 
     // params spectr model
@@ -175,7 +175,7 @@ void CoreSweepClient::initialization()
 
     // send params from model
     connect(ptr_params_spectr_model, &params_spectr_model::signal_params_from_model,
-            ptrUserInterface, &UserInterface::slot_set_params_spectr);
+            ptr_user_interface, &user_interface::slot_set_params_spectr);
 
     // sync db & model
     connect(ptr_params_spectr_model, &params_spectr_model::signal_remove_from_model,
@@ -212,7 +212,7 @@ bool CoreSweepClient::read_settings(const QString &file)
 
                 isRead = ptr_client_settings->is_valid();
 
-                ptrUserInterface->onSweepClientSettings(settings);
+                ptr_user_interface->onSweepClientSettings(settings);
                 // MessageLogModel
                 ptr_message_log_model->set_max_size(ptr_client_settings->max_size_message_log());
 
@@ -311,8 +311,8 @@ void CoreSweepClient::launching()
     // connect to mqtt broker
     if(ptrMqttClient)
     {
-        ptrMqttClient->setHostname(ptrUserInterface->sweepClientSettings().host_broker());
-        ptrMqttClient->setPort(ptrUserInterface->sweepClientSettings().port_broker());
+        ptrMqttClient->setHostname(ptr_user_interface->sweepClientSettings().host_broker());
+        ptrMqttClient->setPort(ptr_user_interface->sweepClientSettings().port_broker());
 
         if (ptrMqttClient->state() == QMqttClient::Disconnected)
             ptrMqttClient->connectToHost();
@@ -397,7 +397,7 @@ void CoreSweepClient::brokerDisconnected()
 
 void CoreSweepClient::pingReceived()
 {
-    ptrUserInterface->onPingReceived();
+    ptr_user_interface->onPingReceived();
 
 #ifdef QT_DEBUG
     qDebug() << Q_FUNC_INFO;

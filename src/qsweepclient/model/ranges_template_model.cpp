@@ -39,6 +39,7 @@ QHash<int, QByteArray> ranges_template_model::roleNames() const
 
     roles[DATAROLE_NAME] = "name_ranges";
     roles[DATAROLE_DESCR] = "descr_ranges";
+    roles[DATAROLE_RANGES] = "freq_ranges";
 
     return roles;
 }

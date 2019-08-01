@@ -1,14 +1,18 @@
 import QtQuick 2.4
+import QtQuick.Controls 2.3
 
 Item {
-    width: 400
+    width: 600
     height: 400
+    property alias list_view_freq_info: list_view_freq_info
 
-    Text {
-        id: element
-        x: 143
-        y: 184
-        text: qsTr("Freq Info")
-        font.pixelSize: 28
+    Frame {
+        id: frame
+        anchors.fill: parent
+
+        ListView {
+            id: list_view_freq_info
+            anchors.fill: parent
+        }
     }
 }

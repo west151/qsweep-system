@@ -14,7 +14,7 @@
 #include "model/params_spectr_model.h"
 #include "model/ranges_template_model.h"
 
-class UserInterface;
+class user_interface;
 class sweep_topic;
 class SystemMonitorInterface;
 class StateSweepClient;
@@ -55,7 +55,7 @@ private slots:
 
 private:
     QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
-    UserInterface* ptrUserInterface {Q_NULLPTR};
+    user_interface* ptr_user_interface {Q_NULLPTR};
     QMqttClient* ptrMqttClient {Q_NULLPTR};
     sweep_topic* ptr_sweep_topic {Q_NULLPTR};
     hackrf_info_model* ptr_hackrf_info_model {Q_NULLPTR};
