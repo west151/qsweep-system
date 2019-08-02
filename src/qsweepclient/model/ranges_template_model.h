@@ -24,6 +24,8 @@ public:
 
 private:
     QVector<ranges_template> m_data;
+
+    QString ranges_to_str_descr(const QList<QPair<quint64, quint64> > &)const;
 };
 
 #endif // RANGES_TEMPLATE_MODEL_H

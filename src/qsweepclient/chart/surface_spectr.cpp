@@ -309,12 +309,12 @@ void surface_spectr::slot_level_max(const qreal &value)
 
 void surface_spectr::slot_add_ranges_template(const ranges_template &data)
 {
-
+    Q_UNUSED(data)
 }
 
 void surface_spectr::slot_remove_ranges_template(const ranges_template &data)
 {
-
+    Q_UNUSED(data)
 }
 
 void surface_spectr::slot_power_spectr_test()

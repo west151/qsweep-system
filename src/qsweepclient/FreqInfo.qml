@@ -26,7 +26,7 @@ FreqInfoForm {
                     width: mainItem.width
                     text: "Name: " + name_ranges + "\n"
                           + "Descr: " + descr_ranges + "\n"
-                          + "Ranges: " + freq_ranges + "\n"
+                          + "Ranges MHz: " + freq_ranges + "\n"
                     wrapMode: Text.WordWrap
                     anchors.verticalCenter: parent.verticalCenter
                     font.pointSize: 13
