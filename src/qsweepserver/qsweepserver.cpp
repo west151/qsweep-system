@@ -1,4 +1,4 @@
-#include "coresweep.h"
+#include "core_sweep.h"
 
 #include <QCoreApplication>
 
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 #endif
 
     QCoreApplication app(argc, argv);
-    CoreSweep coreSweepServer(app.applicationFilePath());
+    core_sweep core_sweep_server(app.applicationFilePath());
 
     return app.exec();
 }

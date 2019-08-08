@@ -152,8 +152,8 @@ void db_manager::slot_test_received_data()
         p1.m_date_time = QDateTime::currentDateTimeUtc();
         p1.m_fft_bin_width = 250000;
         p1.m_fft_size = 100;
-        p1.m_frequency_min = 100000000;
-        p1.m_frequency_max = 200000000;
+        p1.hz_low = 100000000;
+        p1.hz_high = 200000000;
 
         for(int i=0; i<100; ++i){
             qreal value = rm.generateDouble()*-100;

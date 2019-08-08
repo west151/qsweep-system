@@ -1,5 +1,5 @@
-#ifndef SWEEPWORKER_H
-#define SWEEPWORKER_H
+#ifndef SPECTRUM_NATIVE_WORKER_H
+#define SPECTRUM_NATIVE_WORKER_H
 
 #include <QObject>
 
@@ -15,12 +15,12 @@
 #include "constant.h"
 #include "data_spectr.h"
 
-class SweepWorker : public QObject
+class spectrum_native_worker : public QObject
 {
     Q_OBJECT
 public:
-    explicit SweepWorker(QObject *parent = nullptr);
-    static SweepWorker* getInstance();
+    explicit spectrum_native_worker(QObject *parent = nullptr);
+    static spectrum_native_worker* getInstance();
 
     void onDataPowerSpectrCallbacks(const power_spectr &, const bool &isSending = false);
 
@@ -33,7 +33,7 @@ signals:
     void signal_sweep_worker(const bool &);
 
 private:
-    static SweepWorker* m_instance;
+    static spectrum_native_worker* m_instance;
 
     int opt, i, result = 0;
     const char* path = "/dev/null";
@@ -59,21 +59,4 @@ private:
     void sweepWorkerMessagelog(const QString &);
 };
 
-//fprintf(stderr, "Usage:\n");
-//fprintf(stderr, "\t[-h] # this help\n");
-//fprintf(stderr, "\t[-d serial_number] # Serial number of desired HackRF\n");
-//fprintf(stderr, "\t[-a amp_enable] # RX RF amplifier 1=Enable, 0=Disable\n");
-//fprintf(stderr, "\t[-f freq_min:freq_max] # minimum and maximum frequencies in MHz\n");
-//fprintf(stderr, "\t[-p antenna_enable] # Antenna port power, 1=Enable, 0=Disable\n");
-//fprintf(stderr, "\t[-l gain_db] # RX LNA (IF) gain, 0-40dB, 8dB steps\n");
-//fprintf(stderr, "\t[-g gain_db] # RX VGA (baseband) gain, 0-62dB, 2dB steps\n");
-//fprintf(stderr, "\t[-n num_samples] # Number of samples per frequency, 16384-4294967296\n");
-//fprintf(stderr, "\t[-w bin_width] # FFT bin width (frequency resolution) in Hz\n");
-//fprintf(stderr, "\t[-1] # one shot mode\n");
-//fprintf(stderr, "\t[-B] # binary output\n");
-//fprintf(stderr, "\n");
-//fprintf(stderr, "Output fields:\n");
-//fprintf(stderr, "\tdate, time, hz_low, hz_high, hz_bin_width, num_samples, dB, dB, . . .\n");
-
-
-#endif // SWEEPWORKER_H
+#endif // SPECTRUM_NATIVE_WORKER_H

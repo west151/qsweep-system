@@ -1,4 +1,4 @@
-#include "sweepworker.h"
+#include "spectrum_native_worker.h"
 
 #include <QThread>
 
@@ -43,21 +43,21 @@ char params_id_str[8];
 #include <sys/time.h>
 #endif
 
-SweepWorker* SweepWorker::m_instance = nullptr;
+spectrum_native_worker* spectrum_native_worker::m_instance = nullptr;
 
-SweepWorker::SweepWorker(QObject *parent) : QObject(parent)
+spectrum_native_worker::spectrum_native_worker(QObject *parent) : QObject(parent)
 {
 
 }
 
-SweepWorker *SweepWorker::getInstance()
+spectrum_native_worker *spectrum_native_worker::getInstance()
 {
     if (m_instance == nullptr)
-        m_instance = new SweepWorker();
+        m_instance = new spectrum_native_worker();
     return m_instance;
 }
 
-void SweepWorker::onDataPowerSpectrCallbacks(const power_spectr &power, const bool &isSending)
+void spectrum_native_worker::onDataPowerSpectrCallbacks(const power_spectr &power, const bool &isSending)
 {
     m_powerSpectrBuffer.append(power);
 
@@ -83,14 +83,14 @@ void SweepWorker::onDataPowerSpectrCallbacks(const power_spectr &power, const bo
     }
 }
 
-int SweepWorker::rx_callback(hackrf_transfer *transfer)
+int spectrum_native_worker::rx_callback(hackrf_transfer *transfer)
 {
-    SweepWorker *obj = (SweepWorker *)transfer->rx_ctx;
+    spectrum_native_worker *obj = (spectrum_native_worker *)transfer->rx_ctx;
     if( transfer->valid_length == 0) return(0);
     return obj->hackrf_rx_callback(transfer->buffer, transfer->valid_length);
 }
 
-int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
+int spectrum_native_worker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
 {
     int8_t* buf;
     uint8_t* ubuf;
@@ -157,8 +157,8 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
         fft_time = localtime(&time_now);
         strftime(time_str, 50, "%Y-%m-%d, %H:%M:%S", fft_time);
 
-        dataPowerSpectr.m_frequency_min = static_cast<uint64_t>(frequency);
-        dataPowerSpectr.m_frequency_max = static_cast<uint64_t>(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
+        dataPowerSpectr.hz_low = static_cast<uint64_t>(frequency);
+        dataPowerSpectr.hz_high = static_cast<uint64_t>(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
         dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
         dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
@@ -170,8 +170,8 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
 
         //---------------------------------------------------------------------
         dataPowerSpectr.m_power.clear();
-        dataPowerSpectr.m_frequency_min = static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
-        dataPowerSpectr.m_frequency_max = static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
+        dataPowerSpectr.hz_low = static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
+        dataPowerSpectr.hz_high = static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
         dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
         dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
@@ -196,7 +196,7 @@ int SweepWorker::hackrf_rx_callback(unsigned char *buffer, uint32_t length)
     return 0;
 }
 
-float SweepWorker::logPower(fftwf_complex in, float scale)
+float spectrum_native_worker::logPower(fftwf_complex in, float scale)
 {
     float re = in[0] * scale;
     float im = in[1] * scale;
@@ -204,12 +204,12 @@ float SweepWorker::logPower(fftwf_complex in, float scale)
     return log2f(magsq) * 10.0f / log2(10.0f);
 }
 
-float SweepWorker::TimevalDiff(const timeval *a, const timeval *b)
+float spectrum_native_worker::TimevalDiff(const timeval *a, const timeval *b)
 {
     return (a->tv_sec - b->tv_sec) + 1e-6f * (a->tv_usec - b->tv_usec);
 }
 
-void SweepWorker::errorHackrf(const QString &text, int result)
+void spectrum_native_worker::errorHackrf(const QString &text, int result)
 {
 #ifdef QT_DEBUG
     qDebug() << text
@@ -226,7 +226,7 @@ void SweepWorker::errorHackrf(const QString &text, int result)
     sweepWorkerMessagelog(msg);
 }
 
-void SweepWorker::sweepWorkerMessagelog(const QString &value)
+void spectrum_native_worker::sweepWorkerMessagelog(const QString &value)
 {
     data_log message;
     message.set_text_message(value);
@@ -238,7 +238,7 @@ void SweepWorker::sweepWorkerMessagelog(const QString &value)
     emit signal_sweep_message(send_data.export_json());
 }
 
-void SweepWorker::slot_run_sweep_worker(const QByteArray &value)
+void spectrum_native_worker::slot_run_sweep_worker(const QByteArray &value)
 {
     const sweep_message ctrl_info(value);
     const params_spectr params_spectr_data(ctrl_info.data_message());
@@ -497,7 +497,7 @@ void SweepWorker::slot_run_sweep_worker(const QByteArray &value)
     emit signal_sweep_worker(false);
 }
 
-void SweepWorker::slot_stop_sweep_worker()
+void spectrum_native_worker::slot_stop_sweep_worker()
 {
     do_exit = true;
 }

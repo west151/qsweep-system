@@ -1,20 +1,21 @@
-#include "coresweep.h"
+#include "core_sweep.h"
 #include <QThread>
 #include <QTimer>
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
 
-#include "hackrfinfo.h"
-#include "sweepworker.h"
+#include "hackrf_info.h"
+#include "spectrum_native_worker.h"
 #include "sweep_topic.h"
-
+#include "process_worker.h"
+#include "parser_worker.h"
 #include "sweep_message.h"
 #include "params_spectr.h"
 
 static const QString config_suffix(QString(".conf"));
 
-CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
+core_sweep::core_sweep(const QString &file, QObject *parent) : QObject(parent)
 {
     // read file settings
     const auto isSettings = readSettings(file);
@@ -27,7 +28,7 @@ CoreSweep::CoreSweep(const QString &file, QObject *parent) : QObject(parent)
     }
 }
 
-void CoreSweep::slot_publish_message(const QByteArray &value)
+void core_sweep::slot_publish_message(const QByteArray &value)
 {
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
@@ -36,23 +37,23 @@ void CoreSweep::slot_publish_message(const QByteArray &value)
         if(send_data.is_valid())
         {
             if(send_data.type() == type_message::data_sdr_info)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_info), value);
+                ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_info), value);
 
             if(send_data.type() == type_message::data_message_log)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_message_log), value);
+                ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_message_log), value);
 
             if(send_data.type() == type_message::data_system_monitor)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_system_monitor), value);
+                ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_system_monitor), value);
 
             if(send_data.type() == type_message::data_spectr)
-                ptrMqttClient->publish(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_power_spectr), value);
+                ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_power_spectr), value);
         }
     }
 }
 
-void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
+void core_sweep::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
-    if(ptrSweepTopic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_ctrl)
+    if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_ctrl)
     {
         const sweep_message ctrl_message(message, false);
 
@@ -87,12 +88,64 @@ void CoreSweep::slot_message_received(const QByteArray &message, const QMqttTopi
     }
 }
 
-void CoreSweep::slot_sweep_worker(const bool &on)
+void core_sweep::slot_sweep_worker(const bool &on)
 {
     m_run_sweep_worker = on;
 }
 
-bool CoreSweep::readSettings(const QString &file)
+void core_sweep::init_spectrum_native_worker()
+{
+    ptr_spectrum_native_worker = new spectrum_native_worker;
+    ptr_spectrum_native_thread = new QThread;
+    ptr_spectrum_native_worker->moveToThread(ptr_spectrum_native_thread);
+
+    connect(this, &core_sweep::signal_run_spectr_worker,
+            ptr_spectrum_native_worker, &spectrum_native_worker::slot_run_sweep_worker);
+
+    connect(ptr_spectrum_native_worker, &spectrum_native_worker::signal_sweep_message,
+            this, &core_sweep::slot_publish_message);
+
+    connect(ptr_spectrum_native_worker, &spectrum_native_worker::signal_sweep_worker,
+            this, &core_sweep::slot_sweep_worker);
+
+    // Power spectr
+    connect(spectrum_native_worker::getInstance(), &spectrum_native_worker::signal_sweep_message,
+            this, &core_sweep::slot_publish_message);
+    // stop spectr
+    connect(this, &core_sweep::signal_stop_spectr_worker,
+            spectrum_native_worker::getInstance(), &spectrum_native_worker::slot_stop_sweep_worker);
+
+    ptr_spectrum_native_thread->start();
+}
+
+void core_sweep::init_process_worker()
+{
+    // run process hackrf_sweep
+    ptr_process_worker = new process_worker;
+    ptr_process_thread = new QThread;
+    ptr_process_worker->moveToThread(ptr_process_thread);
+
+    connect(this, &core_sweep::signal_run_spectr_worker,
+            ptr_process_worker, &process_worker::slot_run_process_worker);
+
+    ptr_process_thread->start();
+
+    // parser hackrf_sweep stdout
+    ptr_parser_worker = new parser_worker;
+    ptr_parser_thread = new QThread;
+    ptr_parser_worker->moveToThread(ptr_parser_thread);
+
+    connect(ptr_process_worker, &process_worker::signal_output_line,
+            ptr_parser_worker, &parser_worker::slot_input_line);
+
+    // Power spectr
+    connect(ptr_parser_worker, &parser_worker::signal_data_spectr_message,
+            this, &core_sweep::slot_publish_message);
+
+    ptr_parser_thread->start();
+}
+
+bool core_sweep::readSettings(const QString &file)
 {
     bool isRead(false);
 
@@ -108,10 +161,10 @@ bool CoreSweep::readSettings(const QString &file)
 
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                ptrSweepServerSettings = new SweepServerSettings(file.readAll(), false);
+                ptr_server_settings = new server_settings(file.readAll(), false);
                 file.close();
 
-                isRead = ptrSweepServerSettings->isValid();
+                isRead = ptr_server_settings->is_valid();
 
             }else{
                 qCritical("Can't file open ('%s').", qUtf8Printable(config.fileName()));
@@ -128,7 +181,7 @@ bool CoreSweep::readSettings(const QString &file)
     return isRead;
 }
 
-bool CoreSweep::saveSettings(const QString &file)
+bool core_sweep::saveSettings(const QString &file)
 {
     bool isSave(false);
 
@@ -143,11 +196,11 @@ bool CoreSweep::saveSettings(const QString &file)
 
         if(file.open(QIODevice::ReadWrite | QIODevice::Text)) {
             if(fileExists){
-                if(ptrSweepServerSettings)
-                    file.write(ptrSweepServerSettings->exportToJson());
+                if(ptr_server_settings)
+                    file.write(ptr_server_settings->to_json());
             }else{
-                const auto defaultSettings = SweepServerSettings();
-                file.write(defaultSettings.exportToJson(false, false));
+                const auto defaultSettings = server_settings();
+                file.write(defaultSettings.to_json(false, false));
             }
 
             file.close();
@@ -161,62 +214,43 @@ bool CoreSweep::saveSettings(const QString &file)
     return isSave;
 }
 
-void CoreSweep::initialization()
+void core_sweep::initialization()
 {    
     m_run_sweep_worker = false;
 
-    ptrSweepTopic = new sweep_topic(this);
+    ptr_sweep_topic = new sweep_topic(this);
 
-    ptrSweepWorker = new SweepWorker;
-    ptrSweepThread = new QThread;
-    ptrSweepWorker->moveToThread(ptrSweepThread);
-
-    connect(this, &CoreSweep::signal_run_spectr_worker,
-            ptrSweepWorker, &SweepWorker::slot_run_sweep_worker);
-
-    connect(ptrSweepWorker, &SweepWorker::signal_sweep_message,
-            this, &CoreSweep::slot_publish_message);
-
-    connect(ptrSweepWorker, &SweepWorker::signal_sweep_worker,
-            this, &CoreSweep::slot_sweep_worker);
-
-    // Power spectr
-    connect(SweepWorker::getInstance(), &SweepWorker::signal_sweep_message,
-            this, &CoreSweep::slot_publish_message);
-    // stop spectr
-    connect(this, &CoreSweep::signal_stop_spectr_worker,
-            SweepWorker::getInstance(), &SweepWorker::slot_stop_sweep_worker);
-
-
-    ptrSweepThread->start();
+    if(ptr_server_settings->spectrum_source_native())
+        init_spectrum_native_worker();
+    else
+        init_process_worker();
 
     // MQTT
     ptrMqttClient = new QMqttClient(this);
 
     // new style
     connect(ptrMqttClient, &QMqttClient::messageReceived,
-            this, &CoreSweep::slot_message_received);
-
+            this, &core_sweep::slot_message_received);
 
     connect(ptrMqttClient, &QMqttClient::stateChanged,
-            this, &CoreSweep::updateLogStateChange);
+            this, &core_sweep::updateLogStateChange);
     connect(ptrMqttClient, &QMqttClient::disconnected,
-            this, &CoreSweep::brokerDisconnected);
+            this, &core_sweep::brokerDisconnected);
     connect(ptrMqttClient, &QMqttClient::connected,
-            this, &CoreSweep::pingReceived);
+            this, &core_sweep::pingReceived);
     connect(ptrMqttClient, &QMqttClient::pingResponseReceived,
-            this , &CoreSweep::pingReceived);
+            this , &core_sweep::pingReceived);
     connect(ptrMqttClient, &QMqttClient::errorChanged,
-            this, &CoreSweep::errorChanged);
+            this, &core_sweep::errorChanged);
 
     // HackRF Info
-    ptrHackrfInfo = new HackrfInfo(this);
+    ptr_hackrf_info = new hackrf_info(this);
     // get hacrf info
-    connect(this, &CoreSweep::signal_run_hackrf_info,
-            ptrHackrfInfo, &HackrfInfo::slot_run_hackrf_info);
+    connect(this, &core_sweep::signal_run_hackrf_info,
+            ptr_hackrf_info, &hackrf_info::slot_run_hackrf_info);
     // send result to broker
-    connect(ptrHackrfInfo, &HackrfInfo::signal_hackrf_info,
-            this, &CoreSweep::slot_publish_message);
+    connect(ptr_hackrf_info, &hackrf_info::signal_hackrf_info,
+            this, &core_sweep::slot_publish_message);
 
     // System monitor
     ptrSystemMonitorWorker = new SystemMonitorWorker;
@@ -229,46 +263,46 @@ void CoreSweep::initialization()
             ptrSystemMonitorWorker, &SystemMonitorWorker::runSystemMonitorWorker);
     // send result
     connect(ptrSystemMonitorWorker, &SystemMonitorWorker::signal_system_monitor_result,
-            this, &CoreSweep::slot_publish_message);
+            this, &core_sweep::slot_publish_message);
 
     ptrSystemMonitorThread->start();
 
-    QTimer::singleShot(ptrSweepServerSettings->delayedLaunch(), this, &CoreSweep::launching);
+    QTimer::singleShot(ptr_server_settings->delayed_launch(), this, &core_sweep::launching);
 }
 
-void CoreSweep::launching()
+void core_sweep::launching()
 {
     // connect to broker
-    if(ptrSweepServerSettings&&ptrSweepServerSettings->isValid())
+    if(ptr_server_settings&&ptr_server_settings->is_valid())
     {
 #ifdef QT_DEBUG
-        qDebug().noquote() << tr("settings->") << tr("id:") << ptrSweepServerSettings->id();
-        qDebug().noquote() << tr("settings->") << tr("launching:") << ptrSweepServerSettings->isValid();
-        qDebug().noquote() << tr("settings->") << tr("host broker:") << ptrSweepServerSettings->hostBroker();
-        qDebug().noquote() << tr("settings->") << tr("port broker:") << ptrSweepServerSettings->portBroker();
-        qDebug().noquote() << tr("settings->") << tr("monitor interval:") << ptrSweepServerSettings->systemMonitorInterval();
-        qDebug().noquote() << tr("settings->") << tr("delayed launch:") << ptrSweepServerSettings->delayedLaunch();
+        qDebug().noquote() << tr("settings->") << tr("id:") << ptr_server_settings->id();
+        qDebug().noquote() << tr("settings->") << tr("launching:") << ptr_server_settings->is_valid();
+        qDebug().noquote() << tr("settings->") << tr("host broker:") << ptr_server_settings->host_broker();
+        qDebug().noquote() << tr("settings->") << tr("port broker:") << ptr_server_settings->port_broker();
+        qDebug().noquote() << tr("settings->") << tr("monitor interval:") << ptr_server_settings->system_monitor_interval();
+        qDebug().noquote() << tr("settings->") << tr("delayed launch:") << ptr_server_settings->delayed_launch();
 #endif
 
         // connect to MQTT broker
         if(ptrMqttClient)
         {
-            ptrMqttClient->setHostname(ptrSweepServerSettings->hostBroker());
-            ptrMqttClient->setPort(ptrSweepServerSettings->portBroker());
+            ptrMqttClient->setHostname(ptr_server_settings->host_broker());
+            ptrMqttClient->setPort(ptr_server_settings->port_broker());
 
             if (ptrMqttClient->state() == QMqttClient::Disconnected)
                 ptrMqttClient->connectToHost();
         }
         // start system monitor
-        ptrTimer->start(ptrSweepServerSettings->systemMonitorInterval());
+        ptrTimer->start(ptr_server_settings->system_monitor_interval());
     }
 }
 
-void CoreSweep::updateLogStateChange()
+void core_sweep::updateLogStateChange()
 {
     if (ptrMqttClient->state() == QMqttClient::Connected)
     {
-        auto subscription = ptrMqttClient->subscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::topic_ctrl), 0);
+        auto subscription = ptrMqttClient->subscribe(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), 0);
 
         if (!subscription)
         {
@@ -286,28 +320,28 @@ void CoreSweep::updateLogStateChange()
 #endif
 }
 
-void CoreSweep::brokerDisconnected()
+void core_sweep::brokerDisconnected()
 {
 #ifdef QT_DEBUG
     qDebug() << "brokerDisconnected";
 #endif
 }
 
-void CoreSweep::pingReceived()
+void core_sweep::pingReceived()
 {
 #ifdef QT_DEBUG
     qDebug() << "pingReceived";
 #endif
 }
 
-void CoreSweep::connecting()
+void core_sweep::connecting()
 {
 #ifdef QT_DEBUG
     qDebug() << "connecting";
 #endif
 }
 
-void CoreSweep::errorChanged(QMqttClient::ClientError error)
+void core_sweep::errorChanged(QMqttClient::ClientError error)
 {
     qCritical("Mqtt client error code: '%d'", error);
 

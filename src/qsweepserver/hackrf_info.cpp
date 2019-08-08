@@ -1,4 +1,4 @@
-#include "hackrfinfo.h"
+#include "hackrf_info.h"
 
 #include "sweep_message.h"
 #include "sdr_info.h"
@@ -7,24 +7,24 @@
 #include <QtCore/qdebug.h>
 #endif
 
-HackrfInfo::HackrfInfo(QObject *parent) : QObject(parent)
+hackrf_info::hackrf_info(QObject *parent) : QObject(parent)
 {
 
 }
 
-void HackrfInfo::slot_run_hackrf_info(const QByteArray &value)
+void hackrf_info::slot_run_hackrf_info(const QByteArray &value)
 {
-    hackrfInfo(value);
+    get_hackrf_info(value);
 }
 
-int HackrfInfo::hackrfInfo(const QByteArray &value)
+int hackrf_info::get_hackrf_info(const QByteArray &value)
 {
     Q_UNUSED(value)
 
     result = hackrf_init();
 
     if (result != HACKRF_SUCCESS) {
-        errorHackrf(tr("hackrf_init() failed:"), result);
+        error_hackrf(tr("hackrf_init() failed:"), result);
         return EXIT_FAILURE;
     }
 
@@ -52,7 +52,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
         device = NULL;
         result = hackrf_device_list_open(list, i, &device);
         if (result != HACKRF_SUCCESS) {
-            errorHackrf(tr("hackrf_open() failed:"), result);
+            error_hackrf(tr("hackrf_open() failed:"), result);
             return EXIT_FAILURE;
         }
 
@@ -63,14 +63,14 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
             boardID.append(tr(" (%1)").arg(hackrf_board_id_name(static_cast<hackrf_board_id>(board_id))));
             hackrf_info.set_board_id(boardID);
         }else{
-            errorHackrf(tr("hackrf_board_id_read() failed:"), result);
+            error_hackrf(tr("hackrf_board_id_read() failed:"), result);
             return EXIT_FAILURE;
         }
 
         // Firmware Version
         result = hackrf_version_string_read(device, &version[0], 255);
         if (result != HACKRF_SUCCESS) {
-            errorHackrf(tr("hackrf_version_string_read() failed:"), result);
+            error_hackrf(tr("hackrf_version_string_read() failed:"), result);
             return EXIT_FAILURE;
         }else{
             result = hackrf_usb_api_version_read(device, &usb_version);
@@ -79,7 +79,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
                 firmwareVer.append(tr("(API:%1.%2)").arg((usb_version>>8)&0xFF).arg(usb_version&0xFF));
                 hackrf_info.set_firmware_version(firmwareVer);
             }else{
-                errorHackrf(tr("hackrf_usb_api_version_read() failed:"), result);
+                error_hackrf(tr("hackrf_usb_api_version_read() failed:"), result);
                 return EXIT_FAILURE;
             }
         }
@@ -95,14 +95,14 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
             partIDNumber.append(QString::number(read_partid_serialno.part_id[1], 16));
             hackrf_info.set_part_id_number(partIDNumber);
         }else{
-            errorHackrf(tr("hackrf_board_partid_serialno_read() failed:"), result);
+            error_hackrf(tr("hackrf_board_partid_serialno_read() failed:"), result);
             return EXIT_FAILURE;
         }
 
         result = hackrf_get_operacake_boards(device, &operacakes[0]);
 
         if ((result != HACKRF_SUCCESS) && (result != HACKRF_ERROR_USB_API_VERSION)) {
-            errorHackrf(tr("hackrf_get_operacake_boards() failed:"), result);
+            error_hackrf(tr("hackrf_get_operacake_boards() failed:"), result);
             return EXIT_FAILURE;
         }
 
@@ -118,7 +118,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
 
         result = hackrf_close(device);
         if (result != HACKRF_SUCCESS)
-            errorHackrf(tr("hackrf_close() failed:"), result);
+            error_hackrf(tr("hackrf_close() failed:"), result);
 
         QString libStr;
         libStr.append(hackrf_library_release());
@@ -144,7 +144,7 @@ int HackrfInfo::hackrfInfo(const QByteArray &value)
     return EXIT_SUCCESS;
 }
 
-void HackrfInfo::errorHackrf(const QString &text, int result)
+void hackrf_info::error_hackrf(const QString &text, int result)
 {
 #ifdef QT_DEBUG
     qDebug() << text

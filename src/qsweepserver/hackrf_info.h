@@ -1,24 +1,21 @@
-#ifndef HACKRFINFO_H
-#define HACKRFINFO_H
+#ifndef HACKRF_INFO_H
+#define HACKRF_INFO_H
 
 #include <QObject>
 
 #include <hackrf.h>
 
-class QSweepAnswer;
-
-class HackrfInfo : public QObject
+class hackrf_info : public QObject
 {
     Q_OBJECT
 public:
-    explicit HackrfInfo(QObject *parent = nullptr);
+    explicit hackrf_info(QObject *parent = nullptr);
 
 public slots:
     void slot_run_hackrf_info(const QByteArray &value);
 
 signals:
     void signal_hackrf_info(const QByteArray &value);
-    //void sendHackrfInfo(const QSweepAnswer &);
 
 private:
     int result = HACKRF_SUCCESS;
@@ -30,8 +27,8 @@ private:
     hackrf_device_list_t *list;
     hackrf_device* device;
 
-    void errorHackrf(const QString &, int result);
-    int hackrfInfo(const QByteArray &);
+    void error_hackrf(const QString &, int result);
+    int get_hackrf_info(const QByteArray &);
 };
 
-#endif // HACKRFINFO_H
+#endif // HACKRF_INFO_H

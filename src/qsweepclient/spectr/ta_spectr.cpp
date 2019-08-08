@@ -14,7 +14,7 @@ void ta_spectr::slot_data_spectr(const data_spectr &data)
     QVector<power_spectr> tmp_spectr(data.spectr());
 
     std::sort(tmp_spectr.begin(), tmp_spectr.end(), [](const power_spectr& a, const power_spectr& b) {
-        return a.m_frequency_min < b.m_frequency_min;
+        return a.hz_low < b.hz_low;
     });
 
     if(tmp_spectr.size()>0)
@@ -26,6 +26,6 @@ void ta_spectr::slot_data_spectr(const data_spectr &data)
 
         const auto dt = tmp_spectr.at(0).m_date_time;
 
-        emit signal_spectr_rt(dt, tmp_spectr.at(0).m_frequency_min, tmp_spectr.at(tmp_spectr.size()-1).m_frequency_max, tmp_power_rt);
+        emit signal_spectr_rt(dt, tmp_spectr.at(0).hz_low, tmp_spectr.at(tmp_spectr.size()-1).hz_high, tmp_power_rt);
     }
 }

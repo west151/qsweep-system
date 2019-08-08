@@ -8,19 +8,23 @@ include(../../common.pri)
 include(../../protocol.pri)
 
 SOURCES += \
+    core_sweep.cpp \
+    hackrf_info.cpp \
+    parser_worker.cpp \
+    process_worker.cpp \
     qsweepserver.cpp \
-    coresweep.cpp \
-    sweepworker.cpp \
-    hackrfinfo.cpp \
-    settings/sweepserversettings.cpp \
+    settings/server_settings.cpp \
+    spectrum_native_worker.cpp \
     systemmonitorworker.cpp
 
 HEADERS += \
-    coresweep.h \
-    sweepworker.h \
-    hackrfinfo.h \
+    core_sweep.h \
+    hackrf_info.h \
+    parser_worker.h \
+    process_worker.h \
+    settings/server_settings.h \
     constant.h \
-    settings/sweepserversettings.h \
+    spectrum_native_worker.h \
     systemmonitorworker.h
 
 # FFT
