@@ -8,7 +8,7 @@
 #include "hackrf_info.h"
 #include "spectrum_native_worker.h"
 #include "sweep_topic.h"
-#include "process_worker.h"
+#include "spectrum_process_worker.h"
 #include "parser_worker.h"
 #include "sweep_message.h"
 #include "params_spectr.h"
@@ -95,6 +95,10 @@ void core_sweep::slot_sweep_worker(const bool &on)
 
 void core_sweep::init_spectrum_native_worker()
 {
+#ifdef QT_DEBUG
+    qDebug() << "Init spectrum native";
+#endif
+
     ptr_spectrum_native_worker = new spectrum_native_worker;
     ptr_spectrum_native_thread = new QThread;
     ptr_spectrum_native_worker->moveToThread(ptr_spectrum_native_thread);
@@ -118,24 +122,28 @@ void core_sweep::init_spectrum_native_worker()
     ptr_spectrum_native_thread->start();
 }
 
-void core_sweep::init_process_worker()
+void core_sweep::init_spectrum_process_worker()
 {
+#ifdef QT_DEBUG
+    qDebug() << "Init spectrum process";
+#endif
+
     // run process hackrf_sweep
-    ptr_process_worker = new process_worker;
-    ptr_process_thread = new QThread;
-    ptr_process_worker->moveToThread(ptr_process_thread);
+    ptr_spectrum_process_worker = new spectrum_process_worker;
+    ptr_spectrum_process_thread = new QThread;
+    ptr_spectrum_process_worker->moveToThread(ptr_spectrum_process_thread);
 
     connect(this, &core_sweep::signal_run_spectr_worker,
-            ptr_process_worker, &process_worker::slot_run_process_worker);
+            ptr_spectrum_process_worker, &spectrum_process_worker::slot_run_process_worker);
 
-    ptr_process_thread->start();
+    ptr_spectrum_process_thread->start();
 
     // parser hackrf_sweep stdout
     ptr_parser_worker = new parser_worker;
     ptr_parser_thread = new QThread;
     ptr_parser_worker->moveToThread(ptr_parser_thread);
 
-    connect(ptr_process_worker, &process_worker::signal_output_line,
+    connect(ptr_spectrum_process_worker, &spectrum_process_worker::signal_output_line,
             ptr_parser_worker, &parser_worker::slot_input_line);
 
     // Power spectr
@@ -223,7 +231,7 @@ void core_sweep::initialization()
     if(ptr_server_settings->spectrum_source_native())
         init_spectrum_native_worker();
     else
-        init_process_worker();
+        init_spectrum_process_worker();
 
     // MQTT
     ptrMqttClient = new QMqttClient(this);

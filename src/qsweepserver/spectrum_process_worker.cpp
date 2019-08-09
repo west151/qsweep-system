@@ -1,4 +1,4 @@
-#include "process_worker.h"
+#include "spectrum_process_worker.h"
 #include "sweep_message.h"
 #include "params_spectr.h"
 
@@ -13,13 +13,13 @@
 #include <QtCore/qdebug.h>
 #endif
 
-process_worker::process_worker(QObject *parent) : QObject(parent),
+spectrum_process_worker::spectrum_process_worker(QObject *parent) : QObject(parent),
     is_ready(true)
 {
 
 }
 
-void process_worker::slot_run_process_worker(const QByteArray &value)
+void spectrum_process_worker::slot_run_process_worker(const QByteArray &value)
 {
     if(is_ready)
     {
@@ -31,12 +31,12 @@ void process_worker::slot_run_process_worker(const QByteArray &value)
     }
 }
 
-void process_worker::slot_stop_process_worker()
+void spectrum_process_worker::slot_stop_process_worker()
 {
 
 }
 
-void process_worker::read_test_data_from_file()
+void spectrum_process_worker::read_test_data_from_file()
 {
 
 #ifdef QT_DEBUG

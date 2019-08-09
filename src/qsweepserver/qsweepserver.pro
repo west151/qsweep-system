@@ -11,20 +11,20 @@ SOURCES += \
     core_sweep.cpp \
     hackrf_info.cpp \
     parser_worker.cpp \
-    process_worker.cpp \
     qsweepserver.cpp \
     settings/server_settings.cpp \
     spectrum_native_worker.cpp \
+    spectrum_process_worker.cpp \
     systemmonitorworker.cpp
 
 HEADERS += \
     core_sweep.h \
     hackrf_info.h \
     parser_worker.h \
-    process_worker.h \
     settings/server_settings.h \
     constant.h \
     spectrum_native_worker.h \
+    spectrum_process_worker.h \
     systemmonitorworker.h
 
 # FFT

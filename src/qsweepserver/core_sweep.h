@@ -14,7 +14,7 @@ class QTimer;
 class hackrf_info;
 class spectrum_native_worker;
 class sweep_topic;
-class process_worker;
+class spectrum_process_worker;
 class parser_worker;
 
 class core_sweep : public QObject
@@ -52,9 +52,9 @@ private:
     QPointer<QThread> ptrSystemMonitorThread;
 
     // run process hackrf_sweep
-    process_worker* ptr_process_worker {Q_NULLPTR};
-    QPointer<QThread> ptr_process_thread;
-    void init_process_worker();
+    spectrum_process_worker* ptr_spectrum_process_worker {Q_NULLPTR};
+    QPointer<QThread> ptr_spectrum_process_thread;
+    void init_spectrum_process_worker();
 
     // parser hackrf_sweep stdout
     parser_worker* ptr_parser_worker {Q_NULLPTR};

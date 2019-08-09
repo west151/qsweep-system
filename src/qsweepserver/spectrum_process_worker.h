@@ -1,13 +1,13 @@
-#ifndef PROCESS_WORKER_H
-#define PROCESS_WORKER_H
+#ifndef SPECTRUM_PROCESS_WORKER_H
+#define SPECTRUM_PROCESS_WORKER_H
 
 #include <QObject>
 
-class process_worker : public QObject
+class spectrum_process_worker : public QObject
 {
     Q_OBJECT
 public:
-    explicit process_worker(QObject *parent = nullptr);
+    explicit spectrum_process_worker(QObject *parent = nullptr);
 
 public slots:
     void slot_run_process_worker(const QByteArray &value);
@@ -22,4 +22,4 @@ private:
     void read_test_data_from_file();
 };
 
-#endif // PROCESS_WORKER_H
+#endif // SPECTRUM_PROCESS_WORKER_H
