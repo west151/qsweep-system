@@ -10,22 +10,24 @@ include(../../protocol.pri)
 SOURCES += \
     core_sweep.cpp \
     hackrf_info.cpp \
-    parser_worker.cpp \
+    worker/parser_worker.cpp \
     qsweepserver.cpp \
     settings/server_settings.cpp \
-    spectrum_native_worker.cpp \
-    spectrum_process_worker.cpp \
-    systemmonitorworker.cpp
+    worker/spectrum_native_worker.cpp \
+    worker/spectrum_process_worker.cpp \
+    systemmonitorworker.cpp \
+    worker/state_worker.cpp
 
 HEADERS += \
     core_sweep.h \
     hackrf_info.h \
-    parser_worker.h \
+    worker/parser_worker.h \
     settings/server_settings.h \
     constant.h \
-    spectrum_native_worker.h \
-    spectrum_process_worker.h \
-    systemmonitorworker.h
+    worker/spectrum_native_worker.h \
+    worker/spectrum_process_worker.h \
+    systemmonitorworker.h \
+    worker/state_worker.h
 
 # FFT
 unix: LIBS += -lfftw3f

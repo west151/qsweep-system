@@ -8,7 +8,8 @@ static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
 static const QString SYSTEM_MONITOR_INTERVAL_KEY = QStringLiteral("system_monitor_interval");
 static const QString DELAYED_LAUNCH_KEY = QStringLiteral("delayed_launch");
 static const QString ID_KEY = QStringLiteral("id");
-static const QString SPECTRUM_NATIVE_WORKER_KEY = QStringLiteral("spectrum_source_native");
+static const QString SPECTRUM_NATIVE_KEY = QStringLiteral("spectrum_source_native");
+static const QString SPECTRUM_PROCESS_NAME_KEY = QStringLiteral("spectrum_process_name");
 
 class server_settings_data : public QSharedData {
 public:
@@ -21,6 +22,7 @@ public:
         delayed_launch = 1000;
         id = "unknow";
         spectrum_source_native = true;
+        spectrum_process_name.clear();
     }
     server_settings_data(const server_settings_data &other) : QSharedData(other)
     {
@@ -31,6 +33,7 @@ public:
         delayed_launch = other.delayed_launch;
         id = other.id;
         spectrum_source_native = other.spectrum_source_native;
+        spectrum_process_name = other.spectrum_process_name;
     }
 
     ~server_settings_data() {}
@@ -42,6 +45,7 @@ public:
     int delayed_launch;
     QString id;
     bool spectrum_source_native;
+    QString spectrum_process_name;
 };
 
 server_settings::server_settings() : data(new server_settings_data)
@@ -66,7 +70,8 @@ server_settings::server_settings(const QByteArray &json, const bool binary) : da
     data->system_monitor_interval = json_object.value(SYSTEM_MONITOR_INTERVAL_KEY).toInt(1000);
     data->delayed_launch = json_object.value(DELAYED_LAUNCH_KEY).toInt(1000);
     data->id = json_object.value(ID_KEY).toString();
-    data->spectrum_source_native = json_object.value(SPECTRUM_NATIVE_WORKER_KEY).toBool();
+    data->spectrum_source_native = json_object.value(SPECTRUM_NATIVE_KEY).toBool();
+    data->spectrum_process_name = json_object.value(SPECTRUM_PROCESS_NAME_KEY).toString();
 
     if(!doc.isEmpty())
         data->valid = true;
@@ -141,6 +146,16 @@ bool server_settings::spectrum_source_native() const
     return data->spectrum_source_native;
 }
 
+void server_settings::set_spectrum_process_name(const QString &value)
+{
+    data->spectrum_process_name = value;
+}
+
+QString server_settings::spectrum_process_name() const
+{
+    return data->spectrum_process_name;
+}
+
 void server_settings::set_id(const QString &value)
 {
     data->id = value;
@@ -159,7 +174,8 @@ QByteArray server_settings::to_json(const bool binary, const bool isCompact) con
     json_object.insert(SYSTEM_MONITOR_INTERVAL_KEY, data->system_monitor_interval);
     json_object.insert(DELAYED_LAUNCH_KEY, data->delayed_launch);
     json_object.insert(ID_KEY, data->id);
-    json_object.insert(SPECTRUM_NATIVE_WORKER_KEY, data->spectrum_source_native);
+    json_object.insert(SPECTRUM_NATIVE_KEY, data->spectrum_source_native);
+    json_object.insert(SPECTRUM_PROCESS_NAME_KEY, data->spectrum_process_name);
 
     QJsonDocument doc(json_object);
 

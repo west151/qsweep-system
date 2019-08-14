@@ -6,10 +6,10 @@
 #include <QDebug>
 
 #include "hackrf_info.h"
-#include "spectrum_native_worker.h"
+#include "worker/spectrum_native_worker.h"
 #include "sweep_topic.h"
-#include "spectrum_process_worker.h"
-#include "parser_worker.h"
+#include "worker/spectrum_process_worker.h"
+#include "worker/parser_worker.h"
 #include "sweep_message.h"
 #include "params_spectr.h"
 
@@ -129,12 +129,21 @@ void core_sweep::init_spectrum_process_worker()
 #endif
 
     // run process hackrf_sweep
-    ptr_spectrum_process_worker = new spectrum_process_worker;
+    ptr_spectrum_process_worker = new spectrum_process_worker(ptr_server_settings->spectrum_process_name());
     ptr_spectrum_process_thread = new QThread;
     ptr_spectrum_process_worker->moveToThread(ptr_spectrum_process_thread);
 
+    // run spectr
     connect(this, &core_sweep::signal_run_spectr_worker,
             ptr_spectrum_process_worker, &spectrum_process_worker::slot_run_process_worker);
+
+    // stop spectr
+    connect(this, &core_sweep::signal_stop_spectr_worker,
+            ptr_spectrum_process_worker, &spectrum_process_worker::slot_stop_process_worker);
+
+    // send message to published
+    connect(ptr_spectrum_process_worker, &spectrum_process_worker::signal_message,
+            this, &core_sweep::slot_publish_message);
 
     ptr_spectrum_process_thread->start();
 
@@ -144,7 +153,7 @@ void core_sweep::init_spectrum_process_worker()
     ptr_parser_worker->moveToThread(ptr_parser_thread);
 
     connect(ptr_spectrum_process_worker, &spectrum_process_worker::signal_output_line,
-            ptr_parser_worker, &parser_worker::slot_input_line);
+            ptr_parser_worker, &parser_worker::slot_input_line);    
 
     // Power spectr
     connect(ptr_parser_worker, &parser_worker::signal_data_spectr_message,

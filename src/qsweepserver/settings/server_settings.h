@@ -32,6 +32,9 @@ public:
     void set_spectrum_source_native(const bool &);
     bool spectrum_source_native()const;
 
+    void set_spectrum_process_name(const QString &);
+    QString spectrum_process_name()const;
+
     void set_id(const QString &);
     QString id()const;
 
