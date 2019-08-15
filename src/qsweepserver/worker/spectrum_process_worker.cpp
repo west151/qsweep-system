@@ -59,18 +59,19 @@ void spectrum_process_worker::slot_run_process_worker(const QByteArray &value)
             ptr_process_hackrf_sweep->setArguments(arguments);
             ptr_process_hackrf_sweep->start(QProcess::ReadOnly); //QProcess::Unbuffered  //
 
-            if(ptr_process_hackrf_sweep->waitForStarted(1000))
-                    qDebug() << QString("Program <b>%1</b> started").arg(ptr_process_hackrf_sweep->program());
-                else
-                qDebug() << QString("Can't start program <b>%1</b>").arg(ptr_process_hackrf_sweep->program());
+            if(ptr_process_hackrf_sweep->waitForStarted(1000)){
+                send_message_log(QString("Environment: %1").arg(ptr_process_hackrf_sweep->environment().join(",")));
+                send_message_log(QString("Program %1 started").arg(ptr_process_hackrf_sweep->program()));
+            }else
+                send_message_log(QString("Can't start program %1").arg(ptr_process_hackrf_sweep->program()));
         }
 
-//        // stop spectr
-//        if(!params_spectr_data.start_spectr())
-//        {
-//            if(ptr_process_hackrf_sweep->state()==QProcess::Running)
-//                ptr_process_hackrf_sweep->kill();
-//        }
+        //        // stop spectr
+        //        if(!params_spectr_data.start_spectr())
+        //        {
+        //            if(ptr_process_hackrf_sweep->state()==QProcess::Running)
+        //                ptr_process_hackrf_sweep->kill();
+        //        }
     }
 }
 

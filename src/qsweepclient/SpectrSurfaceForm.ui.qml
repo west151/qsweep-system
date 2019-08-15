@@ -5,6 +5,7 @@ Item {
     id: item_main
     width: 800
     height: 600
+    property alias button_message_log: button_message_log
     property alias button_freq_info: button_freq_info
     property alias button_sdr_info: button_sdr_info
     property alias check_box_db_write: check_box_db_write
@@ -177,6 +178,15 @@ Item {
             width: 141
             height: 40
             text: "SDR Info"
+        }
+
+        Button {
+            id: button_message_log
+            x: 8
+            y: 430
+            width: 141
+            height: 40
+            text: qsTr("message log")
         }
 
     }

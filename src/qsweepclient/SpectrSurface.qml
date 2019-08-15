@@ -55,6 +55,10 @@ SpectrSurfaceForm {
         idLoader.setSource("DialogFreqInfo.qml")
     }
 
+    button_message_log.onClicked: {
+        idLoader.setSource("DialogMessageLog.qml")
+    }
+
     check_box_max_spectr.onClicked: {
         userInterface.on_spectr_max_calc(check_box_max_spectr.checked)
     }

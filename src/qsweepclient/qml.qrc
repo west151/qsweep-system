@@ -17,5 +17,8 @@
         <file>DialogFreqInfo.qml</file>
         <file>FreqInfo.qml</file>
         <file>FreqInfoForm.ui.qml</file>
+        <file>DialogMessageLog.qml</file>
+        <file>MessageLog.qml</file>
+        <file>MessageLogForm.ui.qml</file>
     </qresource>
 </RCC>

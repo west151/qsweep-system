@@ -10,7 +10,7 @@ struct power_spectr
 {
     QDateTime m_date_time;
     qreal m_fft_bin_width = 0;      // FFT bin width (frequency resolution) in Hz")
-    quint32 m_fft_size = 0;         // unused !!!!!!!!!!!!!!!!!!!
+    quint32 num_samples = 0;
     quint64 hz_low = 0;    // frequency min Hz
     quint64 hz_high = 0;    // frequency max Hz
     QVector<qreal> m_power;

@@ -133,10 +133,6 @@ void core_sweep::init_spectrum_process_worker()
     ptr_spectrum_process_thread = new QThread;
     ptr_spectrum_process_worker->moveToThread(ptr_spectrum_process_thread);
 
-    // run spectr
-    connect(this, &core_sweep::signal_run_spectr_worker,
-            ptr_spectrum_process_worker, &spectrum_process_worker::slot_run_process_worker);
-
     // stop spectr
     connect(this, &core_sweep::signal_stop_spectr_worker,
             ptr_spectrum_process_worker, &spectrum_process_worker::slot_stop_process_worker);
@@ -152,12 +148,24 @@ void core_sweep::init_spectrum_process_worker()
     ptr_parser_thread = new QThread;
     ptr_parser_worker->moveToThread(ptr_parser_thread);
 
+    // run(get config) spectr
+    connect(this, &core_sweep::signal_run_spectr_worker,
+            ptr_parser_worker, &parser_worker::slot_run_parser_worker);
+
+    // run spectr
+    connect(ptr_parser_worker, &parser_worker::signal_run_process_worker,
+            ptr_spectrum_process_worker, &spectrum_process_worker::slot_run_process_worker);
+
     connect(ptr_spectrum_process_worker, &spectrum_process_worker::signal_output_line,
             ptr_parser_worker, &parser_worker::slot_input_line);    
 
     // Power spectr
     connect(ptr_parser_worker, &parser_worker::signal_data_spectr_message,
             this, &core_sweep::slot_publish_message);
+
+    // stop parser
+    connect(this, &core_sweep::signal_stop_spectr_worker,
+            ptr_parser_worker, &parser_worker::slot_stop_parser_worker);
 
     ptr_parser_thread->start();
 }

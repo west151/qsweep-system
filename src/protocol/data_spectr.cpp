@@ -57,7 +57,7 @@ data_spectr::data_spectr(const QByteArray &json, const bool binary) : data(new d
         dt.setTimeSpec(Qt::UTC);
         powerSpectr.m_date_time = dt;
         powerSpectr.m_fft_bin_width = objectPowerSpectr.value(FFT_BIN_WIDTH_KEY).toString().toDouble();
-        powerSpectr.m_fft_size = objectPowerSpectr.value(FFT_SIZE_KEY).toString().toUInt();
+        powerSpectr.num_samples = objectPowerSpectr.value(NUM_SAMPLES_KEY).toString().toUInt();
         powerSpectr.hz_low = objectPowerSpectr.value(FREQUENCY_MIN_KEY).toString().toULongLong();
         powerSpectr.hz_high = objectPowerSpectr.value(FREQUENCY_MAX_KEY).toString().toULongLong();
 
@@ -132,7 +132,7 @@ QByteArray data_spectr::to_json(const bool binary) const
             objectPowerSpectr.insert(FREQUENCY_MIN_KEY, QString::number(powerSpectr.hz_low));
             objectPowerSpectr.insert(FREQUENCY_MAX_KEY, QString::number(powerSpectr.hz_high));
             objectPowerSpectr.insert(FFT_BIN_WIDTH_KEY, QString::number(powerSpectr.m_fft_bin_width));
-            objectPowerSpectr.insert(FFT_SIZE_KEY, QString::number(powerSpectr.m_fft_size));
+            objectPowerSpectr.insert(NUM_SAMPLES_KEY, QString::number(powerSpectr.num_samples));
 
             QStringList list;
             for(int w=0; w<powerSpectr.m_power.count(); ++w)

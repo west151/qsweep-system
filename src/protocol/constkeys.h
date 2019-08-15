@@ -33,7 +33,7 @@ static const QString START_SPECTR_KEY = QStringLiteral("start_spectr");
 static const QString DESCR_KEY = QStringLiteral("descr");
 
 static const QString POWERS_KEY = QStringLiteral("powers");
-static const QString FFT_SIZE_KEY = QStringLiteral("fft_size");
+static const QString NUM_SAMPLES_KEY = QStringLiteral("num_samples");
 
 static const QString HOST_NAME_KEY = QStringLiteral("hostname");
 static const QString UPTIME_KEY = QStringLiteral("uptime");

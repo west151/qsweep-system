@@ -160,7 +160,7 @@ int spectrum_native_worker::hackrf_rx_callback(unsigned char *buffer, uint32_t l
         dataPowerSpectr.hz_low = static_cast<uint64_t>(frequency);
         dataPowerSpectr.hz_high = static_cast<uint64_t>(frequency + DEFAULT_SAMPLE_RATE_HZ/4);
         dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
-        dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
+        //dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
         for(int i = 0; (fftSize / 4) > i; i++)
             dataPowerSpectr.m_power.append(static_cast<qreal>(pwr[i + 1 + (fftSize*5)/8]));
@@ -173,7 +173,7 @@ int spectrum_native_worker::hackrf_rx_callback(unsigned char *buffer, uint32_t l
         dataPowerSpectr.hz_low = static_cast<uint64_t>(frequency+(DEFAULT_SAMPLE_RATE_HZ/2));
         dataPowerSpectr.hz_high = static_cast<uint64_t>(frequency+((DEFAULT_SAMPLE_RATE_HZ*3)/4));
         dataPowerSpectr.m_fft_bin_width = DEFAULT_SAMPLE_RATE_HZ / fftSize;
-        dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
+        //dataPowerSpectr.m_fft_size = static_cast<quint32>(fftSize) ;
 
         for(int i = 0; (fftSize / 4) > i; i++)
             dataPowerSpectr.m_power.append(static_cast<qreal>(pwr[i + 1 + (fftSize/8)]));
@@ -380,7 +380,7 @@ void spectrum_native_worker::slot_run_sweep_worker(const QByteArray &value)
     for(i = 0; i < num_ranges; i++) {
         step_count = 1 + (frequencies[2*i+1] - frequencies[2*i] - 1) / TUNE_STEP;
         // frequencies[2*i+1] = (uint16_t) (frequencies[2*i] + step_count * TUNE_STEP);
-        frequencies[2*i+1] = static_cast<uint16_t> (frequencies[2*i] + step_count * TUNE_STEP);
+        frequencies[2*i+1] = static_cast<uint16_t> (frequencies[2*i] + static_cast<uint16_t>(step_count) * TUNE_STEP);
 
         fprintf(stderr, "Sweeping from %u MHz to %u MHz\n", frequencies[2*i], frequencies[2*i+1]);
         sweepWorkerMessagelog(tr("Sweeping from %1 MHz to %2 MHz").arg(frequencies[2*i]).arg(frequencies[2*i+1]));

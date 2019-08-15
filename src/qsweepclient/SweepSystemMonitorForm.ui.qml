@@ -5,7 +5,6 @@ Item {
     id: item1
     width: 800
     height: 600
-    property alias listViewMessageLog: listViewMessageLog
     property alias textBufferMemory: textBufferMemory
     property alias textFreeMemory: textFreeMemory
     property alias textTotalMemory: textTotalMemory
@@ -14,24 +13,11 @@ Item {
 
     Item {
         id: itemHostInfo
-        width: 400
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
-        anchors.top: parent.top
-        anchors.topMargin: 8
+        anchors.fill: parent
 
         Frame {
             id: frame
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
-            anchors.top: parent.top
-            anchors.topMargin: 8
+            anchors.fill: parent
 
             Column {
                 x: 155
@@ -74,73 +60,6 @@ Item {
                     id: textBufferMemory
                     text: qsTr("Text")
                     font.pixelSize: 25
-                }
-            }
-        }
-    }
-
-    Item {
-        id: item2
-        anchors.left: parent.left
-        anchors.leftMargin: 414
-        anchors.right: parent.right
-        anchors.rightMargin: 8
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 8
-        anchors.top: parent.top
-        anchors.topMargin: 8
-
-        Frame {
-            id: frameMessageLog
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 8
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.top: parent.top
-            anchors.topMargin: 8
-
-            Text {
-                id: textMessageLog
-                x: 157
-                text: qsTr("Log")
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 25
-            }
-
-            ListView {
-                id: listViewMessageLog
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 0
-                anchors.top: parent.top
-                anchors.topMargin: 40
-
-                delegate: Item {
-                    x: 5
-                    width: 80
-                    height: 40
-                    Row {
-                        id: row2
-                        Rectangle {
-                            width: 40
-                            height: 40
-                            color: colorCode
-                        }
-
-                        Text {
-                            text: name
-                            font.bold: true
-                            anchors.verticalCenter: parent.verticalCenter
-                        }
-                        spacing: 10
-                    }
                 }
             }
         }
