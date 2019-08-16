@@ -36,7 +36,9 @@ SOURCES += \
     model/params_spectr_model.cpp \
     user_interface.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += \
+    $$files(qml/*.qml) \
+    qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

@@ -73,7 +73,7 @@ int CoreSweepClient::runCoreSweepClient(int argc, char *argv[])
     context->setContextProperty("paramsSpectrModel", ptr_params_spectr_model);
     context->setContextProperty("rangesTemplateModel", ptr_ranges_template_model);
 
-    ptrEngine->load(QUrl(QLatin1String("qrc:/main.qml")));
+    ptrEngine->load(QUrl(QLatin1String("qrc:/qml/main.qml")));
 
     QObject *rootObject = ptrEngine->rootObjects().first();
 
