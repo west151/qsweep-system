@@ -347,6 +347,18 @@ void surface_spectr::remove_spectr_item(const QString &name)
     }
 }
 
+void surface_spectr::mousePressEvent(QMouseEvent *event)
+{
+    QQuickItem::mousePressEvent(event);
+    qDebug() << Q_FUNC_INFO  << event->pos();
+}
+
+void surface_spectr::hoverMoveEvent(QHoverEvent *event)
+{
+    QQuickItem::hoverMoveEvent(event);
+    qDebug() << Q_FUNC_INFO  << event->pos();
+}
+
 void surface_spectr::slot_size_changed()
 {
     if(!m_image_waterfall.isNull())

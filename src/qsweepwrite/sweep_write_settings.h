@@ -4,8 +4,6 @@
 #include <QtCore/qshareddata.h>
 #include <QtCore/qmetatype.h>
 
-
-
 class sweep_write_settings_data;
 
 class sweep_write_settings

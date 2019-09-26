@@ -30,16 +30,8 @@ public:
     void add_spectr_item(const QString &, const QColor &color);
     void remove_spectr_item(const QString &);
 
-    void mousePressEvent(QMouseEvent* event) override
-    {
-        QQuickItem::mousePressEvent(event);
-        qDebug() << Q_FUNC_INFO  << event->pos();
-    }
-
-    void hoverMoveEvent(QHoverEvent* event) override {
-        QQuickItem::hoverMoveEvent(event);
-        qDebug() << Q_FUNC_INFO  << event->pos();
-    }
+    void mousePressEvent(QMouseEvent* event) override;
+    void hoverMoveEvent(QHoverEvent* event) override;
 
 public slots:
     void slot_power_spectr(const QDateTime &, const quint64 &, const quint64 &, const QVector<qreal> &spectr);
@@ -78,6 +70,7 @@ private:
     QColor m_color_axis;
 
     QPoint m_surface_point;
+    QPoint cursor_point;
 
     QVector<QPointF> spectr_rt_vector;
     QVector<qreal> spectr_max_value;
