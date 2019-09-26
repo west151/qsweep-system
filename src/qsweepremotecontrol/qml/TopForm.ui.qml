@@ -4,7 +4,6 @@ Item {
     width: 800
     height: 40
     property alias textFrame: textFrame
-    property alias labelBroker: labelBroker
     property alias textTime: textTime
 
     Rectangle {
@@ -24,17 +23,6 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 8
             font.bold: false
-            font.pixelSize: 20
-        }
-
-        Text {
-            id: labelBroker
-            x: 13
-            y: 8
-            width: 139
-            height: 23
-            color: "#ffffff"
-            text: qsTr("127.0.0.1:1883")
             font.pixelSize: 20
         }
 
