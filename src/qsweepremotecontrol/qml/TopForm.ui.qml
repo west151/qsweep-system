@@ -3,11 +3,12 @@ import QtQuick 2.4
 Item {
     width: 800
     height: 40
+    property alias mainRectangle: mainRectangle
     property alias textFrame: textFrame
     property alias textTime: textTime
 
     Rectangle {
-        id: rectangle
+        id: mainRectangle
         color: "#000000"
         anchors.fill: parent
 

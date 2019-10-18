@@ -17,12 +17,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     core_sweep_remote_control.h \
     model/top_model.h \
+    provider/mqtt_provider.h \
+    settings/mqtt_provider_settings.h \
     settings/remote_control_settings.h
 
 SOURCES += \
     core_sweep_remote_control.cpp \
     model/top_model.cpp \
+    provider/mqtt_provider.cpp \
     qsweepremotecontrol.cpp \
+    settings/mqtt_provider_settings.cpp \
     settings/remote_control_settings.cpp
 
 RESOURCES += \
