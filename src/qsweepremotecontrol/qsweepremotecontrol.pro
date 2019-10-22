@@ -16,21 +16,33 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     core_sweep_remote_control.h \
+    manager/net_manager.h \
+    model/lna_gain.h \
+    model/lna_gain_model.h \
     model/top_model.h \
+    model/ui_model.h \
+    model/vga_gain.h \
+    model/vga_gain_model.h \
     provider/mqtt_provider.h \
     settings/mqtt_provider_settings.h \
     settings/remote_control_settings.h
 
 SOURCES += \
     core_sweep_remote_control.cpp \
+    manager/net_manager.cpp \
+    model/lna_gain.cpp \
+    model/lna_gain_model.cpp \
     model/top_model.cpp \
+    model/ui_model.cpp \
+    model/vga_gain.cpp \
+    model/vga_gain_model.cpp \
     provider/mqtt_provider.cpp \
     qsweepremotecontrol.cpp \
     settings/mqtt_provider_settings.cpp \
     settings/remote_control_settings.cpp
 
 RESOURCES += \
-    $$files(qml/*.qml) \
+#    $$files(qml/*.qml) \
     qml.qrc
 
 # Default rules for deployment.

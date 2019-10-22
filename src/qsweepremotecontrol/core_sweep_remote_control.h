@@ -7,6 +7,9 @@
 #include "settings/remote_control_settings.h"
 
 class top_model;
+class lna_gain_model;
+class vga_gain_model;
+class ui_model;
 
 class core_sweep_remote_control : public QObject
 {
@@ -31,6 +34,9 @@ private:
 
     // models
     top_model* ptr_top_model {Q_NULLPTR};
+    ui_model* ptr_ui_model {Q_NULLPTR};
+    lna_gain_model* ptr_lna_gain_list {Q_NULLPTR};
+    vga_gain_model* ptr_vga_gain_list {Q_NULLPTR};
 
     bool read_settings();
     bool write_settings();

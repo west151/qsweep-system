@@ -15,4 +15,34 @@ ApplicationWindow {
         objectName: "topForm"
         width: window.width
     }
+    SwipeView {
+        id: swipeView
+        anchors.right: parent.right
+        anchors.rightMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        anchors.top: parent.top
+        anchors.topMargin: idTopForm.height
+
+        currentIndex: tabBar.currentIndex
+
+        SpectrFreqParams {
+        }
+
+        onCurrentIndexChanged: {
+//            console.log("SwipeView: currentIndex = ", currentIndex);
+        }
+    }
+
+    footer: TabBar {
+        id: tabBar
+        currentIndex: swipeView.currentIndex
+
+        TabButton {
+            text: qsTr("Spectr")
+        }
+
+    }
 }

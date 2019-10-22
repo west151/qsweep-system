@@ -3,5 +3,7 @@
         <file>qml/main.qml</file>
         <file>qml/Top.qml</file>
         <file>qml/TopForm.ui.qml</file>
+        <file>qml/SpectrFreqParams.qml</file>
+        <file>qml/SpectrFreqParamsForm.ui.qml</file>
     </qresource>
 </RCC>
