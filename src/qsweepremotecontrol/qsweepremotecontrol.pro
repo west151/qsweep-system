@@ -17,6 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 HEADERS += \
     core_sweep_remote_control.h \
     manager/net_manager.h \
+    model/fft_width.h \
+    model/fft_width_model.h \
     model/lna_gain.h \
     model/lna_gain_model.h \
     model/top_model.h \
@@ -30,6 +32,8 @@ HEADERS += \
 SOURCES += \
     core_sweep_remote_control.cpp \
     manager/net_manager.cpp \
+    model/fft_width.cpp \
+    model/fft_width_model.cpp \
     model/lna_gain.cpp \
     model/lna_gain_model.cpp \
     model/top_model.cpp \

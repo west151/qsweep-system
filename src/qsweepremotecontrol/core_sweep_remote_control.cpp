@@ -14,6 +14,7 @@
 #include "model/ui_model.h"
 #include "model/lna_gain_model.h"
 #include "model/vga_gain_model.h"
+#include "model/fft_width_model.h"
 
 static const QString str_config_suffix(QString(".conf"));
 
@@ -21,7 +22,8 @@ core_sweep_remote_control::core_sweep_remote_control(const QString &app_name, QO
     ptr_top_model(new top_model(this)),
     ptr_ui_model (new ui_model(this)),
     ptr_lna_gain_list(new lna_gain_model(this)),
-    ptr_vga_gain_list(new vga_gain_model(this))
+    ptr_vga_gain_list(new vga_gain_model(this)),
+    ptr_fft_width_model(new fft_width_model(this))
 {
     str_config_location.append(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation));
     str_config_location.append(QDir::separator());
@@ -42,6 +44,13 @@ core_sweep_remote_control::core_sweep_remote_control(const QString &app_name, QO
         QString title(QString::number(i)+" dB");
         ptr_vga_gain_list->add_result(title, static_cast<quint32>(i));
     }
+
+    ptr_fft_width_model->add_result("500000 Hz", 500000);
+    ptr_fft_width_model->add_result("250000 Hz", 250000);
+    ptr_fft_width_model->add_result("125000 Hz", 125000);
+    ptr_fft_width_model->add_result("100000 Hz", 100000);
+    ptr_fft_width_model->add_result("50000 Hz", 50000);
+    ptr_fft_width_model->add_result("25000 Hz", 25000);
 }
 
 bool core_sweep_remote_control::initialization()
@@ -67,6 +76,7 @@ void core_sweep_remote_control::program_launch(bool is_init_state)
     context->setContextProperty("ui_model", ptr_ui_model);
     context->setContextProperty("lna_gain_model", ptr_lna_gain_list);
     context->setContextProperty("vga_gain_model", ptr_vga_gain_list);
+    context->setContextProperty("fft_width_model", ptr_fft_width_model);
 
     ptr_engine->load(QUrl(QLatin1String("qrc:/qml/main.qml")));
 

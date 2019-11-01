@@ -1,32 +1,31 @@
 #include "remote_control_settings.h"
 
-#include <QtCore/QJsonObject>
-#include <QtCore/QJsonDocument>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QByteArray>
 
-static const QString HOST_BROKER_KEY = QStringLiteral("host_broker");
-static const QString PORT_BROKER_KEY = QStringLiteral("port_broker");
+#include "mqtt_provider_settings.h"
+
+static const QString MQTT_PROVIDER_KEY = QStringLiteral("mqtt_provider");
 
 class remote_control_settings_data : public QSharedData {
 public:
     remote_control_settings_data(): QSharedData()
     {
         m_valid = false;
-        m_host_broker = "127.0.0.1";
-        m_port_broker = 1883;
     }
     remote_control_settings_data(const remote_control_settings_data &other) : QSharedData(other)
     {
         m_valid = other.m_valid;
-        m_host_broker = other.m_host_broker;
-        m_port_broker = other.m_port_broker;
+        m_mqtt_provider_settings = other.m_mqtt_provider_settings;
     }
 
     ~remote_control_settings_data() {}
 
     bool m_valid;
     // broker
-    quint16 m_port_broker;
-    QString m_host_broker;
+    mqtt_provider_settings m_mqtt_provider_settings;
+
 };
 
 remote_control_settings::remote_control_settings() : data(new remote_control_settings_data)
@@ -46,8 +45,10 @@ remote_control_settings::remote_control_settings(const QByteArray &json, const b
         doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object = doc.object();
-    data->m_host_broker = json_object.value(HOST_BROKER_KEY).toString();
-    data->m_port_broker = json_object.value(PORT_BROKER_KEY).toString().toUShort();
+
+    //mqtt_provider_settings tt(json_object.value(MQTT_PROVIDER_KEY).toString());
+    //data->m_host_broker = json_object.value(HOST_BROKER_KEY).toString();
+    //data->m_port_broker = json_object.value(PORT_BROKER_KEY).toString().toUShort();
 
     if(!doc.isEmpty())
         data->m_valid = true;
@@ -67,11 +68,20 @@ remote_control_settings::~remote_control_settings()
 {
 }
 
-void remote_control_settings::set_settings(const remote_control_settings &settings)
+void remote_control_settings::set_settings(const remote_control_settings &value)
 {
-    data->m_valid = settings.is_valid();
-    data->m_host_broker = settings.host_broker();
-    data->m_port_broker = settings.port_broker();
+    data->m_valid = value.is_valid();
+    data->m_mqtt_provider_settings = value.mqtt_provider_settings_data();
+}
+
+void remote_control_settings::set_mqtt_provider_settings_data(const mqtt_provider_settings &value)
+{
+    data->m_mqtt_provider_settings = value;
+}
+
+mqtt_provider_settings remote_control_settings::mqtt_provider_settings_data() const
+{
+    return data->m_mqtt_provider_settings;
 }
 
 bool remote_control_settings::is_valid() const
@@ -79,31 +89,10 @@ bool remote_control_settings::is_valid() const
     return data->m_valid;
 }
 
-void remote_control_settings::set_host_broker(const QString &value)
-{
-    data->m_host_broker = value;
-}
-
-QString remote_control_settings::host_broker() const
-{
-    return data->m_host_broker;
-}
-
-void remote_control_settings::set_port_broker(const quint16 &value)
-{
-    data->m_port_broker = value;
-}
-
-quint16 remote_control_settings::port_broker() const
-{
-    return data->m_port_broker;
-}
-
 QByteArray remote_control_settings::to_json(const bool is_binary, const bool is_compact) const
 {
     QJsonObject json_object;
-    json_object.insert(HOST_BROKER_KEY, data->m_host_broker);
-    json_object.insert(PORT_BROKER_KEY, QString::number(data->m_port_broker));
+    json_object.insert(MQTT_PROVIDER_KEY, QString(data->m_mqtt_provider_settings.to_json()));
 
     QJsonDocument doc(json_object);
 

@@ -26,6 +26,8 @@ void sweep_message_output(QtMsgType type, const QMessageLogContext &context, con
 
 int main(int argc, char *argv[])
 {
+    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+
     QGuiApplication::setApplicationVersion("1.0");
     QGuiApplication::setOrganizationName("qsweep");
     QGuiApplication::setOrganizationDomain("sweep-system");

@@ -20,6 +20,28 @@ SpectrFreqParamsForm {
         }
     }
 
+    cbx_fft_width {
+        textRole: "title"
+        model: fft_width_model
+
+        onActivated: {
+            console.log("fft_width_model value:", fft_width_model.get_fft_width_value_by_index(cbx_lna_gain.currentIndex))
+        }
+    }
+
+    in_freq_min{
+        //validator : RegExpValidator { regExp : /[0-9]+\.[0-9]+/ }
+        validator : IntValidator{bottom: 1; top: 6000;}
+        inputMethodHints: Qt.ImhDigitsOnly
+    }
+
+    in_freq_max{
+        validator : IntValidator{bottom: 30; top: 6000;}
+        inputMethodHints: Qt.ImhDigitsOnly
+    }
+
+    // fft_width_model
+
 //    cbx_lna_gain {
 //        textRole: "title"
 //        model: lna_gain_model

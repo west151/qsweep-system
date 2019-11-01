@@ -2,72 +2,82 @@
 
 ui_model::ui_model(QObject *parent) : QObject(parent)
 {
-
+    m_frequency_tuning_step = 5000000;
 }
 
 void ui_model::set_frequency_min(const quint32 &value)
 {
-    m_freq_min = value;
+    m_params_spectr_data.set_frequency_min(value);
 
     emit signal_frequency_min_changed();
 }
 
 quint32 ui_model::frequency_min() const
 {
-    return m_freq_min;
+    return m_params_spectr_data.frequency_min();
 }
 
 void ui_model::set_frequency_max(const quint32 &value)
 {
-    m_freq_max = value;
+    m_params_spectr_data.set_frequency_max(value);
 
     emit signal_frequency_max_changed();
 }
 
 quint32 ui_model::frequency_max() const
 {
-    return m_freq_max;
+    return m_params_spectr_data.frequency_max();
 }
 
 void ui_model::set_lna_gain(const quint32 &value)
 {
-    m_lna_gain = value;
+    m_params_spectr_data.set_lna_gain(value);
 
     emit signal_lna_gain_changed();
 }
 
 quint32 ui_model::lna_gain() const
 {
-    return m_lna_gain;
+    return m_params_spectr_data.lna_gain();
 }
 
 void ui_model::set_vga_gain(const quint32 &value)
 {
-    m_vga_gain = value;
+    m_params_spectr_data.set_vga_gain(value);
 
     emit signal_vga_gain_changed();
 }
 
 quint32 ui_model::vga_gain() const
 {
-    return m_vga_gain;
+    return m_params_spectr_data.vga_gain();
 }
 
 void ui_model::set_fft_bin_width(const quint32 &value)
 {
-    m_fft_bin_width = value;
+    m_params_spectr_data.set_fft_bin_width(value);
 
     emit signal_fft_bin_width_changed();
 }
 
 quint32 ui_model::fft_bin_width() const
 {
-    return m_fft_bin_width;
+    return m_params_spectr_data.fft_bin_width();
 }
 
 QString ui_model::last_error_string() const
 {
     return m_last_error_string;
+}
+
+void ui_model::set_frequency_tuning_step(const quint32 &value)
+{
+
+}
+
+quint32 ui_model::frequency_tuning_step() const
+{
+
 }
 
 void ui_model::set_last_error_string(const QString &value)

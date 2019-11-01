@@ -5,6 +5,7 @@ Item {
     id: item_main
     width: 500
     height: 700
+    property alias btn_ctrl_spectr: btn_ctrl_spectr
     property alias cbx_vga_gain: cbx_vga_gain
     property alias cbx_lna_gain: cbx_lna_gain
     property alias cbx_fft_width: cbx_fft_width
@@ -14,9 +15,12 @@ Item {
     Item {
         id: element
         x: 8
-        y: 8
         width: 484
-        height: 261
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 384
+        anchors.top: parent.top
+        anchors.topMargin: 8
 
         TextField {
             id: in_freq_min
@@ -108,6 +112,15 @@ Item {
             y: 220
             text: qsTr("vga gain")
             font.pointSize: 15
+        }
+
+        Button {
+            id: btn_ctrl_spectr
+            x: 336
+            y: 257
+            width: 140
+            height: 40
+            text: qsTr("run")
         }
     }
 }

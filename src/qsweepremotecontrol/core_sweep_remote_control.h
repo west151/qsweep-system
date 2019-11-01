@@ -9,6 +9,7 @@
 class top_model;
 class lna_gain_model;
 class vga_gain_model;
+class fft_width_model;
 class ui_model;
 
 class core_sweep_remote_control : public QObject
@@ -37,6 +38,7 @@ private:
     ui_model* ptr_ui_model {Q_NULLPTR};
     lna_gain_model* ptr_lna_gain_list {Q_NULLPTR};
     vga_gain_model* ptr_vga_gain_list {Q_NULLPTR};
+    fft_width_model* ptr_fft_width_model {Q_NULLPTR};
 
     bool read_settings();
     bool write_settings();
