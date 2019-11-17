@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTime>
+#include <QTextStream>
 #include <unistd.h>
 
 #ifdef QT_DEBUG
@@ -45,7 +46,9 @@ void spectrum_process_worker::slot_run_process_worker(const QByteArray &value)
         const params_spectr params_spectr_data(ctrl_info.data_message());
         const auto arguments = make_argument_list(params_spectr_data);
 
+#ifdef QT_DEBUG
         qDebug() << arguments;
+#endif
 
         // for test
         //read_test_data_from_file();
