@@ -36,13 +36,11 @@ data_log::data_log(const data_log &rhs) : data(rhs.data)
 {
 }
 
-data_log::data_log(const QByteArray &json, const bool binary) : data(new data_log_data)
+data_log::data_log(const QByteArray &json) : data(new data_log_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject jsonObject(doc.object());
     data->m_text_message = jsonObject.value(TEXT_MESSAGE_KEY).toString();
@@ -88,7 +86,7 @@ QDateTime data_log::date_time() const
     return data->m_date_time;
 }
 
-QByteArray data_log::export_json(const bool binary) const
+QByteArray data_log::to_json() const
 {
     QJsonObject jsonObject;
     jsonObject.insert(TEXT_MESSAGE_KEY, data->m_text_message);
@@ -96,8 +94,5 @@ QByteArray data_log::export_json(const bool binary) const
 
     const QJsonDocument doc(jsonObject);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }

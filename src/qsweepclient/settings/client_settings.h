@@ -11,7 +11,7 @@ class client_settings
 public:
     client_settings();
     client_settings(const client_settings &);
-    client_settings(const QByteArray &json, const bool binary = false);
+    client_settings(const QByteArray &json);
     client_settings &operator=(const client_settings &);
     ~client_settings();
 
@@ -26,7 +26,7 @@ public:
     void set_max_size_message_log(const qint32 &);
     qint32 max_size_message_log()const;
 
-    QByteArray to_json(const bool binary = false, const bool isCompact = true) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<sweep_client_settings_data> data;

@@ -11,7 +11,7 @@ class sweep_write_settings
 public:
     sweep_write_settings();
     sweep_write_settings(const sweep_write_settings &);
-    sweep_write_settings(const QByteArray &json, const bool binary = false);
+    sweep_write_settings(const QByteArray &json);
     sweep_write_settings &operator=(const sweep_write_settings &);
     ~sweep_write_settings();
 
@@ -44,7 +44,7 @@ public:
     void set_backup_compress_level(const int &);
     int backup_compress_level()const;
 
-    QByteArray to_json(const bool binary = false, const bool isCompact = true) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<sweep_write_settings_data> data;

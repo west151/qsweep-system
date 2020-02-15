@@ -3,7 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.VirtualKeyboard 2.3
 
 ApplicationWindow {
-    id: window
+    id: id_window
     objectName: "mainWindow"
     visible: true
     width: 500
@@ -11,9 +11,9 @@ ApplicationWindow {
     title: qsTr("Remote control")
 
     Top{
-        id: idTopForm
+        id: id_top_form
         objectName: "topForm"
-        width: window.width
+        width: id_window.width
     }
     SwipeView {
         id: swipeView
@@ -24,7 +24,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         anchors.top: parent.top
-        anchors.topMargin: idTopForm.height
+        anchors.topMargin: id_top_form.height
 
         currentIndex: tabBar.currentIndex
 

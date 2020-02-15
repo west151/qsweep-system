@@ -47,13 +47,11 @@ sweep_message &sweep_message::operator=(const sweep_message &rhs)
     return *this;
 }
 
-sweep_message::sweep_message(const QByteArray &json, const bool binary) : data(new sweep_message_data)
+sweep_message::sweep_message(const QByteArray &json) : data(new sweep_message_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object(doc.object());
     data->m_id = json_object.value(ID_KEY).toString();
@@ -103,7 +101,7 @@ QByteArray sweep_message::data_message() const
     return  data->m_data;
 }
 
-QByteArray sweep_message::export_json(const bool binary) const
+QByteArray sweep_message::to_json() const
 {
     QJsonObject json_object;
 
@@ -113,8 +111,5 @@ QByteArray sweep_message::export_json(const bool binary) const
 
     const QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }

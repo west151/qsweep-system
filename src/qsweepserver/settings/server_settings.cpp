@@ -56,13 +56,11 @@ server_settings::server_settings(const server_settings &rhs) : data(rhs.data)
 {
 }
 
-server_settings::server_settings(const QByteArray &json, const bool binary) : data(new server_settings_data)
+server_settings::server_settings(const QByteArray &json) : data(new server_settings_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object = doc.object();
     data->host_broker = json_object.value(HOST_BROKER_KEY).toString();
@@ -166,7 +164,7 @@ QString server_settings::id() const
     return  data->id;
 }
 
-QByteArray server_settings::to_json(const bool binary, const bool isCompact) const
+QByteArray server_settings::to_json() const
 {
     QJsonObject json_object;
     json_object.insert(HOST_BROKER_KEY, data->host_broker);
@@ -179,12 +177,5 @@ QByteArray server_settings::to_json(const bool binary, const bool isCompact) con
 
     QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else{
-        if(isCompact)
-            return doc.toJson(QJsonDocument::Compact);
-        else
-            return doc.toJson();
-    }
+    return doc.toJson();
 }

@@ -22,7 +22,7 @@ class sweep_message
 public:
     sweep_message();
     sweep_message(const sweep_message &);
-    sweep_message(const QByteArray &json, const bool binary = false);
+    sweep_message(const QByteArray &json);
     sweep_message &operator=(const sweep_message &);
     ~sweep_message();
 
@@ -36,7 +36,7 @@ public:
     void set_data_message(const QByteArray &);
     QByteArray data_message()const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<sweep_message_data> data;

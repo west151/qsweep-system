@@ -24,7 +24,7 @@ class data_spectr
 public:
     data_spectr();
     data_spectr(const data_spectr &);
-    data_spectr(const QByteArray &json, const bool binary = false);
+    data_spectr(const QByteArray &json);
     data_spectr &operator=(const data_spectr &);
     ~data_spectr();
 
@@ -36,7 +36,7 @@ public:
     void set_spectr(const QVector<power_spectr> &);
     QVector<power_spectr> spectr()const;
 
-    QByteArray to_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<data_spectr_data> data;

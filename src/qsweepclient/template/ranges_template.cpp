@@ -45,13 +45,11 @@ ranges_template::ranges_template(const ranges_template &rhs) : data(rhs.data)
 {
 }
 
-ranges_template::ranges_template(const QByteArray &json, const bool binary) : data(new ranges_template_data)
+ranges_template::ranges_template(const QByteArray &json) : data(new ranges_template_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object(doc.object());
 

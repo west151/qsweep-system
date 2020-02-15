@@ -57,13 +57,11 @@ params_spectr::params_spectr(const params_spectr &rhs) : data(rhs.data)
 {
 }
 
-params_spectr::params_spectr(const QByteArray &json, const bool binary) : data(new params_spectr_data)
+params_spectr::params_spectr(const QByteArray &json) : data(new params_spectr_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object(doc.object());
     bool ok;
@@ -190,7 +188,7 @@ QString params_spectr::descr() const
     return data->m_descr;
 }
 
-QByteArray params_spectr::to_json(const bool binary) const
+QByteArray params_spectr::to_json() const
 {
     QJsonObject json_object;
 
@@ -206,8 +204,5 @@ QByteArray params_spectr::to_json(const bool binary) const
 
     const QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }

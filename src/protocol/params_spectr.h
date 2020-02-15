@@ -11,7 +11,7 @@ class params_spectr
 public:
     params_spectr();
     params_spectr(const params_spectr &);
-    params_spectr(const QByteArray &json, const bool binary = false);
+    params_spectr(const QByteArray &json);
     params_spectr &operator=(const params_spectr &);
     ~params_spectr();
 
@@ -44,7 +44,7 @@ public:
     void set_descr(const QString &);
     QString descr()const;
 
-    QByteArray to_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<params_spectr_data> data;

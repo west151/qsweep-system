@@ -11,7 +11,7 @@ class system_monitor
 public:
     system_monitor();
     system_monitor(const system_monitor &);
-    system_monitor(const QByteArray &json, const bool binary = false);
+    system_monitor(const QByteArray &json);
     system_monitor &operator=(const system_monitor &);
     ~system_monitor();
 
@@ -37,7 +37,7 @@ public:
 
     QDateTime date_time()const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<system_monitor_data> data;

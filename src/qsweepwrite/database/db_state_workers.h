@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QMap>
 
+class QTimer;
+
 enum state_workers: qint32 {
     unknown,
     initialization,
@@ -48,7 +50,7 @@ public slots:
     void slot_state_db(const QString &, const state_db &);
 
 private:
-    QTime *m_timer_writed {Q_NULLPTR};
+    QTimer *m_timer_writed {Q_NULLPTR};
     QMap<QString, state_workers> m_workers_state;
     QMap <QString, qint64> m_db_file_size;
     QMap <QString, state_db> m_state_db;

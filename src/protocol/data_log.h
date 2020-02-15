@@ -11,7 +11,7 @@ class data_log
 public:
     data_log();
     data_log(const data_log &);
-    data_log(const QByteArray &json, const bool binary = false);
+    data_log(const QByteArray &json);
     data_log &operator=(const data_log &);
     ~data_log();
 
@@ -22,7 +22,7 @@ public:
 
     QDateTime date_time()const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<data_log_data> data;

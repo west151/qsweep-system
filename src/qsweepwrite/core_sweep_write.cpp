@@ -63,7 +63,7 @@ bool core_sweep_write::save_settings(const QString &file)
                     file.write(m_sweep_write_settings.to_json());
             }else{
                 const auto defaultSettings = sweep_write_settings();
-                file.write(defaultSettings.to_json(false, false));
+                file.write(defaultSettings.to_json());
             }
 
             file.close();
@@ -93,7 +93,7 @@ bool core_sweep_write::read_settings(const QString &file)
 
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                const auto settings = sweep_write_settings(file.readAll(), false);
+                const auto settings = sweep_write_settings(file.readAll());
                 m_sweep_write_settings = settings;
                 file.close();
 

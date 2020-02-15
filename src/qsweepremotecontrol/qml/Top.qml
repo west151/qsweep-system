@@ -4,8 +4,8 @@ TopForm {
 
     Rectangle {
         id: idRectangleState
-         width: mainRectangle.height - 12
-         height: mainRectangle.height - 12
+        width: textTime.height
+        height: textTime.height
          x: 6
          anchors.verticalCenter: parent.verticalCenter
          color: "red"

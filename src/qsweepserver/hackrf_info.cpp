@@ -134,8 +134,8 @@ int hackrf_info::get_hackrf_info(const QByteArray &value)
         qDebug() << tr("Part ID Number:") << hackrf_info.part_id_number();
         qDebug() << tr("Libhackrf Version:") << hackrf_info.lib_sdr_version();
 #endif
-        answer_data.set_data_message(hackrf_info.export_json());
-        emit signal_hackrf_info(answer_data.export_json());
+        answer_data.set_data_message(hackrf_info.to_json());
+        emit signal_hackrf_info(answer_data.to_json());
     }
 
     hackrf_device_list_free(list);

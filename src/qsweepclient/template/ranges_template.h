@@ -11,7 +11,7 @@ class ranges_template
 public:
     ranges_template();
     ranges_template(const ranges_template &);
-    ranges_template(const QByteArray &json, const bool binary = false);
+    ranges_template(const QByteArray &json);
     ranges_template &operator=(const ranges_template &);
     ~ranges_template();
 

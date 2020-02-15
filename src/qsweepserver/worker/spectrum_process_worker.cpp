@@ -133,9 +133,9 @@ void spectrum_process_worker::send_message_log(const QString &value)
 
     sweep_message send_data;
     send_data.set_type(type_message::data_message_log);
-    send_data.set_data_message(message.export_json());
+    send_data.set_data_message(message.to_json());
 
-    emit signal_message(send_data.export_json());
+    emit signal_message(send_data.to_json());
 }
 
 QStringList spectrum_process_worker::make_argument_list(const params_spectr &params)

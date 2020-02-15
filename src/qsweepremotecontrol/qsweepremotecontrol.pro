@@ -27,7 +27,8 @@ HEADERS += \
     model/vga_gain_model.h \
     provider/mqtt_provider.h \
     settings/mqtt_provider_settings.h \
-    settings/remote_control_settings.h
+    settings/remote_control_settings.h \
+    shared/local_const.h
 
 SOURCES += \
     core_sweep_remote_control.cpp \

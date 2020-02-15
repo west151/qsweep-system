@@ -40,13 +40,11 @@ client_settings::client_settings(const client_settings &rhs) : data(rhs.data)
 {
 }
 
-client_settings::client_settings(const QByteArray &json, const bool binary) : data(new sweep_client_settings_data)
+client_settings::client_settings(const QByteArray &json) : data(new sweep_client_settings_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object = doc.object();
     data->m_host_broker = json_object.value(HOST_BROKER_KEY).toString();
@@ -106,7 +104,7 @@ qint32 client_settings::max_size_message_log() const
     return  data->m_max_size_message_log;
 }
 
-QByteArray client_settings::to_json(const bool binary, const bool isCompact) const
+QByteArray client_settings::to_json() const
 {
     QJsonObject json_object;
     json_object.insert(HOST_BROKER_KEY, data->m_host_broker);
@@ -115,12 +113,5 @@ QByteArray client_settings::to_json(const bool binary, const bool isCompact) con
 
     QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else{
-        if(isCompact)
-            return doc.toJson(QJsonDocument::Compact);
-        else
-            return doc.toJson();
-    }
+    return doc.toJson();
 }

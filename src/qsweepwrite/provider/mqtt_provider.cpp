@@ -78,13 +78,13 @@ void mqtt_provider::slot_message_received(const QByteArray &message, const QMqtt
 {
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_db_ctrl)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
         {            
             if(data_received.type() == type_message::ctrl_db)
             {
-                const broker_ctrl broker_ctrl_data(data_received.data_message(), false);
+                const broker_ctrl broker_ctrl_data(data_received.data_message());
 
                 if(broker_ctrl_data.ctrl_type()==broker_ctrl_type::subscribe)
                     subscribe_broker(broker_ctrl_data.topic_list());
@@ -103,7 +103,7 @@ void mqtt_provider::slot_message_received(const QByteArray &message, const QMqtt
 
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_power_spectr)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
             if(data_received.type() == type_message::data_spectr)
@@ -112,7 +112,7 @@ void mqtt_provider::slot_message_received(const QByteArray &message, const QMqtt
 
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_ctrl)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
             if(data_received.type() == type_message::ctrl_spectr)

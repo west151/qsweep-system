@@ -46,11 +46,11 @@ Item {
 
         CheckBox {
             id: cbx_lock_freq_band
-            x: 173
+            x: 197
             y: 8
-            width: 139
+            width: 90
             height: 40
-            text: qsTr("Lock band")
+            text: qsTr("lock")
             font.pointSize: 15
         }
 
@@ -121,6 +121,7 @@ Item {
             width: 140
             height: 40
             text: qsTr("run")
+            font.pointSize: 15
         }
     }
 }

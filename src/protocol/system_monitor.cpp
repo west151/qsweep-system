@@ -51,13 +51,11 @@ system_monitor::system_monitor(const system_monitor &rhs) : data(rhs.data)
 {
 }
 
-system_monitor::system_monitor(const QByteArray &json, const bool binary) : data(new system_monitor_data)
+system_monitor::system_monitor(const QByteArray &json) : data(new system_monitor_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject jsonObject(doc.object());
     data->m_hostName = jsonObject.value(HOST_NAME_KEY).toString();
@@ -158,7 +156,7 @@ QDateTime system_monitor::date_time() const
     return data->m_dateTime;
 }
 
-QByteArray system_monitor::export_json(const bool binary) const
+QByteArray system_monitor::to_json() const
 {
     QJsonObject jsonObject;
     jsonObject.insert(HOST_NAME_KEY, data->m_hostName);
@@ -171,8 +169,5 @@ QByteArray system_monitor::export_json(const bool binary) const
 
     const QJsonDocument doc(jsonObject);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }

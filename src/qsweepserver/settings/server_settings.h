@@ -11,7 +11,7 @@ class server_settings
 public:
     server_settings();
     server_settings(const server_settings &);
-    server_settings(const QByteArray &json, const bool binary = false);
+    server_settings(const QByteArray &json);
     server_settings &operator=(const server_settings &);
     ~server_settings();
 
@@ -38,7 +38,7 @@ public:
     void set_id(const QString &);
     QString id()const;
 
-    QByteArray to_json(const bool binary = false, const bool isCompact = true) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<server_settings_data> data;

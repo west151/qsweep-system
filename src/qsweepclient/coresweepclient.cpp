@@ -34,7 +34,7 @@ CoreSweepClient::CoreSweepClient(QObject *parent) : QObject(parent),
     ptrSystemMonitorInterface(new SystemMonitorInterface(this)),
     ptrStateSweepClient(new StateSweepClient(this))
 {
-    m_timer_receive = new QTime;
+    m_timer_receive = new QTimer;
 
     qRegisterMetaType<data_spectr>();
     qRegisterMetaType<QVector<params_spectr> >();
@@ -206,7 +206,7 @@ bool CoreSweepClient::read_settings(const QString &file)
 
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                const client_settings settings(file.readAll(), false); // !!!!!!!!!!!!!!!
+                const client_settings settings(file.readAll()); // !!!!!!!!!!!!!!!
                 ptr_client_settings = new client_settings(settings);
                 file.close();
 
@@ -252,7 +252,7 @@ bool CoreSweepClient::save_settings(const QString &file)
                     file.write(ptr_client_settings->to_json());
             }else{
                 const auto defaultSettings = client_settings();
-                file.write(defaultSettings.to_json(false, false));
+                file.write(defaultSettings.to_json());
             }
 
             file.close();
@@ -291,7 +291,7 @@ bool CoreSweepClient::read_template(const QString &path)
 #ifdef QT_DEBUG
                 qDebug() << Q_FUNC_INFO << file;
 #endif
-                const ranges_template range(file_renge.readAll(), false);
+                const ranges_template range(file_renge.readAll());
                 file_renge.close();
 
                 if(range.is_valid())
@@ -422,17 +422,17 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
             if(send_data.is_valid())
             {
                 if(send_data.type() == type_message::ctrl_info)
-                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
+                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.to_json());
 
                 if(send_data.type() == type_message::ctrl_spectr)
-                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.export_json());
+                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_ctrl), send_data.to_json());
 
                 if(send_data.type() == type_message::ctrl_db)
-                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_db_ctrl), send_data.export_json());
+                    ptrMqttClient->publish(ptr_sweep_topic->sweep_topic_by_type(sweep_topic::topic_db_ctrl), send_data.to_json());
             }
 
 //#ifdef QT_DEBUG
-//            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << send_data.export_json();
+//            qDebug() << Q_FUNC_INFO << tr("Data sending to host result:") << send_data.to_json();
 //#endif
         }
     }
@@ -440,16 +440,18 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
 
 void CoreSweepClient::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
+    qDebug() << Q_FUNC_INFO << topic.name();
+
     // system info
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_info)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
         {
             if(data_received.type() == type_message::data_sdr_info)
             {
-                const sdr_info sdr_info_data(data_received.data_message(), false);
+                const sdr_info sdr_info_data(data_received.data_message());
                 emit signal_sdr_info(sdr_info_data);
             }
         }
@@ -458,13 +460,13 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     // message log
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_message_log)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
         {
             if(data_received.type() == type_message::data_message_log)
             {
-                const data_log data_log_data(data_received.data_message(), false);
+                const data_log data_log_data(data_received.data_message());
                 emit signal_data_log(data_log_data);
             }
         }
@@ -473,13 +475,13 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     // system monitor
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_system_monitor)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
         {
             if(data_received.type() == type_message::data_system_monitor)
             {
-                const system_monitor data_system_monitor(data_received.data_message(), false);
+                const system_monitor data_system_monitor(data_received.data_message());
                 emit signal_system_monitor(data_system_monitor);
             }
         }
@@ -488,7 +490,7 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
     // power spectr
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_power_spectr)
     {
-        const sweep_message data_received(message, false);
+        const sweep_message data_received(message);
 
         if(data_received.is_valid())
         {
@@ -503,15 +505,17 @@ void CoreSweepClient::slot_message_received(const QByteArray &message, const QMq
 
     m_size_data_receive = m_size_data_receive + message.size();
 
-    if(m_timer_receive->elapsed()>=5000)
+
+    if(m_timer_receive->interval() >= 5000)
     {
 #ifdef QT_DEBUG
+        qDebug() << Q_FUNC_INFO << topic.name();
         qDebug() << Q_FUNC_INFO
                  << "Data size:" << QString::number(m_size_data_receive/1024.0, 'f', 2) << "Kbyte"
                  << "(" << QString::number((m_size_data_receive/1024)/1024.0, 'f', 2) << "Mbyte" << ")"
-                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timer_receive->elapsed()).arg(m_timer_receive->elapsed()/1000);
+                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timer_receive->interval()).arg(m_timer_receive->interval()/1000);
 #endif
-        m_timer_receive->restart();
+        m_timer_receive->start();
         m_size_data_receive = 0;
     }
 }

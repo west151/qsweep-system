@@ -12,7 +12,7 @@ class remote_control_settings
 public:
     remote_control_settings();
     remote_control_settings(const remote_control_settings &);
-    remote_control_settings(const QByteArray &json, const bool binary = false);
+    remote_control_settings(const QByteArray &json);
     remote_control_settings &operator=(const remote_control_settings &);
     ~remote_control_settings();
 
@@ -23,7 +23,7 @@ public:
 
     bool is_valid() const;
 
-    QByteArray to_json(const bool is_binary = false, const bool is_compact = true) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<remote_control_settings_data> data;

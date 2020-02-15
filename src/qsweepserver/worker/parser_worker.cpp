@@ -66,7 +66,7 @@ void parser_worker::slot_input_line(const QByteArray &line)
 
                     send_data.set_data_message(spectr.to_json());
 
-                    emit signal_data_spectr_message(send_data.export_json());
+                    emit signal_data_spectr_message(send_data.to_json());
 
                     is_complete_parser_range = false;
                     buffer_power_db.clear();

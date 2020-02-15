@@ -141,7 +141,7 @@ void user_interface::onRequestSweepInfo()
 {
     sweep_message ctrl_info;
     ctrl_info.set_type(type_message::ctrl_info);
-    emit signal_sweep_message(ctrl_info.export_json());
+    emit signal_sweep_message(ctrl_info.to_json());
 }
 
 void user_interface::onRequestSweepSpectr(const bool &start)
@@ -162,7 +162,7 @@ void user_interface::onRequestSweepSpectr(const bool &start)
 
     ctrl_spectr.set_data_message(params_spectr_data.to_json());
 
-    emit signal_sweep_message(ctrl_spectr.export_json());
+    emit signal_sweep_message(ctrl_spectr.to_json());
 }
 
 void user_interface::onClearMaxPowerSpectr()
@@ -193,9 +193,9 @@ void user_interface::on_spectr_db_write(const bool &value)
 
     db_ctrl.set_topic_list(list_topic);
 
-    ctrl_msg.set_data_message(db_ctrl.export_json());
+    ctrl_msg.set_data_message(db_ctrl.to_json());
 
-    emit signal_sweep_message(ctrl_msg.export_json());
+    emit signal_sweep_message(ctrl_msg.to_json());
 }
 
 void user_interface::on_read_params_spectr()

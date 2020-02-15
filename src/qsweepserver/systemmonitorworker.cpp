@@ -64,7 +64,7 @@ void SystemMonitorWorker::runSystemMonitorWorker()
     monitor_data.set_free_memory(free);
     monitor_data.set_buffer_memory(buffer);
 
-    send_data.set_data_message(monitor_data.export_json());
+    send_data.set_data_message(monitor_data.to_json());
 
-    emit signal_system_monitor_result(send_data.export_json());
+    emit signal_system_monitor_result(send_data.to_json());
 }

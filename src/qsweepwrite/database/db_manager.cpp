@@ -167,7 +167,7 @@ void db_manager::slot_test_received_data()
 
     send_data.set_data_message(spectr.to_json());
 
-    slot_received_data(send_data.export_json());
+    slot_received_data(send_data.to_json());
 }
 
 void db_manager::create_db_writer_worker(db_state_workers *state)

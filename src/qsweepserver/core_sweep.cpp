@@ -55,7 +55,7 @@ void core_sweep::slot_message_received(const QByteArray &message, const QMqttTop
 {
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_ctrl)
     {
-        const sweep_message ctrl_message(message, false);
+        const sweep_message ctrl_message(message);
 
         if(ctrl_message.is_valid())
         {
@@ -66,7 +66,7 @@ void core_sweep::slot_message_received(const QByteArray &message, const QMqttTop
             // start/stop spectr
             if(ctrl_message.type() == type_message::ctrl_spectr)
             {
-                const params_spectr params_spectr_data(ctrl_message.data_message(), false);
+                const params_spectr params_spectr_data(ctrl_message.data_message());
 
                 if(params_spectr_data.start_spectr())
                 {
@@ -186,7 +186,7 @@ bool core_sweep::readSettings(const QString &file)
 
             if(file.open(QIODevice::ReadOnly | QIODevice::Text))
             {
-                ptr_server_settings = new server_settings(file.readAll(), false);
+                ptr_server_settings = new server_settings(file.readAll());
                 file.close();
 
                 isRead = ptr_server_settings->is_valid();
@@ -225,7 +225,7 @@ bool core_sweep::saveSettings(const QString &file)
                     file.write(ptr_server_settings->to_json());
             }else{
                 const auto defaultSettings = server_settings();
-                file.write(defaultSettings.to_json(false, false));
+                file.write(defaultSettings.to_json());
             }
 
             file.close();

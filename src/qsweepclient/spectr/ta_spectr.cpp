@@ -27,5 +27,7 @@ void ta_spectr::slot_data_spectr(const data_spectr &data)
         const auto dt = tmp_spectr.at(0).m_date_time;
 
         emit signal_spectr_rt(dt, tmp_spectr.at(0).hz_low, tmp_spectr.at(tmp_spectr.size()-1).hz_high, tmp_power_rt);
+
+        qDebug() << "if(tmp_spectr.size()>0)";
     }
 }

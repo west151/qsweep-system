@@ -36,13 +36,11 @@ remote_control_settings::remote_control_settings(const remote_control_settings &
 {
 }
 
-remote_control_settings::remote_control_settings(const QByteArray &json, const bool binary) : data(new remote_control_settings_data)
+remote_control_settings::remote_control_settings(const QByteArray &json) : data(new remote_control_settings_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object = doc.object();
 
@@ -89,19 +87,12 @@ bool remote_control_settings::is_valid() const
     return data->m_valid;
 }
 
-QByteArray remote_control_settings::to_json(const bool is_binary, const bool is_compact) const
+QByteArray remote_control_settings::to_json() const
 {
     QJsonObject json_object;
     json_object.insert(MQTT_PROVIDER_KEY, QString(data->m_mqtt_provider_settings.to_json()));
 
     QJsonDocument doc(json_object);
 
-    if(is_binary)
-        return doc.toBinaryData();
-    else{
-        if(is_compact)
-            return doc.toJson(QJsonDocument::Compact);
-        else
-            return doc.toJson();
-    }
+    return doc.toJson();
 }

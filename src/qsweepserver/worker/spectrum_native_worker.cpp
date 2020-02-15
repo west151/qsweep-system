@@ -77,7 +77,7 @@ void spectrum_native_worker::onDataPowerSpectrCallbacks(const power_spectr &powe
 
         send_data.set_data_message(spectr.to_json());
 
-        emit signal_sweep_message(send_data.export_json());
+        emit signal_sweep_message(send_data.to_json());
 
         m_powerSpectrBuffer.clear();
     }
@@ -233,9 +233,9 @@ void spectrum_native_worker::sweepWorkerMessagelog(const QString &value)
 
     sweep_message send_data;
     send_data.set_type(type_message::data_message_log);
-    send_data.set_data_message(message.export_json());
+    send_data.set_data_message(message.to_json());
 
-    emit signal_sweep_message(send_data.export_json());
+    emit signal_sweep_message(send_data.to_json());
 }
 
 void spectrum_native_worker::slot_run_sweep_worker(const QByteArray &value)

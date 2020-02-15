@@ -4,6 +4,7 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QFileInfo>
+#include <QTimer>
 
 #include "sweep_message.h"
 
@@ -87,19 +88,19 @@ void db_writer_worker::slot_stopping()
 
 void db_writer_worker::slot_data_to_write(const QByteArray &rc_data)
 {
-    const sweep_message data_received(rc_data, false);
+    const sweep_message data_received(rc_data);
 
     if(data_received.is_valid())
     {
         if(data_received.type() == type_message::data_spectr)
         {
-            const data_spectr rc_data_spectr(data_received.data_message(), false);
+            const data_spectr rc_data_spectr(data_received.data_message());
             data_spectr_to_write(rc_data_spectr);
         }
 
         if(data_received.type() == type_message::ctrl_spectr)
         {
-            const params_spectr rc_params_spectr_data(data_received.data_message(), false);
+            const params_spectr rc_params_spectr_data(data_received.data_message());
             data_params_to_write(rc_params_spectr_data);
         }
     }
@@ -260,7 +261,7 @@ void db_writer_worker::data_spectr_to_write(const data_spectr &data)
 
         if(on)
         {
-            //qDebug() << "id_params:" << data.id_params(); // << data.export_json();
+            //qDebug() << "id_params:" << data.id_params(); // << data.to_json();
             update_size_file(m_dbase.databaseName());
         }
 
@@ -356,11 +357,11 @@ void db_writer_worker::clean_file_db(const QString &file_name)
         {
             const auto list_table = table.keys();
 
-            QTime start_time;
+            QTimer start_time;
             start_time.start();
 
 #ifdef QT_DEBUG
-            qDebug() << "start clean database:" << start_time.toString();
+            //qDebug() << "start clean database:" << start_time.toString();
             qDebug() << "database:" << file_name;
 #endif
 
@@ -379,10 +380,10 @@ void db_writer_worker::clean_file_db(const QString &file_name)
 
             close_db();
 
-#ifdef QT_DEBUG
-            qDebug() << "stop clean database:" << start_time.currentTime().toString()
-                     << QString("Time elapsed: %1 ms").arg(start_time.elapsed());
-#endif
+//#ifdef QT_DEBUG
+//            qDebug() << "stop clean database:" << start_time.currentTime().toString()
+//                     << QString("Time elapsed: %1 ms").arg(start_time.elapsed());
+//#endif
         }
     }
 }

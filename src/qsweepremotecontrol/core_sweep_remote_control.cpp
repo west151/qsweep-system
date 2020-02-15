@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QString>
 #include <QQmlContext>
+#include <QThread>
 
 #ifdef QT_DEBUG
 #include <QDebug>
@@ -15,6 +16,8 @@
 #include "model/lna_gain_model.h"
 #include "model/vga_gain_model.h"
 #include "model/fft_width_model.h"
+#include "manager/net_manager.h"
+#include "settings/mqtt_provider_settings.h"
 
 static const QString str_config_suffix(QString(".conf"));
 
@@ -83,6 +86,14 @@ void core_sweep_remote_control::program_launch(bool is_init_state)
     ptr_top_model->start();
 }
 
+void core_sweep_remote_control::init_net_manager()
+{
+    ptr_net_manager_worker = new net_manager;
+    ptr_net_manager_worker->set_settings(ptr_remote_control_settings->mqtt_provider_settings_data().to_json());
+    ptr_net_manager_thread = new QThread;
+    ptr_net_manager_worker->moveToThread(ptr_net_manager_thread);
+}
+
 bool core_sweep_remote_control::read_settings()
 {
     bool is_read(false);
@@ -95,7 +106,7 @@ bool core_sweep_remote_control::read_settings()
         {
             if(ptr_remote_control_settings)
             {
-                const auto settings = remote_control_settings(config_file.readAll(), false);
+                const auto settings = remote_control_settings(config_file.readAll());
                 ptr_remote_control_settings->set_settings(settings);
 
                 if(ptr_remote_control_settings->is_valid())
@@ -122,7 +133,7 @@ bool core_sweep_remote_control::write_settings()
         if(config_file.open(QIODevice::ReadWrite | QIODevice::Text))
         {
             if(ptr_remote_control_settings){
-                qint64 result = config_file.write(ptr_remote_control_settings->to_json(false, false));
+                qint64 result = config_file.write(ptr_remote_control_settings->to_json());
 
                 if(result > 0)
                     is_write = true;
@@ -135,4 +146,15 @@ bool core_sweep_remote_control::write_settings()
     }
 
     return is_write;
+}
+
+void core_sweep_remote_control::bind_connect()
+{
+
+}
+
+void core_sweep_remote_control::remote_control_start()
+{
+    if(!ptr_net_manager_thread->isRunning())
+        ptr_net_manager_thread->start();
 }

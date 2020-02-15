@@ -11,7 +11,7 @@ class sdr_info
 public:
     sdr_info();
     sdr_info(const sdr_info &);
-    sdr_info(const QByteArray &json, const bool binary = false);
+    sdr_info(const QByteArray &json);
     sdr_info &operator=(const sdr_info &);
     ~sdr_info();
 
@@ -35,7 +35,7 @@ public:
 
     bool is_valid() const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<sdr_info_data> data;

@@ -18,7 +18,7 @@ class broker_ctrl
 public:
     broker_ctrl();
     broker_ctrl(const broker_ctrl &);
-    broker_ctrl(const QByteArray &json, const bool binary = false);
+    broker_ctrl(const QByteArray &json);
     broker_ctrl &operator=(const broker_ctrl &);
     ~broker_ctrl();
 
@@ -30,7 +30,7 @@ public:
     void set_topic_list(const QStringList &);
     QStringList topic_list()const;
 
-    QByteArray export_json(const bool binary = false) const;
+    QByteArray to_json() const;
 
 private:
     QSharedDataPointer<broker_ctrl_data> data;

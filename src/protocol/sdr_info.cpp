@@ -47,13 +47,11 @@ sdr_info::sdr_info(const sdr_info &rhs) : data(rhs.data)
 {
 }
 
-sdr_info::sdr_info(const QByteArray &json, const bool binary) : data(new sdr_info_data)
+sdr_info::sdr_info(const QByteArray &json) : data(new sdr_info_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object(doc.object());
     data->m_index = json_object.value(INDEX_KEY).toInt();
@@ -146,7 +144,7 @@ bool sdr_info::is_valid() const
     return data->m_valid;
 }
 
-QByteArray sdr_info::export_json(const bool binary) const
+QByteArray sdr_info::to_json() const
 {
     QJsonObject json_object;
     json_object.insert(INDEX_KEY, data->m_index);
@@ -158,8 +156,5 @@ QByteArray sdr_info::export_json(const bool binary) const
 
     const QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }

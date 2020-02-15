@@ -1,6 +1,6 @@
 #include "db_state_workers.h"
 
-#include <QTime>
+#include <QTimer>
 
 #include "db_const.h"
 
@@ -10,7 +10,7 @@
 
 db_state_workers::db_state_workers(QObject *parent) : QObject(parent)
 {
-    m_timer_writed = new QTime;
+    m_timer_writed = new QTimer;
 }
 
 void db_state_workers::add_name_workers(const QString &name)
@@ -43,15 +43,15 @@ void db_state_workers::slot_db_size(const QString &db_name, const qint64 &db_siz
 {
     m_db_file_size.insert(db_name, db_size);
 
-    if(m_timer_writed->elapsed()>=5000)
+    if(m_timer_writed->interval() >= 5000)
     {
 
 #ifdef QT_DEBUG
         qDebug() << db_name << format_size(db_size) << "(" << db_size << ")"
-                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timer_writed->elapsed()).arg(m_timer_writed->elapsed()/1000);
+                 << QString("Time elapsed: %1 ms, %2 s").arg(m_timer_writed->interval()).arg(m_timer_writed->interval()/1000);
 #endif
 
-        m_timer_writed->restart();
+        m_timer_writed->start();
     }
 }
 

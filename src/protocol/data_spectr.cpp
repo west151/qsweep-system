@@ -37,13 +37,11 @@ data_spectr::data_spectr(const data_spectr &rhs) : data(rhs.data)
 {
 }
 
-data_spectr::data_spectr(const QByteArray &json, const bool binary) : data(new data_spectr_data)
+data_spectr::data_spectr(const QByteArray &json) : data(new data_spectr_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object(doc.object());
 
@@ -116,7 +114,7 @@ QVector<power_spectr> data_spectr::spectr() const
     return data->m_powers;
 }
 
-QByteArray data_spectr::to_json(const bool binary) const
+QByteArray data_spectr::to_json() const
 {
     QJsonObject json_object;
 
@@ -149,8 +147,5 @@ QByteArray data_spectr::to_json(const bool binary) const
 
     const QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }

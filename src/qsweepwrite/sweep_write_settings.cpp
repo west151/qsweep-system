@@ -68,13 +68,11 @@ sweep_write_settings::sweep_write_settings(const sweep_write_settings &rhs) : da
 {
 }
 
-sweep_write_settings::sweep_write_settings(const QByteArray &json, const bool binary) : data(new sweep_write_settings_data)
+sweep_write_settings::sweep_write_settings(const QByteArray &json) : data(new sweep_write_settings_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object = doc.object();
     data->m_host_broker = json_object.value(HOST_BROKER_KEY).toString();
@@ -200,7 +198,7 @@ int sweep_write_settings::backup_compress_level() const
     return data->m_compress_level;
 }
 
-QByteArray sweep_write_settings::to_json(const bool binary, const bool isCompact) const
+QByteArray sweep_write_settings::to_json() const
 {
     QJsonObject json_object;
     json_object.insert(HOST_BROKER_KEY, data->m_host_broker);
@@ -215,12 +213,5 @@ QByteArray sweep_write_settings::to_json(const bool binary, const bool isCompact
 
     QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else{
-        if(isCompact)
-            return doc.toJson(QJsonDocument::Compact);
-        else
-            return doc.toJson();
-    }
+    return doc.toJson();
 }

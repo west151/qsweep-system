@@ -2,6 +2,7 @@
 #include "database/db_const.h"
 
 #include <QFileInfo>
+#include <QTimer>
 #include <QTime>
 
 #ifdef QT_DEBUG
@@ -27,11 +28,11 @@ void db_cleaner_workers::slot_clean_db(const QString &file_name)
         {
             const auto list_table = table.keys();
 
-            QTime start_time;
+            QTimer start_time;
             start_time.start();
 
 #ifdef QT_DEBUG
-            qDebug() << "start clean database:" << start_time.toString();
+            qDebug() << "start clean database:" << QTime::currentTime().toString();
             qDebug() << "database:" << file_name;
 #endif
 
@@ -72,8 +73,8 @@ void db_cleaner_workers::slot_clean_db(const QString &file_name)
             }
 
 #ifdef QT_DEBUG
-            qDebug() << "stop clean database:" << start_time.currentTime().toString()
-                     << QString("Time elapsed: %1 ms").arg(start_time.elapsed());
+            qDebug() << "stop clean database:" << QTime::currentTime().toString()
+                     << QString("Time elapsed: %1 ms").arg(start_time.interval());
 #endif
 
             emit signal_state_db(file_name, state_db::file_is_ready);

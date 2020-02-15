@@ -35,13 +35,11 @@ broker_ctrl::broker_ctrl(const broker_ctrl &rhs) : data(rhs.data)
 {
 }
 
-broker_ctrl::broker_ctrl(const QByteArray &json, const bool binary) : data(new broker_ctrl_data)
+broker_ctrl::broker_ctrl(const QByteArray &json) : data(new broker_ctrl_data)
 {
     QJsonDocument doc;
-    if (binary)
-        doc = QJsonDocument::fromBinaryData(json, QJsonDocument::BypassValidation);
-    else
-        doc = QJsonDocument::fromJson(json);
+
+    doc = QJsonDocument::fromJson(json);
 
     const QJsonObject json_object(doc.object());
 
@@ -92,7 +90,7 @@ QStringList broker_ctrl::topic_list() const
     return data->m_topic_list;
 }
 
-QByteArray broker_ctrl::export_json(const bool binary) const
+QByteArray broker_ctrl::to_json() const
 {
     QJsonObject json_object;
 
@@ -101,8 +99,5 @@ QByteArray broker_ctrl::export_json(const bool binary) const
 
     const QJsonDocument doc(json_object);
 
-    if(binary)
-        return doc.toBinaryData();
-    else
-        return doc.toJson(QJsonDocument::Compact);
+    return doc.toJson(QJsonDocument::Compact);
 }
