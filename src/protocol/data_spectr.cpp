@@ -60,7 +60,7 @@ data_spectr::data_spectr(const QByteArray &json) : data(new data_spectr_data)
         powerSpectr.hz_high = objectPowerSpectr.value(FREQUENCY_MAX_KEY).toString().toULongLong();
 
         const QString valuePower = objectPowerSpectr.value(DATA_KEY).toString();
-        QStringList listValue(valuePower.split(";", QString::SkipEmptyParts));
+        QStringList listValue(valuePower.split(";"));
 
         for(const auto &strItem : listValue){
             const auto value = static_cast<qreal>(strItem.trimmed().toFloat());
