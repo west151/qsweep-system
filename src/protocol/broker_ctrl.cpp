@@ -45,7 +45,7 @@ broker_ctrl::broker_ctrl(const QByteArray &json) : data(new broker_ctrl_data)
 
     data->m_broker_ctrl_type = static_cast<broker_ctrl_type>(json_object.value(BROKER_CTRL_TYPE_KEY).toInt(0));
     const QString topic_list = json_object.value(TOPIC_LIST_KEY).toString();
-    data->m_topic_list = topic_list.split(";", QString::SkipEmptyParts);
+    data->m_topic_list = topic_list.split(";");
 
     if(!doc.isEmpty())
         data->m_valid = true;
