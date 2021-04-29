@@ -58,7 +58,7 @@ sweep_message::sweep_message(const QByteArray &json) : data(new sweep_message_da
     data->m_type = static_cast<type_message>(json_object.value(TYPE_MESSAGE_KEY).toInt(0));
 
     QByteArray ba;
-    ba.append(json_object.value(DATA_KEY).toString());
+    ba.append(json_object.value(DATA_KEY).toString().toUtf8());
     data->m_data = QByteArray::fromBase64(ba);
 
     if(!doc.isEmpty())

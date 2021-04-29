@@ -196,7 +196,7 @@ void spectrum_process_worker::read_test_data_from_file()
     while (stream.readLineInto(&line))
     {
         QByteArray send_data;
-        send_data.append(line);
+        send_data.append(line.toUtf8());
         emit signal_output_line(send_data);
 
         usleep(200);
