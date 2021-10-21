@@ -36,4 +36,4 @@ CONFIG(debug, debug|release) {
     BUILD_FLAG = release
 }
 
-DESTDIR = $${PWD}/bin
+DESTDIR = $${PWD}/$${OS_SUFFIX}/$${BUILD_FLAG}/bin

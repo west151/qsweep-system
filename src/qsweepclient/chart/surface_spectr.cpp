@@ -9,6 +9,9 @@
 #include <QtCore/qdebug.h>
 #endif
 
+#define SURFACE_POINT_X 50
+#define SURFACE_POINT_Y 30
+
 surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 {
     setAcceptHoverEvents(true);
@@ -21,6 +24,10 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     m_grid_pen.setColor(Qt::darkGray);
     m_grid_pen.setStyle(Qt::DashLine);
 
+    m_marker_pen.setColor(Qt::red);
+    m_marker_pen.setStyle(Qt::SolidLine);
+    is_marker_visible = false;
+
     is_spectr_max_calc = false;
     m_ticket_segment = 4;
     m_ticket_segment_frequency = 7;
@@ -29,9 +36,10 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
     // background
     m_color_background = QColor(Qt::black);
     m_color_axis = QColor(Qt::white);
+
     // base surface point
-    m_surface_point.setX(50);
-    m_surface_point.setY(30);
+    m_surface_point.setX(SURFACE_POINT_X);
+    m_surface_point.setY(SURFACE_POINT_Y);
 
     m_spectr_item_list.clear();
     // level
@@ -113,8 +121,13 @@ void surface_spectr::paint(QPainter *painter)
 
     // spectr surface
     spectr_surface_paint(painter);
+
     // waterfall surface
     waterfall_surface_paint(painter);
+
+    // update marker
+    if(is_marker_visible)
+        marker_paint(painter);
 
     if(painter!= Q_NULLPTR)
         painter->drawImage(QRect(waterfall_point().x()+1, waterfall_point().y()+1, waterfall_size().x()-1, waterfall_size().y()-1), m_image_waterfall, QRect(0, 0, m_image_waterfall.width(), m_image_waterfall.height()));
@@ -350,13 +363,32 @@ void surface_spectr::remove_spectr_item(const QString &name)
 void surface_spectr::mousePressEvent(QMouseEvent *event)
 {
     QQuickItem::mousePressEvent(event);
+
+
+    switch (event->buttons()) {
+    case Qt::LeftButton:
+    {
+        if(is_marker_visible)
+            is_marker_visible = false;
+        else
+            is_marker_visible = true;
+    }
+        break;
+    default:
+        break;
+    }
+
     qDebug() << Q_FUNC_INFO  << event->pos();
 }
 
 void surface_spectr::hoverMoveEvent(QHoverEvent *event)
 {
-    QQuickItem::hoverMoveEvent(event);
-    qDebug() << Q_FUNC_INFO  << event->pos();
+    if(is_marker_visible)
+    {
+        QQuickItem::hoverMoveEvent(event);
+        m_cursor_point = event->pos();
+        update();
+    }
 }
 
 void surface_spectr::slot_size_changed()
@@ -553,5 +585,44 @@ void surface_spectr::waterfall_surface_paint(QPainter *painter)
         QLine line(QPoint(waterfall_point().x()-5, y),
                    QPoint(waterfall_point().x(), y));
         painter->drawLine(line);
+    }
+}
+
+void surface_spectr::marker_paint(QPainter *painter)
+{
+    if((m_cursor_point.rx() > m_surface_point.rx())
+            && (m_cursor_point.rx() < spectr_size().rx() + SURFACE_POINT_X)
+            && (m_cursor_point.ry() > m_surface_point.ry())
+            && (m_cursor_point.ry() < spectr_size().ry() + SURFACE_POINT_Y))
+    {
+        // font
+        QFont font = painter->font();
+        font.setPointSizeF(10);
+        painter->setFont(font);
+
+        QFontMetrics font_metrics(painter->font());
+
+        // marker freq
+        QLine marker_freq_line(QPoint(m_cursor_point.rx() , SURFACE_POINT_Y - 10), QPoint(m_cursor_point.rx(), spectr_size().ry() + SURFACE_POINT_Y));
+        painter->setPen(m_marker_pen);
+        painter->drawLine(marker_freq_line);
+
+        // text for marker freq
+        QString text_marker = QString::number(m_cursor_point.rx()) ;
+        int min_text_width = font_metrics.boundingRect(text_marker).width() + 5;
+        painter->drawText(QPoint(m_cursor_point.rx() - floor(min_text_width/2), 15), text_marker.append(tr(" МГц")));
+
+        // marker level
+        QLine marker_level_line(QPoint(SURFACE_POINT_X, m_cursor_point.ry()), QPoint(spectr_size().rx() + SURFACE_POINT_X + 5, m_cursor_point.ry()));
+        painter->setPen(m_marker_pen);
+        painter->drawLine(marker_level_line);
+
+        // text for marker level
+        //qreal calc_level = 0;
+        qreal step_level = spectr_size().ry() / m_level_min;
+        qreal calc_level = (m_cursor_point.ry() - SURFACE_POINT_Y) / step_level;
+        QString text_marker_level = QString::number(calc_level, 'f', 1) ;
+        int min_text_height = font_metrics.boundingRect(text_marker_level).height();
+        painter->drawText(QPoint(spectr_size().rx() + SURFACE_POINT_X + 10, m_cursor_point.ry() + floor(min_text_height/2) ), text_marker_level);
     }
 }

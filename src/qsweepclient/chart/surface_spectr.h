@@ -70,7 +70,7 @@ private:
     QColor m_color_axis;
 
     QPoint m_surface_point;
-    QPoint cursor_point;
+    QPoint m_cursor_point;
 
     QVector<QPointF> spectr_rt_vector;
     QVector<qreal> spectr_max_value;
@@ -95,6 +95,10 @@ private:
     QPoint waterfall_point()const;  // start point
     void waterfall_surface_paint(QPainter *painter);
 
+    // marker
+    void marker_paint(QPainter *painter);
+    bool is_marker_visible;
+
     QMap<QString, spectr_item*> m_spectr_item_list;
 
     QImage m_image_waterfall;
@@ -104,6 +108,7 @@ private:
 
     QPen m_ticket_pen;
     QPen m_grid_pen;
+    QPen m_marker_pen;
 
     // for test
     QRandomGenerator rm;
