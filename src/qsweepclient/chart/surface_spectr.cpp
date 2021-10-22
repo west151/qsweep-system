@@ -608,7 +608,9 @@ void surface_spectr::marker_paint(QPainter *painter)
         painter->drawLine(marker_freq_line);
 
         // text for marker freq
-        QString text_marker = QString::number(m_cursor_point.rx()) ;
+        qreal step_freq = ((m_frequency_max - m_frequency_min)/1e6) / spectr_size().rx();
+        qreal calc_freq = (m_frequency_min / 1e6) + ((m_cursor_point.rx() - SURFACE_POINT_X) * step_freq);
+        QString text_marker = QString::number(calc_freq, 'f', 1) ;
         int min_text_width = font_metrics.boundingRect(text_marker).width() + 5;
         painter->drawText(QPoint(m_cursor_point.rx() - floor(min_text_width/2), 15), text_marker.append(tr(" МГц")));
 
@@ -618,7 +620,6 @@ void surface_spectr::marker_paint(QPainter *painter)
         painter->drawLine(marker_level_line);
 
         // text for marker level
-        //qreal calc_level = 0;
         qreal step_level = spectr_size().ry() / m_level_min;
         qreal calc_level = (m_cursor_point.ry() - SURFACE_POINT_Y) / step_level;
         QString text_marker_level = QString::number(calc_level, 'f', 1) ;
