@@ -1,7 +1,11 @@
 #include "systemmonitorworker.h"
 
 #include <QSysInfo>
+
+#ifdef _WIN64
+#else
 #include <sys/sysinfo.h>
+#endif
 
 #include "system_monitor.h"
 #include "sweep_message.h"
@@ -17,6 +21,8 @@ SystemMonitorWorker::SystemMonitorWorker(QObject *parent) : QObject(parent)
 
 void SystemMonitorWorker::runSystemMonitorWorker()
 {
+#ifdef _WIN64
+#else
     system_monitor monitor_data;
     sweep_message send_data;
     send_data.set_type(type_message::data_system_monitor);
@@ -67,4 +73,5 @@ void SystemMonitorWorker::runSystemMonitorWorker()
     send_data.set_data_message(monitor_data.to_json());
 
     emit signal_system_monitor_result(send_data.to_json());
+#endif
 }

@@ -1,0 +1,38 @@
+C:\qsweep\src\share\3dparty
+	fftw
+		3.3.7
+		3.3.8
+	hackrf
+		2018.01.1
+	libusb
+		1.0.24
+
+Build for windows 
+
+run: MSYS2 MinGW 64-bit
+
+1. Build libUSB
+
+$ cd /c/github/qsweep/src/share/3dparty/libusb/1.0.24
+$ make
+
+    dll: C:\qsweep\src\share\3dparty\libusb\1.0.24\libusb\.libs
+include: C:\qsweep\src\share\3dparty\libusb\1.0.24\libusb
+
+2. Build fft 3.3.7
+
+$ cd /c/github/qsweep/src/share/3dparty/fftw/3.3.7
+$ ./configure --enable-float --with-our-malloc16 --enable-shared --disable-static --enable-threads --with-combined-threads --enable-sse2 --with-incoming-stack-boundary=2
+$ make -j8
+$ make install
+
+dll: C:\qsweep\src\share\3dparty\fftw\3.3.7\.libs
+
+3. Build hackrf tools (2018.01.1)
+$ pacman -S mingw-w64-x86_64-libusb
+
+$ cd /c/github/qsweep/src/share/3dparty/hackrf/2018.01.1/host
+$ mkdir build
+$ cd build
+$ cmake .. -G "MSYS Makefiles" -DLIBUSB_INCLUDE_DIR=/c/msys64/mingw64/include/libusb-1.0
+$ make

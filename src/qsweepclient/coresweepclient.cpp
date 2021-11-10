@@ -440,7 +440,9 @@ void CoreSweepClient::slot_publish_message(const QByteArray &value)
 
 void CoreSweepClient::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
-    qDebug() << Q_FUNC_INFO << topic.name();
+//#ifdef QT_DEBUG
+//    qDebug() << Q_FUNC_INFO << topic.name();
+//#endif
 
     // system info
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_info)

@@ -55,7 +55,8 @@ surface_spectr::surface_spectr(QQuickItem *parent) : QQuickPaintedItem(parent)
 
     m_image_waterfall = QImage(waterfall_size().x(), waterfall_size().y(), QImage::Format_ARGB32);
     m_image_waterfall.fill(m_color_background);
-    m_sensitivity_waterfall = 0.47; // 0.48 <-> 0.05;
+    //m_sensitivity_waterfall = 0.47; // 0.48 <-> 0.05;
+    m_sensitivity_waterfall = 0.45;
 
     // Generate displayable colors
     QImage img(500, 1, QImage::Format_ARGB32);

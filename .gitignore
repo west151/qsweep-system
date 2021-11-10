@@ -36,6 +36,16 @@ Thumbs.db
 /.qmake.stash
 build/
 bin/
+.libs
+.deps
+*.lo
+*.la
+*.cache
+src/share/3dparty/libusb/1.0.24/m4
+*.cmake
+*.qmake.cache
+*.qmake.stash
+autom4te.cache
 
 # qtcreator generated files
 *.pro.user*
