@@ -12,7 +12,7 @@
 #include <math.h>
 #include <inttypes.h>
 
-#include "constant.h"
+#include "../constant.h"
 #include "data_spectr.h"
 
 class spectrum_native_worker : public QObject

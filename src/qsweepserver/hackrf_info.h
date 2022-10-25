@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <hackrf.h>
+#include "hackrf.h"
 
 class hackrf_info : public QObject
 {

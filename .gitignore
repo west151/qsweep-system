@@ -43,6 +43,7 @@ bin/
 *.cache
 src/share/3dparty/libusb/1.0.24/m4
 *.cmake
+*.txt.user
 *.qmake.cache
 *.qmake.stash
 autom4te.cache
