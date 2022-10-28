@@ -44,6 +44,10 @@ target_include_directories(${PROJECT_NAME}
     /usr/include/libhackrf
 )
 
+install(TARGETS ${PROJECT_NAME}
+    CONFIGURATIONS Release
+    DESTINATION bin)
+
 #install(TARGETS target
 #        CONFIGURATIONS Debug
 #        RUNTIME DESTINATION Debug/bin)
