@@ -27,27 +27,13 @@ Makefile*
 *.prl
 *.app
 moc_*.cpp
-#ui_*.h
+ui_*.h
 qrc_*.cpp
 Thumbs.db
 *.res
 *.rc
 /.qmake.cache
 /.qmake.stash
-build/
-src/build*
-bin/
-.libs
-.deps
-*.lo
-*.la
-*.cache
-src/share/3dparty/libusb/1.0.24/m4
-*.cmake
-*.txt.user
-*.qmake.cache
-*.qmake.stash
-autom4te.cache
 
 # qtcreator generated files
 *.pro.user*
