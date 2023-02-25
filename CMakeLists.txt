@@ -7,8 +7,6 @@ option(BUILD_QSWEEP_CLIENT "Enable building qsweep-client" ON)
 option(BUILD_QSWEEP_WRITER "Enable building qsweep-writer" ON)
 option(BUILD_QSWEEP_REMOTE_CONTROL "Enable building qsweep-remote-control" ON)
 
-
-
 if(BUILD_QSWEEP_SERVER)
     add_subdirectory(src/qsweep-server)
 endif()

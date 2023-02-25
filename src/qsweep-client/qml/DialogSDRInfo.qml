@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtQuick.Dialogs 1.3
+import QtQuick
+import QtQuick.Controls
 
 Dialog {
     id: idDialogSDRInfo
@@ -9,7 +9,7 @@ Dialog {
     height: 400
     standardButtons: Dialog.Ok
 
-    modality : Qt.ApplicationModal
+//    modality : Qt.ApplicationModal
 
     SDRInfo{
         id: idSDRInfo
