@@ -7,8 +7,8 @@
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
 
-#include "settings/server_settings.h"
-#include "systemmonitorworker.h"
+#include "server_settings.h"
+#include "system_monitor_worker.h"
 
 class QTimer;
 class hackrf_info;

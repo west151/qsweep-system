@@ -45,6 +45,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Core Qt6::Network Qt6::Mqtt P
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
+    worker
+    settings
     ../qsweep-protocol
 )
 

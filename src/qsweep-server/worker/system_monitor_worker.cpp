@@ -1,4 +1,4 @@
-#include "systemmonitorworker.h"
+#include "system_monitor_worker.h"
 
 #include <QSysInfo>
 

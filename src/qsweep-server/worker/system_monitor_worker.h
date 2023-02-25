@@ -1,5 +1,5 @@
-#ifndef SYSTEMMONITORWORKER_H
-#define SYSTEMMONITORWORKER_H
+#ifndef SYSTEM_MONITOR_WORKER_H
+#define SYSTEM_MONITOR_WORKER_H
 
 #include <QObject>
 
@@ -16,4 +16,4 @@ public slots:
     void runSystemMonitorWorker();
 };
 
-#endif // SYSTEMMONITORWORKER_H
+#endif // SYSTEM_MONITOR_WORKER_H
