@@ -5,6 +5,9 @@ project(qsweep-system VERSION 1.0.0 LANGUAGES CXX)
 option(BUILD_QSWEEP_SERVER "Enable building qsweep-server" ON)
 option(BUILD_QSWEEP_CLIENT "Enable building qsweep-client" ON)
 option(BUILD_QSWEEP_WRITER "Enable building qsweep-writer" ON)
+option(BUILD_QSWEEP_REMOTE_CONTROL "Enable building qsweep-remote-control" ON)
+
+
 
 if(BUILD_QSWEEP_SERVER)
     add_subdirectory(src/qsweep-server)
@@ -16,4 +19,8 @@ endif()
 
 if(BUILD_QSWEEP_WRITER)
     add_subdirectory(src/qsweep-writer)
+endif()
+
+if(BUILD_QSWEEP_REMOTE_CONTROL)
+    add_subdirectory(src/qsweep-remote-control)
 endif()
