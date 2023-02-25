@@ -1,10 +1,9 @@
-#ifndef SWEEP_TOPIC_H
-#define SWEEP_TOPIC_H
+#ifndef QSWEEPTOPIC_H
+#define QSWEEPTOPIC_H
 
-#include "qsweep-protocol_global.h"
 #include <QObject>
 
-class QSWEEPPROTOCOL_EXPORT sweep_topic : public QObject
+class sweep_topic : public QObject
 {
     Q_OBJECT
 public:
@@ -19,6 +18,7 @@ public:
         topic_system_monitor,
         topic_process_status
     };
+
     explicit sweep_topic(QObject *parent = nullptr);
 
     QString sweep_topic_by_type(const topic value = topic_unknown) const;
@@ -42,4 +42,4 @@ private:
     QString str_topic_process_status = QLatin1String("/process/status");
 };
 
-#endif // SWEEP_TOPIC_H
+#endif // QSWEEPTOPIC_H

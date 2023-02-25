@@ -6,7 +6,6 @@
 #include "data_log.h"
 #include "params_spectr.h"
 //#include "cstring"
-#include "hackrf.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>

@@ -1,0 +1,20 @@
+#ifndef CONSTANT_H
+#define CONSTANT_H
+
+#define FD_BUFFER_SIZE (8*1024)
+
+#define FREQ_ONE_MHZ (1000000ull)
+
+#define FREQ_MIN_MHZ (0)    /*    0 MHz */
+#define FREQ_MAX_MHZ (7250) /* 7250 MHz */
+
+#define DEFAULT_SAMPLE_RATE_HZ (20000000) /* 20MHz default sample rate */
+#define DEFAULT_BASEBAND_FILTER_BANDWIDTH (15000000) /* 5MHz default */
+
+#define TUNE_STEP (DEFAULT_SAMPLE_RATE_HZ / FREQ_ONE_MHZ)
+#define OFFSET 7500000
+
+#define DEFAULT_SAMPLE_COUNT 0x4000
+#define BLOCKS_PER_TRANSFER 16
+
+#endif // CONSTANT_H
