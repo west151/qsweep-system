@@ -1,6 +1,13 @@
 #ifndef CORE_SWEEP_H
 #define CORE_SWEEP_H
 
+// mosquitto configure
+// /etc/mosquitto/mosquitto.conf
+//
+// port 1883
+// allow_anonymous true
+// bind_address 0.0.0.0
+
 #include <QObject>
 #include <QPointer>
 #include <QtMqtt/QMqttClient>
