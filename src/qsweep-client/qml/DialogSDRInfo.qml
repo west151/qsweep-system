@@ -7,9 +7,9 @@ Dialog {
     title: "SDR Information"
     width: 600
     height: 400
+    modal: true
+    closePolicy: Popup.NoAutoClose
     standardButtons: Dialog.Ok
-
-//    modality : Qt.ApplicationModal
 
     SDRInfo{
         id: idSDRInfo

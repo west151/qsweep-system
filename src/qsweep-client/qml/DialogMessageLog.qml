@@ -7,9 +7,9 @@ Dialog {
     title: "Message Log"
     width: 600
     height: 400
+    modal: true
+    closePolicy: Popup.NoAutoClose
     standardButtons: Dialog.Ok
-
-//    modality : Qt.ApplicationModal
 
     MessageLog{
         id: idMessageLog

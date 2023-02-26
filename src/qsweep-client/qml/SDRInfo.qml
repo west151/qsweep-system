@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick
 
 SDRInfoForm {
     list_view_sdr_info {
