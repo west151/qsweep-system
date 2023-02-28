@@ -3,7 +3,7 @@
 #include <QQmlContext>
 #include <QFileInfo>
 #include <QDir>
-#include <QTime>
+//#include <QTime>
 #include <QtCore/qdebug.h>
 #include <QThread>
 #include <QStandardPaths>
@@ -62,7 +62,7 @@ core_sweep_client::core_sweep_client(const QString &path_config, const QString &
 
     ptr_sweep_topic = new sweep_topic(this);
 
-    m_timer_receive = new QTimer;
+//    m_timer_receive = new QTimer;
 
     qRegisterMetaType<data_spectr>();
     qRegisterMetaType<QVector<params_spectr> >();
@@ -238,10 +238,10 @@ void core_sweep_client::start_client()
             ptr_mqtt_client->connectToHost();
     }
 
-    // start timer
-    if(m_timer_receive)
-        m_timer_receive->start();
-    m_size_data_receive = 0;
+//    // start timer
+//    if(m_timer_receive)
+//        m_timer_receive->start();
+//    m_size_data_receive = 0;
 
     // open/create database
     emit signal_open_db(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
@@ -407,9 +407,7 @@ void core_sweep_client::slot_publish_message(const QByteArray &value)
 
 void core_sweep_client::slot_message_received(const QByteArray &message, const QMqttTopicName &topic)
 {
-//#ifdef QT_DEBUG
-//    qDebug() << Q_FUNC_INFO << topic.name();
-//#endif
+//    qInfo("slot_message_received: '%s'", qUtf8Printable(topic.name()));
 
     // system info
     if(ptr_sweep_topic->sweep_topic_by_str(topic.name()) == sweep_topic::topic_info)
@@ -472,10 +470,10 @@ void core_sweep_client::slot_message_received(const QByteArray &message, const Q
         }
     }
 
-    // m_size_data_receive = m_size_data_receive + message.size();
+//    m_size_data_receive = m_size_data_receive + message.size();
 
-    if(m_timer_receive->interval() >= 5000)
-    {
+//    if(m_timer_receive->interval() >= 5000)
+//    {
 //        QString msg;
 //        msg.append(topic.name());
 //        msg.append(" Data size: ");
@@ -484,12 +482,12 @@ void core_sweep_client::slot_message_received(const QByteArray &message, const Q
 //        msg.append("( " ).append(QString::number((m_size_data_receive/1024)/1024.0, 'f', 2)).append(" Mbyte ) ");
 //        msg.append(QString("Time elapsed: %1 ms, %2 s").arg(m_timer_receive->interval()).arg(m_timer_receive->interval()/1000));
 
-        QString msg("5ttergfhjd");
-        qInfo("Message received: '%s'", qUtf8Printable(msg));
+//        QString msg("5ttergfhjd");
+//        qInfo("Message received: '%s'", qUtf8Printable(msg));
 
-        m_timer_receive->start();
-        m_size_data_receive = 0;
-    }
+//        m_timer_receive->start();
+//        m_size_data_receive = 0;
+//    }
 }
 
 bool core_sweep_client::save_settings()

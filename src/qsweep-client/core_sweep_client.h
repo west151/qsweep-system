@@ -6,7 +6,7 @@
 #include <QtMqtt/QMqttClient>
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
-#include <QTimer>
+//#include <QTimer>
 #include <QPointer>
 
 #include "model/hackrf_info_model.h"
@@ -70,7 +70,7 @@ private:
 
     SystemMonitorInterface *ptr_system_monitor_interface {Q_NULLPTR};
     StateSweepClient *ptr_state_sweep_client {Q_NULLPTR};
-    QTimer *m_timer_receive {Q_NULLPTR};
+//    QTimer *m_timer_receive {Q_NULLPTR};
     qint32 m_size_data_receive;
 
     // settings
