@@ -1,5 +1,5 @@
-#ifndef QSWEEPTOPIC_H
-#define QSWEEPTOPIC_H
+#ifndef QSWEEP_TOPIC_H
+#define QSWEEP_TOPIC_H
 
 #include <QObject>
 
@@ -42,4 +42,4 @@ private:
     QString str_topic_process_status = QLatin1String("/process/status");
 };
 
-#endif // QSWEEPTOPIC_H
+#endif // QSWEEP_TOPIC_H

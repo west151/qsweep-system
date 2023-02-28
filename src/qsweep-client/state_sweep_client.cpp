@@ -1,4 +1,4 @@
-#include "statesweepclient.h"
+#include "state_sweep_client.h"
 
 #ifdef QT_DEBUG
 #include <QtCore/qdebug.h>

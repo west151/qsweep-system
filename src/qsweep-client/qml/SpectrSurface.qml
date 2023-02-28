@@ -18,7 +18,7 @@ SpectrSurfaceForm {
 
     Connections {
         target: userInterface
-        onSendLnaGainChanged:{
+        function onSendLnaGainChanged(){
             console.log("userInterface.lnaGain = ", userInterface.lnaGain);
 
             for(var i = 0; i < lnaGainModel.count; ++i)
@@ -26,7 +26,7 @@ SpectrSurfaceForm {
                     cbx_lna_gain.currentIndex = i
         }
 
-        onSendVgaGainChanged:{
+        function onSendVgaGainChanged(){
             console.log("userInterface.vgaGain = ", userInterface.vgaGain);
 
             for(var i = 0; i < vgaGainModel.count; ++i)
@@ -34,7 +34,7 @@ SpectrSurfaceForm {
                     cbx_vga_gain.currentIndex = i
         }
 
-        onSendFFTBinWidthChanged:{
+        function onSendFFTBinWidthChanged(){
             console.log("userInterface.fftBinWidth = ", userInterface.fftBinWidth);
 
             for(var i = 0; i < fftSizeModel.count; ++i)

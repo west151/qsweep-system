@@ -1,9 +1,5 @@
 #include "ranges_template_model.h"
 
-#ifdef QT_DEBUG
-#include <QtCore/qdebug.h>
-#endif
-
 ranges_template_model::ranges_template_model(QObject *parent) : QAbstractListModel(parent)
 {
 

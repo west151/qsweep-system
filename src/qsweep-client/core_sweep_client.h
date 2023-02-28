@@ -1,5 +1,5 @@
-#ifndef CORESWEEPCLIENT_H
-#define CORESWEEPCLIENT_H
+#ifndef CORE_SWEEP_CLIENT_H
+#define CORE_SWEEP_CLIENT_H
 
 #include <QObject>
 #include <QQmlApplicationEngine>
@@ -28,12 +28,15 @@ class data_spectr;
 class db_local_state;
 class ranges_template;
 
-class CoreSweepClient : public QObject
+class core_sweep_client : public QObject
 {
     Q_OBJECT
 public:
-    explicit CoreSweepClient(QObject *parent = nullptr);
-    int runCoreSweepClient(int argc, char *argv[]);
+    explicit core_sweep_client(const QString &, const QString &, QObject *parent = nullptr);
+
+    bool read_settings();
+    void initialization(QQmlApplicationEngine *);
+    void start_client();
 
 public slots:
     void onDisconnectFromHost();
@@ -54,17 +57,19 @@ private slots:
     void slot_message_received(const QByteArray &message, const QMqttTopicName &topic = QMqttTopicName());
 
 private:
-    QQmlApplicationEngine* ptrEngine {Q_NULLPTR};
+    QString m_file_settings;
+    QString m_path_config;
+
     user_interface* ptr_user_interface {Q_NULLPTR};
-    QMqttClient* ptrMqttClient {Q_NULLPTR};
+    QMqttClient* ptr_mqtt_client {Q_NULLPTR};
     sweep_topic* ptr_sweep_topic {Q_NULLPTR};
     hackrf_info_model* ptr_hackrf_info_model {Q_NULLPTR};
     message_log_model* ptr_message_log_model {Q_NULLPTR};
     params_spectr_model* ptr_params_spectr_model {Q_NULLPTR};
     ranges_template_model* ptr_ranges_template_model {Q_NULLPTR};
 
-    SystemMonitorInterface *ptrSystemMonitorInterface {Q_NULLPTR};
-    StateSweepClient *ptrStateSweepClient {Q_NULLPTR};
+    SystemMonitorInterface *ptr_system_monitor_interface {Q_NULLPTR};
+    StateSweepClient *ptr_state_sweep_client {Q_NULLPTR};
     QTimer *m_timer_receive {Q_NULLPTR};
     qint32 m_size_data_receive;
 
@@ -79,11 +84,8 @@ private:
     db_local_state* ptr_db_local_state_worker {Q_NULLPTR};
     QPointer<QThread> ptr_db_local_thread;
 
-    void initialization();
-    bool read_settings(const QString &);
-    bool save_settings(const QString &);
+    bool save_settings();
     bool read_template(const QString &);
-    void launching();
 
     void updateLogStateChange();
     void brokerDisconnected();
@@ -91,6 +93,7 @@ private:
     void connecting();
 
     void errorChanged(QMqttClient::ClientError error);
+    QStringList get_local_address_v4();
 };
 
 #endif // CORESWEEPCLIENT_H

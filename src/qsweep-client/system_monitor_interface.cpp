@@ -1,4 +1,4 @@
-#include "systemmonitorinterface.h"
+#include "system_monitor_interface.h"
 
 SystemMonitorInterface::SystemMonitorInterface(QObject *parent) : QObject(parent)
 {

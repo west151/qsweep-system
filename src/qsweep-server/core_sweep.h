@@ -9,20 +9,19 @@
 // bind_address 0.0.0.0
 
 #include <QObject>
+#include <QTimer>
 #include <QPointer>
 #include <QtMqtt/QMqttClient>
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
 
-#include "settings/server_settings.h"
+#include "server_settings.h"
 #include "system_monitor_worker.h"
-
-class QTimer;
-class hackrf_info;
-class spectrum_native_worker;
-class sweep_topic;
-class spectrum_process_worker;
-class parser_worker;
+#include "hackrf_info.h"
+#include "spectrum_native_worker.h"
+#include "sweep_topic.h"
+#include "spectrum_process_worker.h"
+#include "parser_worker.h"
 
 class core_sweep : public QObject
 {

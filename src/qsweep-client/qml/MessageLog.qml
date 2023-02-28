@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick
 
 MessageLogForm {
 
@@ -18,7 +18,7 @@ MessageLogForm {
         Item {
             id: mainItem
             x: 5
-            width: listViewMessageLog.width
+            width: list_view_message_log.width
             height: idTextInfo.height
 
             Row {
