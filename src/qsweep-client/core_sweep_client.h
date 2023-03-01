@@ -87,12 +87,12 @@ private:
     bool save_settings();
     bool read_template(const QString &);
 
-    void updateLogStateChange();
-    void brokerDisconnected();
-    void pingReceived();
+    void update_log_state_change();
+    void broker_disconnected();
+    void ping_received();
     void connecting();
 
-    void errorChanged(QMqttClient::ClientError error);
+    void error_changed(QMqttClient::ClientError error);
     QStringList get_local_address_v4();
 };
 

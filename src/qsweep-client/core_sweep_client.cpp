@@ -113,15 +113,15 @@ void core_sweep_client::initialization(QQmlApplicationEngine *ptr_engine)
     connect(ptr_mqtt_client, &QMqttClient::messageReceived,
             this, &core_sweep_client::slot_message_received);
     connect(ptr_mqtt_client, &QMqttClient::stateChanged,
-            this, &core_sweep_client::updateLogStateChange);
+            this, &core_sweep_client::update_log_state_change);
     connect(ptr_mqtt_client, &QMqttClient::disconnected,
-            this, &core_sweep_client::brokerDisconnected);
+            this, &core_sweep_client::broker_disconnected);
     connect(ptr_mqtt_client, &QMqttClient::connected,
-            this, &core_sweep_client::pingReceived);
+            this, &core_sweep_client::ping_received);
     connect(ptr_mqtt_client, &QMqttClient::pingResponseReceived,
-            this , &core_sweep_client::pingReceived);
+            this , &core_sweep_client::ping_received);
     connect(ptr_mqtt_client, &QMqttClient::errorChanged,
-            this, &core_sweep_client::errorChanged);
+            this, &core_sweep_client::error_changed);
 
     // System Monitor Interface
     ptr_system_monitor_interface = new SystemMonitorInterface;
@@ -294,7 +294,7 @@ bool core_sweep_client::read_template(const QString &path)
     return result;
 }
 
-void core_sweep_client::updateLogStateChange()
+void core_sweep_client::update_log_state_change()
 {
     const QString content = QDateTime::currentDateTime().toString()
             + QLatin1String(": State Change ")
@@ -346,12 +346,12 @@ void core_sweep_client::updateLogStateChange()
     }
 }
 
-void core_sweep_client::brokerDisconnected()
+void core_sweep_client::broker_disconnected()
 {
     qInfo("Broker disconnected ...");
 }
 
-void core_sweep_client::pingReceived()
+void core_sweep_client::ping_received()
 {
     ptr_user_interface->onPingReceived();
 
@@ -527,7 +527,7 @@ bool core_sweep_client::save_settings()
     return is_save;
 }
 
-void core_sweep_client::errorChanged(QMqttClient::ClientError error)
+void core_sweep_client::error_changed(QMqttClient::ClientError error)
 {
     qCritical("Mqtt client error code: '%d'", error);
 
