@@ -2,7 +2,7 @@
 #define USER_INTERFACE_H
 
 #include <QObject>
-#include "settings/client_settings.h"
+#include "client_settings.h"
 
 class params_spectr;
 

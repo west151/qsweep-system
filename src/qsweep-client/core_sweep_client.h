@@ -6,7 +6,6 @@
 #include <QtMqtt/QMqttClient>
 #include <QtMqtt/QMqttMessage>
 #include <QtMqtt/QMqttSubscription>
-//#include <QTimer>
 #include <QPointer>
 
 #include "model/hackrf_info_model.h"
@@ -17,7 +16,7 @@
 class user_interface;
 class sweep_topic;
 class SystemMonitorInterface;
-class StateSweepClient;
+class state_sweep_client;
 class client_settings;
 class sweep_message;
 class sdr_info;
@@ -39,11 +38,11 @@ public:
     void start_client();
 
 public slots:
-    void onDisconnectFromHost();
+    void on_disconnect_from_host();
 
 signals:
-    void sendStateConnected();
-    void sendStateDisconnected();
+    void signal_state_connected();
+    void signal_state_disconnected();
 
     void signal_sdr_info(const sdr_info &);
     void signal_data_log(const data_log &);
@@ -69,8 +68,7 @@ private:
     ranges_template_model* ptr_ranges_template_model {Q_NULLPTR};
 
     SystemMonitorInterface *ptr_system_monitor_interface {Q_NULLPTR};
-    StateSweepClient *ptr_state_sweep_client {Q_NULLPTR};
-//    QTimer *m_timer_receive {Q_NULLPTR};
+    state_sweep_client *ptr_state_sweep_client {Q_NULLPTR};
     qint32 m_size_data_receive;
 
     // settings

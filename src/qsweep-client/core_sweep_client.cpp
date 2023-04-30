@@ -3,7 +3,6 @@
 #include <QQmlContext>
 #include <QFileInfo>
 #include <QDir>
-//#include <QTime>
 #include <QtCore/qdebug.h>
 #include <QThread>
 #include <QStandardPaths>
@@ -61,8 +60,6 @@ core_sweep_client::core_sweep_client(const QString &path_config, const QString &
     }
 
     ptr_sweep_topic = new sweep_topic(this);
-
-//    m_timer_receive = new QTimer;
 
     qRegisterMetaType<data_spectr>();
     qRegisterMetaType<QVector<params_spectr> >();
@@ -133,14 +130,14 @@ void core_sweep_client::initialization(QQmlApplicationEngine *ptr_engine)
     connect(ptr_user_interface, &user_interface::signal_sweep_message,
             this, &core_sweep_client::slot_publish_message);
 
-    // StateSweepClient
-    ptr_state_sweep_client = new StateSweepClient(this);
-    connect(this, &core_sweep_client::sendStateConnected,
-            ptr_state_sweep_client, &StateSweepClient::onConnect);
-    connect(this, &core_sweep_client::sendStateConnected,
+    // state_sweep_client
+    ptr_state_sweep_client = new state_sweep_client(this);
+    connect(this, &core_sweep_client::signal_state_connected,
+            ptr_state_sweep_client, &state_sweep_client::onConnect);
+    connect(this, &core_sweep_client::signal_state_connected,
             ptr_user_interface, &user_interface::onRequestSweepInfo);
-    connect(this, &core_sweep_client::sendStateDisconnected,
-            ptr_state_sweep_client, &StateSweepClient::onDisconnect);
+    connect(this, &core_sweep_client::signal_state_disconnected,
+            ptr_state_sweep_client, &state_sweep_client::onDisconnect);
 
     // Hackrf Info Model
     ptr_hackrf_info_model = new hackrf_info_model(this);
@@ -247,7 +244,7 @@ void core_sweep_client::start_client()
     emit signal_open_db(QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation));
 }
 
-void core_sweep_client::onDisconnectFromHost()
+void core_sweep_client::on_disconnect_from_host()
 {
     if (ptr_mqtt_client->state() == QMqttClient::Connected){
         //ptrMqttClient->unsubscribe(ptrSweepTopic->sweep_topic_by_type(sweep_topic::TOPIC_DATA));
@@ -309,7 +306,7 @@ void core_sweep_client::update_log_state_change()
 
         if (!subscription)
         {
-            qInfo("Could not subscribe. Is there a valid connection ?");
+            qWarning("Could not subscribe. Is there a valid connection ?");
             return;
         }
 
@@ -317,7 +314,7 @@ void core_sweep_client::update_log_state_change()
 
         if (!subscription1)
         {
-            qInfo("Could not subscribe. Is there a valid connection ?");
+            qWarning("Could not subscribe. Is there a valid connection ?");
             return;
         }
 
@@ -325,7 +322,7 @@ void core_sweep_client::update_log_state_change()
 
         if (!subscription2)
         {
-            qInfo("Could not subscribe. Is there a valid connection ?");
+            qWarning("Could not subscribe. Is there a valid connection ?");
             return;
         }
 
@@ -333,16 +330,16 @@ void core_sweep_client::update_log_state_change()
 
         if (!subscription3)
         {
-            qInfo("Could not subscribe. Is there a valid connection ?");
+            qWarning("Could not subscribe. Is there a valid connection ?");
             return;
         }
 
-        emit sendStateConnected();
+        emit signal_state_connected();
     }
 
     if (ptr_mqtt_client->state() == QMqttClient::Disconnected)
     {
-        emit sendStateDisconnected();
+        emit signal_state_disconnected();
     }
 }
 

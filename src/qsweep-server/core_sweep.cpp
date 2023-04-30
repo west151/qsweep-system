@@ -69,6 +69,8 @@ bool core_sweep::read_settings()
 
                 result = ptr_server_settings->is_valid();
 
+                //ptr_sweep_topic->set_id(ptr_server_settings->id());
+
             }else{
                 qCritical("Can't file open ('%s').", qUtf8Printable(m_file_settings));
                 qCritical("Error: '%s'", qUtf8Printable(file.errorString()));

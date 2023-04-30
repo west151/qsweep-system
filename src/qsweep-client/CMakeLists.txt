@@ -28,7 +28,6 @@ find_package(Qt6 COMPONENTS
     Mqtt
     Sql
     Quick
-    Widgets
     StateMachine
     QuickControls2
 REQUIRED
@@ -41,11 +40,17 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE Qt6::Core Qt6::Network Qt6::Mqtt Qt6::Sql Qt6::Quick Qt6::StateMachine Qt6::Widgets)
+    PRIVATE Qt6::Core Qt6::Network Qt6::Mqtt Qt6::Sql Qt6::Quick Qt6::StateMachine)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
     template
+    model
+    chart
+    database
+    spectr
+    ui_interface
+    settings
     ../qsweep-protocol
 )
 

@@ -1,11 +1,7 @@
 #include "state_sweep_client.h"
 
-#ifdef QT_DEBUG
-#include <QtCore/qdebug.h>
-#endif
-
-StateSweepClient::StateSweepClient(QObject *parent) : QObject(parent),
-    isConnect(false)
+state_sweep_client::state_sweep_client(QObject *parent) : QObject(parent),
+    is_connect(false)
 {
     ptrMachine = new QStateMachine(this);
 
@@ -15,8 +11,8 @@ StateSweepClient::StateSweepClient(QObject *parent) : QObject(parent),
     ptrMachine->addState(ptrStateConnect);
     ptrMachine->addState(ptrStateDisconnect);
 
-    ptrStateConnect->addTransition(this, &StateSweepClient::onDisconnect, ptrStateDisconnect);
-    ptrStateDisconnect->addTransition(this, &StateSweepClient::onConnect, ptrStateConnect);
+    ptrStateConnect->addTransition(this, &state_sweep_client::onDisconnect, ptrStateDisconnect);
+    ptrStateDisconnect->addTransition(this, &state_sweep_client::onConnect, ptrStateConnect);
 
     ptrStateConnect->assignProperty(this, "stateConnectToBroker", true);
     ptrStateDisconnect->assignProperty(this, "stateConnectToBroker", false);
@@ -26,14 +22,14 @@ StateSweepClient::StateSweepClient(QObject *parent) : QObject(parent),
     ptrMachine->start();
 }
 
-bool StateSweepClient::stateConnectToBroker() const
+bool state_sweep_client::stateConnectToBroker() const
 {
-    return isConnect;
+    return is_connect;
 }
 
-void StateSweepClient::setStateConnectToBroker(const bool &on)
+void state_sweep_client::setStateConnectToBroker(const bool &on)
 {
-    isConnect = on;
+    is_connect = on;
 
     emit sendStateConnectToBroker();
 }

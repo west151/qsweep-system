@@ -1,15 +1,15 @@
-#ifndef STATESWEEPCLIENT_H
-#define STATESWEEPCLIENT_H
+#ifndef STATE_SWEEP_CLIENT_H
+#define STATE_SWEEP_CLIENT_H
 
 #include <QObject>
 #include <QStateMachine>
 
-class StateSweepClient : public QObject
+class state_sweep_client : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool stateConnectToBroker READ stateConnectToBroker WRITE setStateConnectToBroker NOTIFY sendStateConnectToBroker)
 public:
-    explicit StateSweepClient(QObject *parent = nullptr);
+    explicit state_sweep_client(QObject *parent = nullptr);
 
     bool stateConnectToBroker()const;
     void setStateConnectToBroker(const bool &);
@@ -28,7 +28,7 @@ private:
     QState *ptrStateRun;
     QState *ptrStateStop;
 
-    bool isConnect;
+    bool is_connect;
 };
 
-#endif // STATESWEEPCLIENT_H
+#endif // STATE_SWEEP_CLIENT_H
