@@ -54,15 +54,12 @@ target_include_directories(${PROJECT_NAME}
     ../qsweep-protocol
 )
 
-include(GNUInstallDirs)
+#install(TARGETS ${PROJECT_NAME}
+#    COMPONENT ${PROJECT_NAME}
+#)
 
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION
-)
+#include(GNUInstallDirs)
 
-#install(TARGETS target
-#        CONFIGURATIONS Debug
-#        RUNTIME DESTINATION Debug/bin)
-#install(TARGETS target
-#        CONFIGURATIONS Release
-#        RUNTIME DESTINATION Release/bin)
+#install(TARGETS ${PROJECT_NAME}
+#    RUNTIME DESTINATION
+#)

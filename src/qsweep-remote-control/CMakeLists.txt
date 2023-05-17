@@ -51,11 +51,11 @@ target_include_directories(${PROJECT_NAME}
     ../qsweep-protocol
 )
 
-include(GNUInstallDirs)
+#include(GNUInstallDirs)
 
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION
-)
+#install(TARGETS ${PROJECT_NAME}
+#    RUNTIME DESTINATION
+#)
 
 #install(TARGETS target
 #        CONFIGURATIONS Debug
