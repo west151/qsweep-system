@@ -49,15 +49,31 @@ add_executable(${PROJECT_NAME}
     ${EXT_SOURCES}
 )
 
-# fftw
-find_package(PkgConfig REQUIRED)
-pkg_search_module(FFTW3F REQUIRED fftw3f IMPORTED_TARGET)
-include_directories(PkgConfig::FFTW3F)
-# hackrf
-pkg_search_module(HACKRF REQUIRED libhackrf IMPORTED_TARGET)
-include_directories(PkgConfig::HACKRF)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        Qt6::Core
+        Qt6::Network
+        Qt6::Mqtt
+    )
+else()
+    # fftw
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(FFTW3F REQUIRED fftw3f IMPORTED_TARGET)
+    include_directories(PkgConfig::FFTW3F)
+    # hackrf
+    pkg_search_module(HACKRF REQUIRED libhackrf IMPORTED_TARGET)
+    include_directories(PkgConfig::HACKRF)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Core Qt6::Network Qt6::Mqtt PkgConfig::FFTW3F PkgConfig::HACKRF)
+    target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        Qt6::Core
+        Qt6::Network
+        Qt6::Mqtt
+        PkgConfig::FFTW3F
+        PkgConfig::HACKRF
+    )
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE

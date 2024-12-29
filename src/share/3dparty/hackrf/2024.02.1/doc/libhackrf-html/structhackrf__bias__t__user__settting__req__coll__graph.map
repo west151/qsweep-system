@@ -1,0 +1,4 @@
+<map id="hackrf_bias_t_user_settting_req" name="hackrf_bias_t_user_settting_req">
+<area shape="rect" id="node1" title="User settings for user&#45;supplied bias tee defaults." alt="" coords="29,124,173,165"/>
+<area shape="rect" id="node2" href="$structhackrf__bool__user__settting.html" title="Helper struct for hackrf_bias_t_user_setting." alt="" coords="5,5,196,32"/>
+</map>

@@ -1,0 +1,6 @@
+\_form#0=56x13:$ \le 0.75 \cdot F_s $
+\_form#1=123x13:$f_{center} = f_{IF} + k\cdot f_{LO}$
+\_form#2=74x14:$k\in\left\{-1; 0; 1\right\}$
+\_form#3=71x13:$f_{center} = f_{IF}$
+\_form#4=108x13:$f_{center} = f_{IF} - f_{LO}$
+\_form#5=108x13:$f_{center} = f_{IF} + f_{LO}$
