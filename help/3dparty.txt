@@ -35,4 +35,15 @@ $ cd /c/github/qsweep/src/share/3dparty/hackrf/2018.01.1/host
 $ mkdir build
 $ cd build
 $ cmake .. -G "MSYS Makefiles" -DLIBUSB_INCLUDE_DIR=/c/msys64/mingw64/include/libusb-1.0
+$ cmake ../ -G "MSYS Makefiles" -DLIBUSB_INCLUDE_DIR=/lib -DFFTW_LIBRARIES=/lib
 $ make
+
+# 2024.02.1
+
+C:\work\github\qsweep-system\src\share\3dparty\hackrf\2024.02.1
+
+cd C:/work/github/qsweep-system/src/share/3dparty/hackrf/2024.02.1/host/build
+cmake ../ -G "MSYS Makefiles" -DLIBUSB_INCLUDE_DIR=/c/msys64/mingw64/include/libusb-1.0 -DFFTW_LIBRARIES=/lib
+make
+
+https://github.com/greatscottgadgets/hackrf/issues/1107

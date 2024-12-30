@@ -9,8 +9,8 @@ project(qsweep-server
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 file(GLOB_RECURSE EXT_HEADER
@@ -56,6 +56,15 @@ if(WIN32)
         Qt6::Network
         Qt6::Mqtt
     )
+
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE
+        worker
+        settings
+        ../qsweep-protocol
+        ../include/mingw64/hackrf/2018.01.1
+        ../include/mingw64/fftw/3.3.10
+    )
 else()
     # fftw
     find_package(PkgConfig REQUIRED)
@@ -73,14 +82,14 @@ else()
         PkgConfig::FFTW3F
         PkgConfig::HACKRF
     )
-endif()
 
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-    worker
-    settings
-    ../qsweep-protocol
-)
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE
+        worker
+        settings
+        ../qsweep-protocol
+    )
+endif()
 
 install(TARGETS ${PROJECT_NAME}
     COMPONENT ${PROJECT_NAME}

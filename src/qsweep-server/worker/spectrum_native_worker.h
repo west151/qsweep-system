@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <hackrf.h>
+#include "hackrf.h"
 #include <fftw3.h>
 #include <sys/types.h>
 #include <sys/stat.h>
