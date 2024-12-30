@@ -50,11 +50,16 @@ add_executable(${PROJECT_NAME}
 )
 
 if(WIN32)
+    set(LIB_HACKRF ${CMAKE_CURRENT_SOURCE_DIR}/../../install/windows/mingw64/hackrf/2018.01.1/libhackrf.dll)
+    set(LIB_FFTW   ${CMAKE_CURRENT_SOURCE_DIR}/../../install/windows/mingw64/fftw/3.3.10/libfftw3f-3.dll)
+
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
         Qt6::Core
         Qt6::Network
         Qt6::Mqtt
+        ${LIB_HACKRF}
+        ${LIB_FFTW}
     )
 
     target_include_directories(${PROJECT_NAME}
