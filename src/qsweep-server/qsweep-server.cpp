@@ -1,6 +1,7 @@
 #include "core_sweep.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 
 void sweep_message_output(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -48,13 +49,14 @@ void sweep_message_output_short(QtMsgType type, const QMessageLogContext &contex
 
 int main(int argc, char *argv[])
 {
-#ifdef QT_DEBUG
-//    qInstallMessageHandler(sweep_message_output);
-    qInstallMessageHandler(sweep_message_output_short);
-#endif
+// #ifdef QT_DEBUG
+// //    qInstallMessageHandler(sweep_message_output);
+//     qInstallMessageHandler(sweep_message_output_short);
+// #endif
 
     QCoreApplication app(argc, argv);
     QString cfg_dir("/etc/" + app.applicationName());
+
     // app.applicationFilePath()
     core_sweep core_sweep_server(cfg_dir, app.applicationName());
     /* 1 */

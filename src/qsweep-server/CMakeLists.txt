@@ -70,6 +70,15 @@ if(WIN32)
         ../include/mingw64/hackrf/2018.01.1
         ../include/mingw64/fftw/3.3.10
     )
+    # copy libusb-1.0.dll
+    file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../install/windows/mingw64/libusb/libusb-1.0.dll
+          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+    # copy libhackrf.dll
+    file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../install/windows/mingw64/hackrf/2018.01.1/libhackrf.dll
+          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+    # copy libfftw3f-3.dll
+    file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../install/windows/mingw64/fftw/3.3.10/libfftw3f-3.dll
+          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
 else()
     # fftw
     find_package(PkgConfig REQUIRED)

@@ -12,6 +12,8 @@ option(BUILD_QSWEEP_WRITER "Enable building qsweep-writer" ON)
 # qsweep-remote-control
 option(BUILD_QSWEEP_REMOTE_CONTROL "Enable building qsweep-remote-control" ON)
 
+include (cmake/output.cmake)
+
 if(BUILD_QSWEEP_SERVER)
     add_subdirectory(src/qsweep-server)
 endif()
