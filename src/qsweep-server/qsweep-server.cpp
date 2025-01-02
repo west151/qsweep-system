@@ -55,10 +55,17 @@ int main(int argc, char *argv[])
 // #endif
 
     QCoreApplication app(argc, argv);
-    QString cfg_dir("/etc/" + app.applicationName());
+    QString cfgDir;
 
-    // app.applicationFilePath()
-    core_sweep core_sweep_server(cfg_dir, app.applicationName());
+#ifdef Q_OS_WIN64
+    cfgDir = app.applicationDirPath();
+#else
+    cfgDir = ("/etc/" + app.applicationName());const QDir pluginDir {"plugins"};
+#endif
+
+    qDebug() << "Config dir:" << cfgDir;
+
+    core_sweep core_sweep_server(cfgDir, app.applicationName());
     /* 1 */
     bool result = core_sweep_server.read_settings();
     /* 2 */
