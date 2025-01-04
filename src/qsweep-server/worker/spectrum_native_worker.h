@@ -36,7 +36,12 @@ private:
     static spectrum_native_worker* m_instance;
 
     int opt, i, result = 0;
+
+#ifdef Q_OS_WIN64
+    const char* path = "nul";
+#else
     const char* path = "/dev/null";
+#endif
     const char* serial_number = nullptr;
     int exit_code = EXIT_SUCCESS;
     struct timeval t_end;

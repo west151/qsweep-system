@@ -22,6 +22,14 @@ file(GLOB_RECURSE SOURCES
     ../qsweep-protocol/*.cpp
 )
 
+if(WIN32)
+    # copy qsweep-client.conf
+    file( COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../install/config/qsweep-client.conf
+          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} )
+else()
+
+endif()
+
 find_package(Qt6 COMPONENTS
     Core
     Network
